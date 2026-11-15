@@ -18,3 +18,6 @@ All notable changes to Whiskerling are listed here. The format follows
 - A grown-ups' menu behind the gate: Pro, restore, sound, send feedback, rate, the privacy policy
   and starting over.
 - English and Danish.
+- App Store screenshots for the 13-inch iPad in English and Danish, made from a debug-only
+  screenshot mode.
+- The site, whiskerling.iamjarl.com, in English and Danish, with the privacy policy and support.

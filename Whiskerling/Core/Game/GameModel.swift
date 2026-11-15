@@ -37,9 +37,18 @@ final class GameModel {
 
     @ObservationIgnored private var toastQueue: [String] = []
     @ObservationIgnored private var syncScheduled = false
+    /// Screenshots show Pro as bought (debug builds only).
+    @ObservationIgnored var forcedPro = false
 
     init() {
         world = World(sound: sound)
+        #if DEBUG
+        if let scene = GameModel.screenshotScene {
+            setUpScreenshot(scene)
+            sync()
+            return
+        }
+        #endif
         if let saved = SaveStore.load() {
             world.loadExisting(saved)
             sound.enabled = saved.sound
@@ -48,7 +57,7 @@ final class GameModel {
         sync()
     }
 
-    var isPro: Bool { store.isPro }
+    var isPro: Bool { store.isPro || forcedPro }
 
     // MARK: World hand-over
 
@@ -232,8 +241,8 @@ final class GameModel {
     /// Called when StoreKit has an answer. Before the first answer Pro is unknown, so the cat
     /// stays where it was saved; after it, losing Pro (a refund) brings the cat inside.
     func proChanged() {
-        world.isPro = store.isPro
-        if store.entitlementChecked && !store.isPro { world.proLost() }
+        world.isPro = isPro
+        if store.entitlementChecked && !isPro { world.proLost() }
         sync()
     }
 

@@ -109,6 +109,10 @@ final class World {
     var fishing: FishGame?
     var ripples: [Ripple] = []
     var roomFade: CGFloat = 0
+    #if DEBUG
+    /// Set for App Store screenshots: the scene is staged and the world stands still.
+    var screenshotScene: String?
+    #endif
     var sky = SkyPhase.at(Date())
     var W: CGFloat = 0, H: CGFloat = 0, U: CGFloat = 1
     var G = Geometry()
@@ -276,6 +280,9 @@ final class World {
     func update(_ dt: CGFloat) {
         guard save != nil else { return }
         T += dt
+        #if DEBUG
+        if screenshotScene != nil { return }
+        #endif
         let now = Date()
         let gap = now.timeIntervalSince(save!.last)
         if gap > 8 { afterAway(save!.catchUp(to: now)) } else if gap > 0 {
@@ -315,6 +322,9 @@ final class World {
         G.pic = pic.maxX > G.clock.x - G.clockR - 16 * U ? nil : pic
         layoutGarden()
         if save != nil { snapCat() }
+        #if DEBUG
+        if let scene = screenshotScene { stageScreenshot(scene) }
+        #endif
     }
 
     /// The pond sits on the lawn behind the path the cat walks along, the tree on the right.

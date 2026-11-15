@@ -6,7 +6,7 @@ import Foundation
 /// send it. Same shape as Walkful's.
 enum Feedback {
     static let address = "support@iamjarl.com"
-    static let privacyURL = URL(string: "https://whiskerling.iamjarl.com/privacy")!
+    static let privacyURL = URL(string: "https://whiskerling.iamjarl.com/privacy/")!
 
     /// The marketing version alone, as in "1.0".
     static var marketingVersion: String {

@@ -10,7 +10,7 @@ the app is closed (it sleeps at night). It never dies; a forgotten cat is just s
 drawn in code and stays on the device: no accounts, no network features, no ads, no tracking.
 
 - **Developer:** [IAMJARL](https://iamjarl.com) (Jarl). The full personal name is never used in copy or docs; see `BRAND_LEGAL.md` in the hub.
-- **Website:** whiskerling.iamjarl.com (not live yet)
+- **Website:** whiskerling.iamjarl.com (built in `website/`, not live yet)
 - **License:** MIT
 - **Price:** free download with one optional in-app purchase, **Whiskerling Pro** (`com.iamjarl.whiskerling.pro`, non-consumable, about 29 DKK). No subscription, no ads.
 - **Status:** in development (not in App Store Connect yet)
@@ -110,6 +110,12 @@ file in the same change.
   Catch the fish through the world, with its own UserDefaults suite so a real cat is never touched.
 - Debug builds take `-debugSky night` (or `dawn`, `day`, `dusk`) as a launch argument, to check
   the sky and the garden at any hour, and for screenshots.
+- App Store screenshots: `appstore/README.md`. Debug builds have a screenshot mode
+  (`-screenshots -screen room|gate|fish|wardrobe|night`) with a sample cat in its own storage;
+  `appstore/capture.sh` captures, and the hub's `tools/appstore_screenshots.py` composes the posters.
+- The site, whiskerling.iamjarl.com, is static HTML in `website/` (no build), deployed to GitHub
+  Pages by `.github/workflows/deploy-pages.yml`. Its rules are in `website/IDENTITY.md`. Preview it
+  with `python3 -m http.server 8765 --directory website`.
 - Texts: edit `Whiskerling/Core/Localization/L10n.swift` (English) and the Danish table in
   `tools/l10n.py`, then run `/usr/bin/python3 tools/l10n.py` to rebuild `Localizable.xcstrings`.
 - Icon: `tools/make-icon.sh` renders `AppIcon.png` from the same drawing code as the web version.
@@ -124,6 +130,9 @@ file in the same change.
 - `Whiskerling/Core/Game/SaveState.swift`: the saved cat and how time passes while the app is closed.
 - `Whiskerling/Core/Store/Store.swift`: StoreKit 2, same shape as Walkful's.
 - `Whiskerling/Features/`: SwiftUI screens (game, start, grown-ups and paywall).
+- `Whiskerling/Core/Game/*Screenshots.swift`: the debug-only screenshot scenes.
+- `appstore/`: the App Store posters per release, the raw captures and the manifest.
+- `website/`: the marketing site, with the privacy policy the app and App Store Connect link to.
 - `public/`: the original web version (Min Mis) that runs on an old iOS 12 iPad.
 
 ## Conventions

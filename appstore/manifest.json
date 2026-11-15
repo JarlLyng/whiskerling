@@ -1,0 +1,93 @@
+{
+  "app": "Whiskerling",
+  "mode": "light",
+  "ground": {
+    "top": "#FFF6EA",
+    "bottom": "#FCE4C6"
+  },
+  "text": "#4A3B35",
+  "accent": "#C2416A",
+  "out_dir": "1.0",
+  "shots": [
+    {
+      "raw": "raw/en-room.png",
+      "slot": "ipad-13",
+      "out": "en/ipad-13-1.png",
+      "caption": "Your own kitten\nto *look after*",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/en-gate.png",
+      "slot": "ipad-13",
+      "out": "en/ipad-13-2.png",
+      "caption": "No ads, and\npurchases are\n*for grown-ups*",
+      "caption_pos": "bottom",
+      "bleed": false
+    },
+    {
+      "raw": "raw/en-fish.png",
+      "slot": "ipad-13",
+      "out": "en/ipad-13-3.png",
+      "caption": "In the garden,\nit *catches fish*",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/en-wardrobe.png",
+      "slot": "ipad-13",
+      "out": "en/ipad-13-4.png",
+      "caption": "Earn hearts,\n*dress it up*",
+      "caption_pos": "bottom",
+      "bleed": false
+    },
+    {
+      "raw": "raw/en-night.png",
+      "slot": "ipad-13",
+      "out": "en/ipad-13-5.png",
+      "caption": "It sleeps at night,\nand it *never dies*",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/da-room.png",
+      "slot": "ipad-13",
+      "out": "da/ipad-13-1.png",
+      "caption": "Din egen killing\nat *passe på*",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/da-gate.png",
+      "slot": "ipad-13",
+      "out": "da/ipad-13-2.png",
+      "caption": "Ingen reklamer,\nog køb er\n*for voksne*",
+      "caption_pos": "bottom",
+      "bleed": false
+    },
+    {
+      "raw": "raw/da-fish.png",
+      "slot": "ipad-13",
+      "out": "da/ipad-13-3.png",
+      "caption": "Ude i haven\n*fanger den fisk*",
+      "caption_pos": "top",
+      "bleed": true
+    },
+    {
+      "raw": "raw/da-wardrobe.png",
+      "slot": "ipad-13",
+      "out": "da/ipad-13-4.png",
+      "caption": "Få hjerter,\n*og pynt den*",
+      "caption_pos": "bottom",
+      "bleed": false
+    },
+    {
+      "raw": "raw/da-night.png",
+      "slot": "ipad-13",
+      "out": "da/ipad-13-5.png",
+      "caption": "Den sover trygt,\nog den *dør aldrig*",
+      "caption_pos": "top",
+      "bleed": true
+    }
+  ]
+}

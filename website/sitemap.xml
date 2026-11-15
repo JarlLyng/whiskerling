@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- No lastmod dates here on purpose. The deploy writes them from git, the date of the last
+     commit that touched each page (.github/workflows/deploy-pages.yml). Never hand-write them. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://whiskerling.iamjarl.com/</loc>
+  </url>
+  <url>
+    <loc>https://whiskerling.iamjarl.com/da/</loc>
+  </url>
+  <url>
+    <loc>https://whiskerling.iamjarl.com/support/</loc>
+  </url>
+  <url>
+    <loc>https://whiskerling.iamjarl.com/da/support/</loc>
+  </url>
+  <url>
+    <loc>https://whiskerling.iamjarl.com/privacy/</loc>
+  </url>
+  <url>
+    <loc>https://whiskerling.iamjarl.com/da/privacy/</loc>
+  </url>
+</urlset>

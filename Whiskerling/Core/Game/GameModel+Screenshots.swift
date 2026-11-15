@@ -1,0 +1,54 @@
+#if DEBUG
+import Foundation
+
+/// App Store screenshots, the pattern from `DESIGN.md` (debug builds only): launch with
+/// `-screenshots -screen <scene>` and `-debugSky day|night`, then `xcrun simctl io <device>
+/// screenshot`. Scenes: `room`, `gate`, `fish`, `wardrobe`, `night`. The sample cat lives in its
+/// own UserDefaults suite, so a real cat is never touched, and Pro is shown as bought.
+extension GameModel {
+    static var screenshotScene: String? {
+        guard ProcessInfo.processInfo.arguments.contains("-screenshots") else { return nil }
+        return UserDefaults.standard.string(forKey: "screen") ?? "room"
+    }
+
+    func setUpScreenshot(_ scene: String) {
+        world.defaults = UserDefaults(suiteName: "whiskerling.screenshots") ?? .standard
+        let coats = ["room": "orange", "gate": "orange", "fish": "tabby", "wardrobe": "calico", "night": "white"]
+        var s = SaveState(name: "Luna", coat: coats[scene] ?? "orange")
+        s.needs = Needs(food: 88, fun: 92, energy: 84, clean: 96)
+        s.hearts = 140
+        s.seenHearts = 140
+        switch scene {
+        case "fish":
+            s.room = Room.garden.rawValue
+            s.wear = Wear(head: "hat")
+        case "wardrobe":
+            s.wear = Wear(head: "flowers", neck: "bell")
+        case "night":
+            s.lightsOff = true
+            s.needs.energy = 46
+            s.wear = Wear(neck: "scarf")
+        default:
+            s.wear = Wear(head: "bow")
+        }
+        forcedPro = true
+        world.isPro = true
+        sound.enabled = false
+        world.save = s
+        world.screenshotScene = scene
+        hasCat = true
+        switch scene {
+        case "fish":
+            world.setMode(.fish)
+            mode = .fish
+            modeHint = L10n.fishHint
+        case "wardrobe":
+            overlay = .wardrobe
+        case "gate":
+            adult = .menu
+        default:
+            break
+        }
+    }
+}
+#endif

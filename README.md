@@ -8,6 +8,11 @@ Pet care game for kids, no ads
   Coming to the App Store · Free, with one optional purchase · iPadOS 17 or later · <a href="https://whiskerling.iamjarl.com">whiskerling.iamjarl.com</a>
 </p>
 
+<p>
+  <img src="appstore/1.0/en/ipad-13-1.png" alt="Your own kitten to look after. A ginger kitten with a bow in its room, saying hello, next to its food bowl." width="300">
+  <img src="appstore/1.0/en/ipad-13-2.png" alt="No ads, and purchases are for grown-ups. The parental gate, a multiplication on a keypad." width="300">
+</p>
+
 Choose a kitten, give it a name and look after it: food, play, a bath, the litter box and bedtime. It grows from a kitten into a grown-up cat over a week, and time goes on while the app is closed, so it's hungry after school and rested in the morning. It never dies. A cat that has been forgotten for a while is just sad until someone looks after it again.
 
 Whiskerling is made for children, and for the grown-ups who hand them the iPad. It's free to download, and Whiskerling Pro is a one-time purchase, with no subscription, that adds every coat and accessory, a garden with a pond and a game called Catch the fish. There are no ads, no account, no chat and no tracking, and the cat lives on the iPad only. Purchases, links and settings sit behind a grown-ups' gate.
