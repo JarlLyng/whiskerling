@@ -21,3 +21,7 @@ All notable changes to Whiskerling are listed here. The format follows
 - App Store screenshots for the 13-inch iPad in English and Danish, made from a debug-only
   screenshot mode.
 - The site, whiskerling.iamjarl.com, in English and Danish, with the privacy policy and support.
+
+### Changed
+- CI and the site deploy check out the code with `actions/checkout` v7
+  ([#1](https://github.com/JarlLyng/whiskerling/pull/1)).
