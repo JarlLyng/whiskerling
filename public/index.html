@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="da" manifest="min-mis.appcache">
+<head>
+<meta charset="utf-8">
+<title>Min Mis</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Min Mis">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#FFF8EE">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" type="image/png" href="icon.png">
+<style>
+  /* Safari 12: ingen flex-gap, ingen inset, ingen aspect-ratio */
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%; overflow: hidden;
+    background: #FDF1E0; color: #4A3B35;
+    font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0); -webkit-text-size-adjust: 100%;
+    touch-action: manipulation;
+  }
+  button { font-family: inherit; color: inherit; -webkit-appearance: none; touch-action: manipulation; cursor: pointer; }
+  .hidden { display: none !important; }
+
+  #app { position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; }
+
+  /* toppen: navn, behov og hjerter */
+  #hud { flex: 0 0 auto; display: flex; align-items: center; padding: 8px 12px; background: #FFF8EE; border-bottom: 3px solid #F1D9B5; }
+  #nameBox { flex: 0 0 auto; min-width: 118px; max-width: 200px; margin-right: 10px; }
+  #catName { display: block; font-size: 24px; font-weight: 700; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #stageLbl { display: block; font-size: 14px; font-weight: 600; color: #9A7F6E; white-space: nowrap; }
+  #meters { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; min-width: 0; }
+  .meter { flex: 1 1 0%; max-width: 170px; min-width: 0; display: flex; align-items: center; margin: 0 6px; }
+  .meter .ico { flex: 0 0 auto; display: inline-block; font-size: 24px; margin-right: 5px; }
+  .meter .mcol { flex: 1 1 auto; display: block; min-width: 0; }
+  .meter .mlbl { display: block; font-size: 12px; font-weight: 700; color: #9A7F6E; margin-bottom: 2px; }
+  .meter .bar { display: block; height: 14px; background: #EFE2CF; border: 2px solid #E3CDAC; border-radius: 9px; overflow: hidden; }
+  .meter .fill { display: block; height: 100%; width: 50%; background: #5BC57A; border-radius: 7px; transition: width .5s, background-color .5s; }
+  .meter.low .ico { animation: pulse .7s ease-in-out infinite alternate; }
+  @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.35); } }
+  #hearts { flex: 0 0 auto; display: inline-block; font-size: 22px; font-weight: 700; margin: 0 8px; white-space: nowrap; }
+  #hearts.bump { animation: bump .45s ease-out; }
+  @keyframes bump { 40% { transform: scale(1.35); } }
+  .iconBtn { flex: 0 0 auto; width: 46px; height: 46px; padding: 0; border: 0; border-radius: 14px; background: #F3E3CC; font-size: 22px; }
+
+  /* stuen */
+  #stageWrap { position: relative; flex: 1 1 auto; min-height: 0; }
+  #scene { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
+  #toast {
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%); max-width: 92%;
+    padding: 10px 18px; border-radius: 18px; background: rgba(74,59,53,.9); color: #FFF;
+    font-size: 19px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    opacity: 0; transition: opacity .3s; pointer-events: none;
+  }
+  #toast.show { opacity: 1; }
+
+  /* knapperne i bunden */
+  #bar { flex: 0 0 auto; padding: 10px 8px 12px; background: #FFF8EE; border-top: 3px solid #F1D9B5; }
+  #actions { display: flex; justify-content: center; }
+  .act { position: relative; flex: 1 1 0%; max-width: 170px; height: 88px; margin: 0 5px; padding: 0; border: 0; border-radius: 22px; box-shadow: 0 5px 0 rgba(90,60,40,.18); text-align: center; }
+  .act:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(90,60,40,.18); }
+  .act .e { display: block; font-size: 36px; line-height: 44px; }
+  .act .l { display: block; font-size: 18px; font-weight: 700; line-height: 22px; }
+  .act.off { opacity: .4; }
+  #bFood { background: #FFD6A5; }
+  #bPlay { background: #CDEAC0; }
+  #bWash { background: #BDE0FE; }
+  #bSleep { background: #D9CCF2; }
+  #bDress { background: #FFC8DD; }
+  .badge { position: absolute; top: -6px; right: -4px; min-width: 26px; height: 26px; line-height: 26px; padding: 0 7px; border-radius: 13px; background: #EF476F; color: #FFF; font-size: 15px; font-weight: 700; }
+  #modebar { display: flex; align-items: center; height: 88px; padding: 0 8px; }
+  #modeHint { flex: 1 1 auto; margin-right: 12px; font-size: 21px; font-weight: 700; line-height: 1.25; }
+  #doneBtn { flex: 0 0 auto; height: 72px; padding: 0 30px; border: 0; border-radius: 22px; background: #7BD389; font-size: 22px; font-weight: 700; box-shadow: 0 5px 0 rgba(40,110,60,.25); }
+
+  /* vinduer oven på spillet */
+  /* cursor: pointer får Safari på iOS til at sende klik, når man trykker ved siden af kortet */
+  .sheet { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10; display: flex; align-items: center; justify-content: center; background: rgba(60,40,30,.45); cursor: pointer; }
+  .card { cursor: default; width: 92%; max-width: 640px; max-height: 94%; overflow: auto; -webkit-overflow-scrolling: touch; padding: 20px; border-radius: 28px; background: #FFF8EE; text-align: center; box-shadow: 0 10px 0 rgba(60,40,30,.15); }
+  .card h1 { margin: 0 0 4px; font-size: 40px; }
+  .card h2 { margin: 2px 0 14px; font-size: 26px; }
+  .card p { margin: 6px 0 12px; font-size: 18px; font-weight: 600; color: #7C6458; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 12px; }
+  .opt { padding: 12px 6px; border: 0; border-radius: 20px; background: #FFE7C7; font-size: 17px; font-weight: 700; box-shadow: 0 5px 0 rgba(90,60,40,.14); }
+  .opt .e { display: block; font-size: 46px; line-height: 1.2; }
+  .opt small { display: block; margin-top: 3px; font-size: 14px; font-weight: 600; color: #8C7466; }
+  .opt.on { background: #D2F2CF; box-shadow: 0 0 0 4px #5BC57A, 0 5px 0 rgba(90,60,40,.14); }
+  .opt.locked { opacity: .55; }
+  .opt.wide { display: block; width: 100%; margin-top: 10px; padding: 16px; font-size: 19px; }
+  .opt.danger { background: #FFD3D3; }
+  .closeBtn, .bigBtn { margin-top: 16px; height: 60px; padding: 0 34px; border: 0; border-radius: 20px; background: #F3E3CC; font-size: 20px; font-weight: 700; box-shadow: 0 5px 0 rgba(90,60,40,.14); }
+  .bigBtn { background: #7BD389; font-size: 22px; }
+
+  /* garderoben ligger i siden, så man kan se katten imens */
+  #dress { background: rgba(60,40,30,.15); justify-content: flex-start; align-items: stretch; }
+  #dress .card { width: 380px; max-width: 46%; max-height: none; margin: 12px; border-radius: 24px; }
+  @media (orientation: portrait) {
+    #dress { align-items: flex-start; justify-content: center; }
+    #dress .card { width: 96%; max-width: none; }
+    #dress .grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  /* startskærm */
+  .screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; align-items: center; justify-content: center; background: #FDF1E0; }
+  .coat { padding: 8px 4px 10px; }
+  .coat canvas { display: block; width: 110px; height: 110px; margin: 0 auto 2px; }
+  .coat .l { display: block; }
+  #nameInput, #pA {
+    display: block; width: 100%; max-width: 360px; margin: 0 auto; padding: 12px 16px;
+    font-family: inherit; font-size: 26px; font-weight: 700; text-align: center; color: #4A3B35;
+    background: #FFF; border: 3px solid #F1D9B5; border-radius: 18px; outline: none;
+    -webkit-user-select: text; user-select: text; -webkit-appearance: none;
+  }
+  #installHint { margin-top: 14px; font-size: 15px; color: #9A7F6E; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="hud">
+    <div id="nameBox"><span id="catName">Mis</span><span id="stageLbl"></span></div>
+    <div id="meters">
+      <div class="meter" id="mtFood"><span class="ico">🐟</span><span class="mcol"><span class="mlbl">Mæt</span><span class="bar"><span class="fill" id="mFood"></span></span></span></div>
+      <div class="meter" id="mtFun"><span class="ico">😺</span><span class="mcol"><span class="mlbl">Glad</span><span class="bar"><span class="fill" id="mFun"></span></span></span></div>
+      <div class="meter" id="mtEnergy"><span class="ico">⚡</span><span class="mcol"><span class="mlbl">Energi</span><span class="bar"><span class="fill" id="mEnergy"></span></span></span></div>
+      <div class="meter" id="mtClean"><span class="ico">🛁</span><span class="mcol"><span class="mlbl">Ren</span><span class="bar"><span class="fill" id="mClean"></span></span></span></div>
+    </div>
+    <div id="hearts">❤️ <span id="heartNum">0</span></div>
+    <button id="soundBtn" class="iconBtn" aria-label="Lyd">🔊</button>
+  </div>
+  <div id="stageWrap"><canvas id="scene"></canvas><div id="toast"></div></div>
+  <div id="bar">
+    <div id="actions">
+      <button class="act" id="bFood"><span class="e">🍽️</span><span class="l">Mad</span></button>
+      <button class="act" id="bPlay"><span class="e">🧶</span><span class="l">Leg</span></button>
+      <button class="act" id="bWash"><span class="e">🧽</span><span class="l">Vask</span></button>
+      <button class="act" id="bSleep"><span class="e" id="sleepIco">🌙</span><span class="l" id="sleepLbl">Sov</span></button>
+      <button class="act" id="bDress"><span class="e">🎀</span><span class="l">Pynt</span><span class="badge hidden" id="dressBadge">!</span></button>
+    </div>
+    <div id="modebar" class="hidden"><div id="modeHint"></div><button id="doneBtn">Færdig ✔︎</button></div>
+  </div>
+</div>
+
+<div id="foodSheet" class="sheet hidden">
+  <div class="card">
+    <h2 id="foodTitle">Hvad skal katten have?</h2>
+    <div class="grid">
+      <button class="opt" data-food="kibble"><span class="e">🥣</span>Tørfoder<small>Mætter lidt</small></button>
+      <button class="opt" data-food="fish"><span class="e">🐟</span>Fisk<small>Mætter godt</small></button>
+      <button class="opt" data-food="shrimp"><span class="e">🦐</span>Rejer<small>Godbid – gør glad</small></button>
+    </div>
+    <button class="closeBtn" data-close="foodSheet">Luk</button>
+  </div>
+</div>
+
+<div id="dress" class="sheet hidden">
+  <div class="card scroll">
+    <h2>Pynt din kat</h2>
+    <p id="dressInfo"></p>
+    <div class="grid" id="dressGrid"></div>
+    <button class="closeBtn" data-close="dress">Færdig</button>
+  </div>
+</div>
+
+<div id="parent" class="sheet hidden">
+  <div class="card">
+    <h2>Til de voksne</h2>
+    <div id="pGate">
+      <p id="pQ"></p>
+      <input id="pA" type="number" pattern="[0-9]*" inputmode="numeric" autocomplete="off">
+      <button id="pOk" class="bigBtn">OK</button>
+    </div>
+    <div id="pMenu" class="hidden">
+      <p id="pInfo"></p>
+      <button id="pSound" class="opt wide"></button>
+      <button id="pReset" class="opt wide danger"></button>
+    </div>
+    <button class="closeBtn" data-close="parent">Luk</button>
+  </div>
+</div>
+
+<div id="start" class="screen hidden">
+  <div class="card scroll">
+    <h1>Min Mis 🐾</h1>
+    <p>Vælg din killing</p>
+    <div class="grid" id="coatGrid"></div>
+    <p>Hvad skal den hedde?</p>
+    <input id="nameInput" type="text" maxlength="14" placeholder="Mis" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false">
+    <button id="startBtn" class="bigBtn">Hent killingen hjem 🏠</button>
+    <div id="installHint" class="hidden">Til de voksne: Tryk på Del-knappen i Safari og vælg „Føj til hjemmeskærm“. Så kører spillet i fuld skærm og virker uden internet.</div>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>

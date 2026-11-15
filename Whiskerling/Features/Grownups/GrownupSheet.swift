@@ -1,0 +1,215 @@
+import StoreKit
+import SwiftUI
+
+/// Everything for grown-ups sits behind a parental gate: buying Pro and the settings.
+/// Apple requires a gate before purchases in apps made for children.
+struct GrownupSheet: View {
+    let model: GameModel
+    let route: AdultRoute
+    @Environment(\.dismiss) private var dismiss
+    @State private var passed = false
+
+    var body: some View {
+        Group {
+            if !passed {
+                ParentGateView(onPass: { passed = true }, onCancel: { dismiss() })
+            } else if route == .paywall {
+                PaywallView(store: model.store, onClose: { dismiss() })
+            } else {
+                GrownupMenu(model: model, onClose: { dismiss() })
+            }
+        }
+        .foregroundStyle(Theme.text)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Theme.card)
+    }
+}
+
+/// A sum a young child can't easily solve, entered on a keypad.
+struct ParentGateView: View {
+    let onPass: () -> Void
+    let onCancel: () -> Void
+    @State private var a = Int.random(in: 6...9)
+    @State private var b = Int.random(in: 12...19)
+    @State private var answer = ""
+    @State private var wrong = false
+
+    var body: some View {
+        VStack(spacing: Tokens.Spacing.lg) {
+            Text(verbatim: L10n.forGrownUps).font(Theme.font(28))
+            Text(verbatim: L10n.gateQuestion(a, b)).font(Theme.font(24, .semibold))
+            Text(verbatim: answer.isEmpty ? " " : answer)
+                .font(Theme.font(40, .heavy)).monospacedDigit()
+                .frame(width: 200, height: 64)
+                .background(Theme.option, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            // The line is always there, so the keypad never jumps under a grown-up's finger.
+            Text(verbatim: wrong ? L10n.gateWrong : " ").font(Theme.font(16, .semibold)).foregroundStyle(Color(hex: "D64545"))
+            Grid(horizontalSpacing: Tokens.Spacing.sm, verticalSpacing: Tokens.Spacing.sm) {
+                ForEach(0..<3) { row in
+                    GridRow {
+                        ForEach(1...3, id: \.self) { col in key(String(row * 3 + col)) }
+                    }
+                }
+                GridRow {
+                    key("⌫")
+                    key("0")
+                    key(L10n.ok)
+                }
+            }
+            Button(L10n.cancel, action: onCancel).font(Theme.font(18)).padding(.top, Tokens.Spacing.sm)
+        }
+        .padding(Tokens.Spacing.xxl)
+    }
+
+    private func key(_ label: String) -> some View {
+        Button {
+            if label != L10n.ok { wrong = false }
+            switch label {
+            case "⌫": if !answer.isEmpty { answer.removeLast() }
+            case L10n.ok: check()
+            default: if answer.count < 4 { answer += label }
+            }
+        } label: {
+            Text(verbatim: label).font(Theme.font(26)).frame(width: 84, height: 64)
+        }
+        .buttonStyle(PillButtonStyle(color: label == L10n.ok ? Theme.go : Theme.feed))
+    }
+
+    private func check() {
+        if Int(answer) == a * b {
+            onPass()
+        } else {
+            wrong = true
+            answer = ""
+            a = Int.random(in: 6...9)
+            b = Int.random(in: 12...19)
+        }
+    }
+}
+
+struct PaywallView: View {
+    let store: Store
+    let onClose: () -> Void
+
+    var body: some View {
+        VStack(spacing: Tokens.Spacing.xl) {
+            VStack(spacing: Tokens.Spacing.sm) {
+                Text(verbatim: L10n.proTitle).font(Theme.font(34, .heavy))
+                Text(verbatim: L10n.proSubtitle).font(Theme.font(19, .semibold)).foregroundStyle(Theme.muted)
+            }
+            VStack(alignment: .leading, spacing: Tokens.Spacing.lg) {
+                row("paintpalette.fill", L10n.proCoatsTitle, L10n.proCoatsBody)
+                row("crown.fill", L10n.proItemsTitle, L10n.proItemsBody)
+                row("leaf.fill", L10n.proGardenTitle, L10n.proGardenBody)
+                row("lock.shield.fill", L10n.proPrivateTitle, L10n.proPrivateBody)
+            }
+            .frame(maxWidth: 460, alignment: .leading)
+
+            if store.isPro {
+                Text(verbatim: L10n.proUnlocked).font(Theme.font(20)).foregroundStyle(Theme.chosen)
+                Button(L10n.close, action: onClose).font(Theme.font(20))
+            } else {
+                Button { Task { await store.purchase() } } label: {
+                    Group {
+                        if store.isPurchasing { ProgressView() } else {
+                            Text(verbatim: store.proProduct.map { L10n.unlockPro($0.displayPrice) } ?? L10n.unlockProPlain)
+                        }
+                    }
+                    .font(Theme.font(22)).padding(.horizontal, 34).frame(height: 64)
+                }
+                .buttonStyle(PillButtonStyle(color: Theme.go))
+                .opacity(store.proProduct == nil ? 0.6 : 1)
+                if store.loadFailed && store.proProduct == nil {
+                    Text(verbatim: L10n.storeOffline).font(Theme.font(15, .semibold)).foregroundStyle(Theme.muted)
+                        .multilineTextAlignment(.center)
+                    Button(L10n.tryAgain) { Task { await store.loadProduct() } }.font(Theme.font(17))
+                }
+                HStack(spacing: Tokens.Spacing.xxl) {
+                    Button(L10n.restore) { Task { await store.restore() } }
+                    Button(L10n.notNow, action: onClose)
+                }
+                .font(Theme.font(17, .semibold))
+            }
+        }
+        .padding(Tokens.Spacing.xxl)
+        .task { await store.loadProduct() }
+        .alert(L10n.purchaseTitle, isPresented: Binding(get: { store.purchaseError != nil }, set: { if !$0 { store.purchaseError = nil } })) {
+            Button(L10n.ok) { store.purchaseError = nil }
+        } message: {
+            Text(verbatim: store.purchaseError ?? "")
+        }
+    }
+
+    private func row(_ symbol: String, _ title: String, _ body: String) -> some View {
+        HStack(alignment: .top, spacing: Tokens.Spacing.md) {
+            Image(systemName: symbol).font(.system(size: 26)).foregroundStyle(Color(hex: "E76B86")).frame(width: 36)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(verbatim: title).font(Theme.font(19))
+                Text(verbatim: body).font(Theme.font(16, .regular)).foregroundStyle(Theme.muted)
+            }
+        }
+    }
+}
+
+struct GrownupMenu: View {
+    let model: GameModel
+    let onClose: () -> Void
+    @State private var resetArmed = false
+    @State private var showPaywall = false
+    @Environment(\.requestReview) private var requestReview
+
+    var body: some View {
+        if showPaywall {
+            PaywallView(store: model.store, onClose: { showPaywall = false })
+        } else {
+            VStack(spacing: Tokens.Spacing.lg) {
+                Text(verbatim: L10n.menuTitle).font(Theme.font(28))
+                if let s = model.world.save {
+                    // Same day number as the top bar ("Kitten · day 1").
+                    let day = Int(Date().timeIntervalSince(s.born) / 86_400) + 1
+                    Text(verbatim: L10n.menuInfo(s.name, day, s.hearts)).font(Theme.font(17, .semibold)).foregroundStyle(Theme.muted)
+                        .multilineTextAlignment(.center)
+                }
+                if model.store.isPro {
+                    // A status, not a button: the same green line as on the paywall.
+                    Text(verbatim: L10n.proUnlocked).font(Theme.font(20)).foregroundStyle(Theme.chosen)
+                        .padding(.vertical, Tokens.Spacing.sm)
+                } else {
+                    wide(L10n.unlockProPlain, color: Theme.dress) { showPaywall = true }
+                }
+                wide(L10n.restore, color: Theme.option) { Task { await model.store.restore() } }
+                wide(model.hud.sound ? L10n.menuSoundOn : L10n.menuSoundOff, color: Theme.option) { model.toggleSoundFromMenu() }
+                if model.hasCat {
+                    wide(resetArmed ? L10n.startOverConfirm(model.hud.name) : L10n.startOver, color: Color(hex: "FFD3D3")) {
+                        if resetArmed { model.startOver(); onClose() } else { resetArmed = true }
+                    }
+                }
+                // Links out of the app and the rating prompt live here, behind the parental gate,
+                // as Apple's Kids category asks.
+                VStack(spacing: Tokens.Spacing.xs) {
+                    HStack(spacing: Tokens.Spacing.xl) {
+                        Link(L10n.sendFeedback, destination: Feedback.mailURL())
+                        Button(L10n.rateApp) { requestReview() }
+                        Link(L10n.privacyPolicy, destination: Feedback.privacyURL)
+                    }
+                    .font(Theme.font(16, .semibold))
+                    Text(verbatim: L10n.feedbackNote).font(Theme.font(13, .regular)).foregroundStyle(Theme.muted)
+                        .multilineTextAlignment(.center)
+                }
+                .padding(.top, Tokens.Spacing.sm)
+                Text(verbatim: "Whiskerling \(Feedback.appVersion)").font(Theme.font(13, .regular)).foregroundStyle(Theme.muted)
+                Button(L10n.close, action: onClose).font(Theme.font(18))
+            }
+            .padding(Tokens.Spacing.xxl)
+            .frame(maxWidth: 520)
+        }
+    }
+
+    private func wide(_ title: String, color: Color, _ action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(verbatim: title).font(Theme.font(19)).multilineTextAlignment(.center)
+                .padding(Tokens.Spacing.lg).frame(maxWidth: .infinity)
+        }
+        .buttonStyle(PillButtonStyle(color: color))
+    }
+}

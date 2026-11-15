@@ -1,0 +1,12 @@
+CACHE MANIFEST
+# Min Mis – version 1
+# Ret versionsnummeret ovenfor, hver gang spillet ændres.
+# Så henter iPad'en den nye udgave næste gang, den kan nå serveren.
+
+CACHE:
+index.html
+game.js
+icon.png
+
+NETWORK:
+*

@@ -1,0 +1,41 @@
+name: Marketing idea / task
+description: A marketing idea or task that's fine in public (content, a post, a screenshot, outreach).
+title: '[Marketing] '
+labels: ['marketing']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For marketing work that's fine in public, such as a blog post, a community thread, a screenshot to redo or a store copy tweak.
+        Keep anything a competitor could use out of public issues: positioning, pricing reasoning, channel plans that reveal an edge, and competitor analysis.
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea / task
+      description: What's the marketing move, and what's the goal?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: channel
+    attributes:
+      label: Channel
+      options:
+        - App Store / ASO
+        - SEO / content
+        - Reddit / community
+        - Social
+        - Newsletter / outreach
+        - Website / landing page
+        - Other
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Public-safe check
+      options:
+        - label: This contains nothing a competitor reading it could use against us
+          required: true

@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1.7.0
+        with:
+          xcode-version: latest-stable
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate project
+        run: xcodegen generate
+
+      - name: Check the Danish texts
+        run: python3 tools/l10n.py --check
+
+      - name: Pick an iPad simulator
+        id: sim
+        run: |
+          # Runner images change which simulators exist, so pick any available iPad.
+          udid=$(xcrun simctl list devices available --json \
+            | python3 -c 'import json,sys; d=json.load(sys.stdin)["devices"]; print(next((x["udid"] for r in d.values() for x in r if x["name"].startswith("iPad")), ""))')
+          if [ -z "$udid" ]; then
+            echo "No iPad simulator available, creating one."
+            runtime=$(xcrun simctl list runtimes --json \
+              | python3 -c 'import json,sys; r=[x["identifier"] for x in json.load(sys.stdin)["runtimes"] if x.get("isAvailable") and "iOS" in x["name"]]; print(r[-1] if r else "")')
+            devtype=$(xcrun simctl list devicetypes --json \
+              | python3 -c 'import json,sys; d=[x["identifier"] for x in json.load(sys.stdin)["devicetypes"] if x.get("productFamily")=="iPad"]; print(d[-1] if d else "")')
+            udid=$(xcrun simctl create "CI-iPad" "$devtype" "$runtime")
+          fi
+          echo "Using simulator $udid"
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+
+      - name: Build and test
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project Whiskerling.xcodeproj \
+            -scheme Whiskerling \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -clonedSourcePackagesDirPath .spm \
+            CODE_SIGNING_ALLOWED=NO

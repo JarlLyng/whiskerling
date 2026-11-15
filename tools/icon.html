@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<!-- Tegner hjemmeskærm-ikonet med samme kode som spillet. Bruges af tools/make-icon.sh. -->
+<html>
+<head>
+<meta charset="utf-8">
+<style>html, body { margin: 0; padding: 0; overflow: hidden; background: #FFF; } canvas { display: block; }</style>
+</head>
+<body>
+<script>
+  window.MINMIS_ICON = true;
+  var m = /[?&]size=(\d+)/.exec(location.search);
+  if (m) window.MINMIS_ICON_SIZE = parseInt(m[1], 10);
+</script>
+<script src="../public/game.js"></script>
+</body>
+</html>
