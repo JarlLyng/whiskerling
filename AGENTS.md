@@ -10,7 +10,7 @@ the app is closed (it sleeps at night). It never dies; a forgotten cat is just s
 drawn in code and stays on the device: no accounts, no network features, no ads, no tracking.
 
 - **Developer:** [IAMJARL](https://iamjarl.com) (Jarl). The full personal name is never used in copy or docs; see `BRAND_LEGAL.md` in the hub.
-- **Website:** whiskerling.iamjarl.com (built in `website/`, not live yet)
+- **Website:** [whiskerling.iamjarl.com](https://whiskerling.iamjarl.com) (built in `website/`, live on GitHub Pages with HTTPS enforced)
 - **License:** MIT
 - **Price:** free download with one optional in-app purchase, **Whiskerling Pro** (`com.iamjarl.whiskerling.pro`, non-consumable, about 29 DKK). No subscription, no ads.
 - **Status:** in development (not in App Store Connect yet)
