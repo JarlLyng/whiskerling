@@ -23,7 +23,7 @@ struct RootView: View {
                 StartView(model: model)
             }
         }
-        .sheet(item: $model.adult) { route in
+        .sheet(item: $model.adult, onDismiss: model.adultClosed) { route in
             GrownupSheet(model: model, route: route)
         }
         .task { await model.store.load() }

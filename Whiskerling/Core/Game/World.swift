@@ -48,6 +48,8 @@ struct CatState {
     var hop: CGFloat = 0, petT: CGFloat = 0, scrubT: CGFloat = 0, happyT: CGFloat = 0, mouthT: CGFloat = 0
     var needT: CGFloat = 10, cool: CGFloat = 0, zT: CGFloat = 0, eatT: CGFloat = 0
     var moving = false, sleepHeart = false
+    /// Sideways speed, used where the cat glides after something (the leaping fish).
+    var vx: CGFloat = 0
 }
 
 struct Feather { var x: CGFloat = 0, y: CGFloat = 0, tx: CGFloat = 0, ty: CGFloat = 0, ang: CGFloat = 0, held: CGFloat = 0, catches = 0 }

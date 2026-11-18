@@ -19,6 +19,12 @@ enum AdultRoute: String, Identifiable {
     var id: String { rawValue }
 }
 
+/// The locked thing a child tapped on the way to the paywall. Once Pro is bought (or restored),
+/// the paywall closes by itself and the tap is finished, so the child doesn't have to tap again.
+enum ProUnlock: Equatable {
+    case garden, fish, coat(String), item(String), startCoat(String)
+}
+
 /// The bridge between the game world (drawn every frame) and the SwiftUI screens.
 @MainActor
 @Observable
@@ -34,14 +40,19 @@ final class GameModel {
     var overlay: Overlay?
     var adult: AdultRoute?
     var toast: String?
+    /// A Pro coat bought from the start screen, for the start screen to pick.
+    var startCoat: String?
 
     @ObservationIgnored private var toastQueue: [String] = []
     @ObservationIgnored private var syncScheduled = false
+    @ObservationIgnored private(set) var pendingUnlock: ProUnlock?
     /// Screenshots show Pro as bought (debug builds only).
     @ObservationIgnored var forcedPro = false
 
-    init() {
+    /// `defaults` is where the cat is saved; the tests pass their own, so a real cat is never touched.
+    init(defaults: UserDefaults = .standard) {
         world = World(sound: sound)
+        world.defaults = defaults
         #if DEBUG
         if let scene = GameModel.screenshotScene {
             setUpScreenshot(scene)
@@ -49,7 +60,7 @@ final class GameModel {
             return
         }
         #endif
-        if let saved = SaveStore.load() {
+        if let saved = SaveStore.load(from: defaults) {
             world.loadExisting(saved)
             sound.enabled = saved.sound
             hasCat = true
@@ -148,9 +159,13 @@ final class GameModel {
     func playFish() {
         sound.click()
         overlay = nil
-        if !isPro { adult = .paywall; return }
-        if world.startFishing() { mode = .fish; modeHint = L10n.fishHint }
+        if !isPro { askForPro(.fish); return }
+        startFishing()
         sync()
+    }
+
+    private func startFishing() {
+        if world.startFishing() { mode = .fish; modeHint = L10n.fishHint }
     }
 
     /// Out to the garden (Pro) or back into the living room.
@@ -160,7 +175,7 @@ final class GameModel {
         if world.room == .garden {
             world.comeInside()
         } else if !isPro {
-            adult = .paywall
+            askForPro(.garden)
         } else {
             world.goOutside()
         }
@@ -210,7 +225,7 @@ final class GameModel {
     func choose(item: Item) {
         guard let s = world.save else { return }
         sound.click()
-        if !item.isFree && !isPro { adult = .paywall; return }
+        if !item.isFree && !isPro { askForPro(.item(item.id)); return }
         if s.hearts < item.cost { showToast(L10n.needHearts(item.cost)); return }
         let wearing = s.wear[item.slot] == item.id
         world.save!.wear[item.slot] = wearing ? nil : item.id
@@ -220,7 +235,7 @@ final class GameModel {
 
     func choose(coat: Coat) {
         sound.click()
-        if !coat.isFree && !isPro { adult = .paywall; return }
+        if !coat.isFree && !isPro { askForPro(.coat(coat.id)); return }
         guard world.save != nil, world.save!.coat != coat.id else { return }
         world.save!.coat = coat.id
         world.dressed(true)
@@ -238,12 +253,40 @@ final class GameModel {
         hud = HUD()
     }
 
+    // MARK: Pro
+
+    /// A lock was tapped: open the paywall (behind the gate) and remember what the tap was for.
+    func askForPro(_ unlock: ProUnlock) {
+        pendingUnlock = unlock
+        adult = .paywall
+    }
+
+    /// The grown-ups' sheet closed without Pro being bought: the tap is forgotten.
+    func adultClosed() {
+        pendingUnlock = nil
+    }
+
     /// Called when StoreKit has an answer. Before the first answer Pro is unknown, so the cat
     /// stays where it was saved; after it, losing Pro (a refund) brings the cat inside.
     func proChanged() {
         world.isPro = isPro
         if store.entitlementChecked && !isPro { world.proLost() }
+        if isPro, let unlock = pendingUnlock { finish(unlock) }
         sync()
+    }
+
+    /// Pro arrived while the paywall was open from a lock: close it and do what the tap asked for.
+    /// Hearts still decide whether an accessory can be worn.
+    private func finish(_ unlock: ProUnlock) {
+        pendingUnlock = nil
+        adult = nil
+        switch unlock {
+        case .garden: if world.room == .living { world.goOutside() }
+        case .fish: startFishing()
+        case .coat(let id): choose(coat: Catalog.coat(id))
+        case .item(let id): if let item = Catalog.items.first(where: { $0.id == id }) { choose(item: item) }
+        case .startCoat(let id): startCoat = id
+        }
     }
 
     // MARK: App lifecycle

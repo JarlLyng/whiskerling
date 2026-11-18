@@ -103,7 +103,7 @@ extension World {
         }
         setMode(.fish)
         bowl = nil
-        cat.walk = nil; cat.jump = nil; cat.activity = .fish; cat.petT = 0
+        cat.walk = nil; cat.jump = nil; cat.activity = .fish; cat.petT = 0; cat.vx = 0; cat.moving = false
         sound.stopPurr()
         fishing = FishGame()
         meowSay(L10n.fishStart, 2.2)
@@ -161,17 +161,23 @@ extension World {
         }
         fishing = g
 
-        // the cat follows the fish along the edge of the pond and leaps when one is caught
+        // The cat follows the fish along the edge of the pond and leaps when one is caught.
         if var j = cat.jump {
             j.t += dt
             cat.x = clampToPond(cat.x + j.vx * dt)
             cat.jump = j.t >= j.dur ? nil : j
+            cat.vx = j.vx // it lands still moving, and eases out of it below
             cat.moving = false
         } else {
+            // Glide after the watched fish (#4). The wanted speed grows with the distance and the
+            // cat eases into it (critically damped: gain 2.5, rate 10), so a slowly drifting fish is
+            // followed in one walk. Moving only once a few points behind made it stand, step, stand.
             let tx = clampToPond(watchedFish()?.x ?? (G.pond.x + G.pondRX * 0.5))
-            let dx = tx - cat.x, sp = 260 * U * dt
-            cat.moving = abs(dx) > 6
-            if cat.moving { cat.x += min(max(dx, -sp), sp) }
+            let want = min(max((tx - cat.x) * 2.5, -260 * U), 260 * U)
+            cat.vx += (want - cat.vx) * min(1, dt * 10)
+            cat.x = clampToPond(cat.x + cat.vx * dt)
+            // Walk above 20 points a second and stand below 8, so the legs don't flicker in between.
+            cat.moving = abs(cat.vx) > (cat.moving ? 8 : 20) * U
         }
         cat.y += (G.catY - cat.y) * min(1, dt * 6)
 

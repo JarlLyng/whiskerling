@@ -13,7 +13,7 @@ drawn in code and stays on the device: no accounts, no network features, no ads,
 - **Website:** [whiskerling.iamjarl.com](https://whiskerling.iamjarl.com) (built in `website/`, live on GitHub Pages with HTTPS enforced)
 - **License:** MIT
 - **Price:** free download with one optional in-app purchase, **Whiskerling Pro** (`com.iamjarl.whiskerling.pro`, non-consumable, about 29 DKK). No subscription, no ads.
-- **Status:** in development (not in App Store Connect yet)
+- **Status:** 1.0 in App Store Connect (app ID 6835849162), not submitted yet. Build 1 went to TestFlight; build 2 has the fixes from that test
 - **Sister apps:** Walkful uses the same free + one-time Pro model.
 
 ## Boundaries: work only in this repo
@@ -82,9 +82,12 @@ file in the same change.
 - A real-time cat clock and a window whose sky follows the time of day.
 - Sounds are synthesised in code; the silent switch is respected.
 - English and Danish.
-- Grown-up area behind a parental gate (a sum on a keypad): buying Pro, restoring, sound, send
+- Grown-up area behind a parental gate (a question from the small times table, 6 to 9, on a keypad): buying Pro, restoring, sound, send
   feedback (a prefilled mail to support@iamjarl.com), rate the app, the privacy policy, and
   starting over. Hold the cat's name in the top bar for 2 seconds to open it.
+- Tapping something locked opens the gate and then the paywall. Once Pro is bought or restored,
+  the paywall closes by itself and the tap is finished (out to the garden, Catch the fish, or the
+  coat or accessory put on). The paywall says that what is added to Pro later is included.
 
 ### Features that do NOT exist (common hallucination targets)
 

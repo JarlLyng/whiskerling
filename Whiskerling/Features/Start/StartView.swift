@@ -19,6 +19,12 @@ struct StartView: View {
         }
         .foregroundStyle(Theme.text)
         .background(Theme.screen.ignoresSafeArea())
+        // A Pro coat tapped before buying Pro is chosen once the purchase goes through.
+        .onChange(of: model.startCoat) { _, picked in
+            guard let picked else { return }
+            coat = picked
+            model.startCoat = nil
+        }
     }
 
     private var card: some View {
@@ -58,7 +64,7 @@ struct StartView: View {
         let chosen = coat == c.id
         return Button {
             model.sound.click()
-            if locked { model.adult = .paywall } else { coat = c.id }
+            if locked { model.askForPro(.startCoat(c.id)) } else { coat = c.id }
         } label: {
             VStack(spacing: 2) {
                 KittenPortrait(coat: c).frame(width: 110, height: 110)
