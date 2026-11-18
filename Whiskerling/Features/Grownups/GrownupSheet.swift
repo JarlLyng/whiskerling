@@ -25,12 +25,24 @@ struct GrownupSheet: View {
     }
 }
 
-/// A sum a young child can't easily solve, entered on a keypad.
+/// A question from the small times table (6 to 9 times 6 to 9), entered on a keypad. Quick for a
+/// grown-up, out of reach for the youngest players; Apple asks only for an adult-level task.
 struct ParentGateView: View {
+    static let factors = 6...9
+
     let onPass: () -> Void
     let onCancel: () -> Void
-    @State private var a = Int.random(in: 6...9)
-    @State private var b = Int.random(in: 12...19)
+    @State private var a = ParentGateView.firstFactor(7)
+    @State private var b = ParentGateView.firstFactor(8)
+
+    /// A random factor, or a fixed one in the App Store screenshots, so the poster shows the
+    /// same 7 × 8 as the site.
+    private static func firstFactor(_ screenshot: Int) -> Int {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-screenshots") { return screenshot }
+        #endif
+        return Int.random(in: factors)
+    }
     @State private var answer = ""
     @State private var wrong = false
 
@@ -81,8 +93,8 @@ struct ParentGateView: View {
         } else {
             wrong = true
             answer = ""
-            a = Int.random(in: 6...9)
-            b = Int.random(in: 12...19)
+            a = Int.random(in: ParentGateView.factors)
+            b = Int.random(in: ParentGateView.factors)
         }
     }
 }
@@ -92,6 +104,23 @@ struct PaywallView: View {
     let onClose: () -> Void
 
     var body: some View {
+        // Centred when it fits, scrolling when it doesn't (an iPad mini in landscape with the
+        // offline note), so no line is ever cut short.
+        GeometryReader { geo in
+            ScrollView {
+                content.frame(maxWidth: .infinity, minHeight: geo.size.height)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+        }
+        .task { await store.loadProduct() }
+        .alert(L10n.purchaseTitle, isPresented: Binding(get: { store.purchaseError != nil }, set: { if !$0 { store.purchaseError = nil } })) {
+            Button(L10n.ok) { store.purchaseError = nil }
+        } message: {
+            Text(verbatim: store.purchaseError ?? "")
+        }
+    }
+
+    private var content: some View {
         VStack(spacing: Tokens.Spacing.xl) {
             VStack(spacing: Tokens.Spacing.sm) {
                 Text(verbatim: L10n.proTitle).font(Theme.font(34, .heavy))
@@ -101,6 +130,7 @@ struct PaywallView: View {
                 row("paintpalette.fill", L10n.proCoatsTitle, L10n.proCoatsBody)
                 row("crown.fill", L10n.proItemsTitle, L10n.proItemsBody)
                 row("leaf.fill", L10n.proGardenTitle, L10n.proGardenBody)
+                row("sparkles", L10n.proFutureTitle, L10n.proFutureBody)
                 row("lock.shield.fill", L10n.proPrivateTitle, L10n.proPrivateBody)
             }
             .frame(maxWidth: 460, alignment: .leading)
@@ -132,12 +162,6 @@ struct PaywallView: View {
             }
         }
         .padding(Tokens.Spacing.xxl)
-        .task { await store.loadProduct() }
-        .alert(L10n.purchaseTitle, isPresented: Binding(get: { store.purchaseError != nil }, set: { if !$0 { store.purchaseError = nil } })) {
-            Button(L10n.ok) { store.purchaseError = nil }
-        } message: {
-            Text(verbatim: store.purchaseError ?? "")
-        }
     }
 
     private func row(_ symbol: String, _ title: String, _ body: String) -> some View {

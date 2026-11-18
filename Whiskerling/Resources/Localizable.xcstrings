@@ -1157,6 +1157,40 @@
         }
       }
     },
+    "pro.future.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Det, der kommer til Pro senere, som nye katte og lege, er med."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Future additions to Pro, like new cats and games, are included."
+          }
+        }
+      }
+    },
+    "pro.future.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mere på vej"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "More to come"
+          }
+        }
+      }
+    },
     "pro.garden.body": {
       "extractionState": "manual",
       "localizations": {

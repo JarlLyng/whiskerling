@@ -78,6 +78,31 @@ final class GardenTests: XCTestCase {
         XCTAssertEqual(world.save?.hearts, 0)
     }
 
+    /// The cat follows the leaping fish in one smooth walk, without stepping and stopping (#4).
+    /// A fish drifts slowly, so a cat that only moves once it is a few points behind walks in
+    /// jerks: stand, step, stand. That showed as a stutter on a real iPad at 120 frames a second.
+    func testTheCatGlidesAfterTheFish() {
+        let world = makeWorld(pro: true)
+        world.startFishing()
+        let dt: CGFloat = 1 / 120
+        var starts = 0, frames = 0, wasMoving = false
+        var lastX = world.cat.x, lastStep: CGFloat = 0, maxJerk: CGFloat = 0
+        while world.mode == .fish && frames < 120 * 60 {
+            world.update(dt)
+            frames += 1
+            let step = world.cat.x - lastX
+            lastX = world.cat.x
+            guard world.cat.jump == nil else { wasMoving = false; lastStep = step; continue }
+            if world.cat.moving && !wasMoving { starts += 1 }
+            wasMoving = world.cat.moving
+            maxJerk = max(maxJerk, abs(step - lastStep) / world.U)
+            lastStep = step
+        }
+        XCTAssertEqual(world.mode, .normal, "the round ended")
+        XCTAssertLessThanOrEqual(starts, FishGame.leaps * 2, "the cat starts walking about once per fish, not in steps")
+        XCTAssertLessThan(maxJerk, 0.5, "the cat's speed changes gradually from frame to frame")
+    }
+
     func testATapNextToAFishIsAMiss() {
         let world = makeWorld(pro: true)
         world.startFishing()

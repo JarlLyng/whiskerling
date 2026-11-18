@@ -143,6 +143,10 @@ enum L10n {
     static var proGardenBody: String {
         String(localized: "pro.garden.body", defaultValue: "An extra room with a pond, a tree and butterflies, and a game at the pond.")
     }
+    static var proFutureTitle: String { String(localized: "pro.future.title", defaultValue: "More to come") }
+    static var proFutureBody: String {
+        String(localized: "pro.future.body", defaultValue: "Future additions to Pro, like new cats and games, are included.")
+    }
     static var proPrivateTitle: String { String(localized: "pro.private.title", defaultValue: "Still private") }
     static var proPrivateBody: String {
         String(localized: "pro.private.body", defaultValue: "One payment. No subscription, no ads, no accounts. Everything stays on this iPad.")

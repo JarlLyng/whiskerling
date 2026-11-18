@@ -177,6 +177,8 @@ DA = {
     "toast.fishResult": "%@ fangede %lld fisk! 🐟",
     "pro.garden.title": "Haven og Fang fisken",
     "pro.garden.body": "Et ekstra rum med dam, træ og sommerfugle, og et spil ved dammen.",
+    "pro.future.title": "Mere på vej",
+    "pro.future.body": "Det, der kommer til Pro senere, som nye katte og lege, er med.",
     "say.garden1": "Frisk luft! 🌳",
     "say.garden2": "Se, sommerfugle! 🦋",
     "say.garden3": "Se, fisk i dammen! 🐟",
