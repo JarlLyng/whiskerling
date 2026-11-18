@@ -23,11 +23,25 @@ jobs:
         with:
           xcode-version: latest-stable
 
-      - name: Install XcodeGen
-        run: brew install xcodegen
-
-      - name: Generate project
-        run: xcodegen generate
+      # Xcode Cloud builds the committed project, so it must be what project.yml generates. The
+      # XcodeGen version is pinned (and its download checked), because another version can write
+      # the same project differently. Bump it here and in project.yml's header together.
+      - name: Check the committed project matches project.yml
+        env:
+          XCODEGEN_VERSION: "2.46.0"
+          XCODEGEN_SHA256: "4d9e34b62172d645eed6457cac13fc222569974098ef4ee9c3368bedf0196806"
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/xcodegen.zip" \
+            "https://github.com/yonaskolb/XcodeGen/releases/download/$XCODEGEN_VERSION/xcodegen.zip"
+          echo "$XCODEGEN_SHA256  $RUNNER_TEMP/xcodegen.zip" | shasum -a 256 -c -
+          unzip -q "$RUNNER_TEMP/xcodegen.zip" -d "$RUNNER_TEMP"
+          "$RUNNER_TEMP/xcodegen/bin/xcodegen" generate
+          if [ -n "$(git status --porcelain -- Whiskerling.xcodeproj Whiskerling/Info.plist)" ]; then
+            git status --short -- Whiskerling.xcodeproj Whiskerling/Info.plist
+            git diff -- Whiskerling.xcodeproj Whiskerling/Info.plist | head -60
+            echo "::error::The committed project doesn't match project.yml. Run 'xcodegen generate' (XcodeGen $XCODEGEN_VERSION) and commit the result."
+            exit 1
+          fi
 
       - name: Check the Danish texts
         run: python3 tools/l10n.py --check
@@ -57,4 +71,5 @@ jobs:
             -scheme Whiskerling \
             -destination "id=${{ steps.sim.outputs.udid }}" \
             -clonedSourcePackagesDirPath .spm \
+            -disableAutomaticPackageResolution \
             CODE_SIGNING_ALLOWED=NO
