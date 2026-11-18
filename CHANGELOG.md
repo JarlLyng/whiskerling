@@ -34,6 +34,9 @@ All notable changes to Whiskerling are listed here. The format follows
 - Buying or restoring Pro from a locked item closes the paywall by itself and finishes the tap:
   out to the garden, Catch the fish, or the coat or accessory put on
   ([#3](https://github.com/JarlLyng/whiskerling/issues/3)).
+- Releases are built by Xcode Cloud from the `release` branch and go to TestFlight. The generated
+  Xcode project is committed, and CI checks it matches `project.yml`
+  ([#7](https://github.com/JarlLyng/whiskerling/issues/7)).
 
 ### Fixed
 - The cat no longer stutters in Catch the fish. It eased after a drifting fish in stops and

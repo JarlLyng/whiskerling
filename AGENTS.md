@@ -106,7 +106,9 @@ file in the same change.
 
 ## Build & run
 
-- `xcodegen generate` creates `Whiskerling.xcodeproj` from `project.yml` (the project file is not committed).
+- `project.yml` is the source of truth. `xcodegen generate` (XcodeGen 2.46.0) writes `Whiskerling.xcodeproj`
+  and `Whiskerling/Info.plist`, and both are committed, because Xcode Cloud builds what is in git. Regenerate
+  and commit after every change to `project.yml`; CI fails when the committed project doesn't match.
 - Run the `Whiskerling` scheme on an iPad simulator. It uses `Whiskerling.storekit`, so Pro can
   be bought locally without the App Store.
 - Tests: `xcodebuild -project Whiskerling.xcodeproj -scheme Whiskerling -destination 'platform=iOS Simulator,name=<an iPad>' test`.
@@ -123,6 +125,10 @@ file in the same change.
 - Texts: edit `Whiskerling/Core/Localization/L10n.swift` (English) and the Danish table in
   `tools/l10n.py`, then run `/usr/bin/python3 tools/l10n.py` to rebuild `Localizable.xcstrings`.
 - Icon: `tools/make-icon.sh` renders `AppIcon.png` from the same drawing code as the web version.
+- Releases: Xcode Cloud archives the app on every push to the `release` branch and hands it to
+  TestFlight; `ci_scripts/ci_pre_xcodebuild.sh` sets the build number. `main` takes changes only
+  through pull requests with green CI. The workflow, the build numbers and the owner's steps are in
+  `XCODE_CLOUD.md`. There is no crash-report or dSYM upload step, by design (Kids category).
 
 ## Code map
 

@@ -40,11 +40,12 @@ What the app deliberately doesn't do is listed in [AGENTS.md](AGENTS.md): no acc
 
 ### Build and run
 
-- Xcode 27 and [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`).
-- `xcodegen generate`, then run the `Whiskerling` scheme on an iPad simulator. The project file is generated and not in git; `project.yml` is the source of truth.
+- Xcode 27. Open `Whiskerling.xcodeproj` and run the `Whiskerling` scheme on an iPad simulator.
+- `project.yml` is the source of truth for the project. After changing it, run `xcodegen generate` with [XcodeGen](https://github.com/yonaskolb/XcodeGen) 2.46.0 and commit the regenerated project; CI checks that they match.
 - The run scheme uses `Whiskerling.storekit`, so Pro can be bought locally without the App Store.
 - Tests: `xcodebuild -project Whiskerling.xcodeproj -scheme Whiskerling -destination 'platform=iOS Simulator,name=<an iPad>' test`.
 - Texts: English lives in `Whiskerling/Core/Localization/L10n.swift`, Danish in `tools/l10n.py`, which builds the String Catalog.
+- Releases are built by Xcode Cloud from the `release` branch and go to TestFlight: [XCODE_CLOUD.md](XCODE_CLOUD.md).
 
 The code map and the conventions are in [AGENTS.md](AGENTS.md). `public/` holds the first version of the game as a web page (Min Mis), which still runs on an old iOS 12 iPad; its guide is in Danish.
 

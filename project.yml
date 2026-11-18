@@ -1,3 +1,5 @@
+# Generates Whiskerling.xcodeproj with XcodeGen 2.46.0: run `xcodegen generate` after every change
+# here and commit the project with it. CI fails when the committed project doesn't match.
 name: Whiskerling
 options:
   bundleIdPrefix: com.iamjarl
@@ -14,6 +16,8 @@ settings:
     SWIFT_EMIT_LOC_STRINGS: YES
     MARKETING_VERSION: "1.0"
     CURRENT_PROJECT_VERSION: "2"
+    # agvtool sets the build number on Xcode Cloud (ci_scripts/ci_pre_xcodebuild.sh).
+    VERSIONING_SYSTEM: apple-generic
     DEVELOPMENT_TEAM: KDWZ3WNLDK
     CODE_SIGN_STYLE: Automatic
 packages:
