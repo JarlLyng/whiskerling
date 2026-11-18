@@ -36,6 +36,13 @@ workflow exists or which branch it builds. Look in:
 
 - The bundle ID `com.iamjarl.whiskerling` is registered, and the App Store Connect record exists
   (created by Xcode on 2026-11-17, app ID `6835849162`).
+- **Push `main` to `release` before creating the workflow** (`git push origin main:release`), so the
+  branch has the committed project and the shared scheme. Xcode Cloud reads them from the branch, and
+  without them it can't offer the Archive action for the scheme. That happened on 2026-11-18: the
+  workflow was created while `release` didn't have the project yet, so it got only a Build action. Its
+  first build built the app but didn't archive it, and nothing reached TestFlight. If a workflow shows
+  only a Build action, edit it to match [the workflow](#the-workflow) below and start a build on
+  `release` by hand. The branch doesn't need another push.
 - Sign in to Xcode with an account that can create workflows (Account Holder, Admin or App Manager).
 - **Grant Xcode Cloud access** to `JarlLyng/whiskerling` on GitHub when Xcode asks, while creating the
   first workflow.
@@ -46,14 +53,14 @@ workflow exists or which branch it builds. Look in:
 - **Start condition:** branch changes on **`release`**, like the other IAMJARL apps. `main` is the
   development branch and never starts a release build.
 - **Action:** Archive, iOS, scheme `Whiskerling`, deployment preparation **TestFlight and App Store**.
+  A Build action alone doesn't archive or upload anything.
 - **Post-action:** TestFlight internal testing.
 - **Environment:** nothing. No secrets are needed.
 
 ## Build numbers
 
 Xcode Cloud counts its own build numbers and starts at 1, but App Store Connect accepts each version and
-build pair only once. Builds 1 (uploaded from Xcode on 2026-11-17) and 2 (if it is uploaded from Xcode
-first) already exist for 1.0. So **before the first Xcode Cloud build, set Xcode Cloud's next build number
+build pair only once. Builds 1 and 2 of 1.0 were uploaded from Xcode (on 2026-11-17 and 2026-11-18). So **before the first Xcode Cloud build, set Xcode Cloud's next build number
 above the highest build uploaded for 1.0**, as Apple describes in
 [Setting the next build number for Xcode Cloud builds](https://developer.apple.com/documentation/xcode/setting-the-next-build-number-for-xcode-cloud-builds).
 After that, every Xcode Cloud build gets a higher number by itself.
