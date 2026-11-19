@@ -13,7 +13,9 @@ drawn in code and stays on the device: no accounts, no network features, no ads,
 - **Website:** [whiskerling.iamjarl.com](https://whiskerling.iamjarl.com) (built in `website/`, live on GitHub Pages with HTTPS enforced)
 - **License:** MIT
 - **Price:** free download with one optional in-app purchase, **Whiskerling Pro** (`com.iamjarl.whiskerling.pro`, non-consumable, about 29 DKK). No subscription, no ads.
-- **Status:** 1.0 in App Store Connect (app ID 6835849162), not submitted yet. Build 1 went to TestFlight; build 2 has the fixes from that test
+- **Status:** 1.0 in App Store Connect (app ID 6835849162), not submitted yet. Builds 1 and 2 were uploaded from Xcode (build 2 has the
+  fixes from the TestFlight test of build 1). Since build 4, Xcode Cloud builds each push to `release` and
+  sends it to TestFlight; 1.0 (4) is the latest.
 - **Sister apps:** Walkful uses the same free + one-time Pro model.
 
 ## Boundaries: work only in this repo
