@@ -39,6 +39,7 @@
 		D5E89C9F4931FAFB14312EF4 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 463467B12B9B98C2AC513C63 /* Store.swift */; };
 		DFBE296FFC6DC0BB9CD0AF74 /* IAMJARLDesignTokens in Frameworks */ = {isa = PBXBuildFile; productRef = 1ED3C10C70FB43F7827741C2 /* IAMJARLDesignTokens */; };
 		F4095287E79673134967B498 /* StoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9E3DC534301465458C0D09 /* StoreTests.swift */; };
+		F5629FBF75919BF41FE9ABD0 /* WindowSizeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BEE0D8C66DB3E55C9049B8 /* WindowSizeTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +67,7 @@
 		7C850E96D7291D5EF67AB2D0 /* World+Screenshots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "World+Screenshots.swift"; sourceTree = "<group>"; };
 		7E35B3FCF20B68DE190452C7 /* Whiskerling.storekit */ = {isa = PBXFileReference; path = Whiskerling.storekit; sourceTree = "<group>"; };
 		842E28B85C19DC489C51D47C /* WhiskerlingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiskerlingApp.swift; sourceTree = "<group>"; };
+		85BEE0D8C66DB3E55C9049B8 /* WindowSizeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowSizeTests.swift; sourceTree = "<group>"; };
 		8A0404FDD38F747B4A1A60BF /* ProUnlockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProUnlockTests.swift; sourceTree = "<group>"; };
 		977B3746EDCCAFF4C4774220 /* GrownupSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrownupSheet.swift; sourceTree = "<group>"; };
 		9A3E6C17EAFADD397824EAEE /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 				8A0404FDD38F747B4A1A60BF /* ProUnlockTests.swift */,
 				EEDD935FE447057E479FBF0B /* SaveStateTests.swift */,
 				CE9E3DC534301465458C0D09 /* StoreTests.swift */,
+				85BEE0D8C66DB3E55C9049B8 /* WindowSizeTests.swift */,
 			);
 			path = WhiskerlingTests;
 			sourceTree = "<group>";
@@ -397,6 +400,7 @@
 				7647893823D290FE471C1082 /* ProUnlockTests.swift in Sources */,
 				C406B795EED0027E68BA2150 /* SaveStateTests.swift in Sources */,
 				F4095287E79673134967B498 /* StoreTests.swift in Sources */,
+				F5629FBF75919BF41FE9ABD0 /* WindowSizeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,9 +9,10 @@ struct StartView: View {
 
     var body: some View {
         GeometryReader { geo in
+            let narrow = geo.size.width < 520 // a narrow window (#15)
             ScrollView {
-                card
-                    .padding(Tokens.Spacing.xl)
+                card(narrow: narrow)
+                    .padding(narrow ? Tokens.Spacing.md : Tokens.Spacing.xl)
                     // Centre the card on a tall screen; it still scrolls when the keyboard is up.
                     .frame(maxWidth: .infinity, minHeight: geo.size.height)
             }
@@ -27,9 +28,10 @@ struct StartView: View {
         }
     }
 
-    private var card: some View {
+    private func card(narrow: Bool) -> some View {
             VStack(spacing: Tokens.Spacing.lg) {
                 Text(verbatim: "Whiskerling 🐾").font(Theme.font(44, .heavy))
+                    .lineLimit(1).minimumScaleFactor(0.5)
                 Text(verbatim: L10n.chooseKitten).font(Theme.font(20, .semibold)).foregroundStyle(Theme.muted)
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: Tokens.Spacing.md), count: 3),
                           spacing: Tokens.Spacing.md) {
@@ -54,7 +56,7 @@ struct StartView: View {
                 }
                 .buttonStyle(PillButtonStyle(color: Theme.go))
             }
-            .padding(Tokens.Spacing.xxl)
+            .padding(narrow ? Tokens.Spacing.lg : Tokens.Spacing.xxl)
             .frame(maxWidth: 680)
             .background(Theme.card, in: RoundedRectangle(cornerRadius: 32, style: .continuous))
     }
@@ -67,9 +69,11 @@ struct StartView: View {
             if locked { model.askForPro(.startCoat(c.id)) } else { coat = c.id }
         } label: {
             VStack(spacing: 2) {
-                KittenPortrait(coat: c).frame(width: 110, height: 110)
-                Text(verbatim: c.name).font(Theme.font(17))
+                // As large as the tile allows, up to 110 points, so tiles never overlap.
+                KittenPortrait(coat: c).frame(maxWidth: 110).aspectRatio(1, contentMode: .fit)
+                Text(verbatim: c.name).font(Theme.font(17)).lineLimit(1).minimumScaleFactor(0.7)
                 Text(verbatim: locked ? "🔒 " + L10n.askGrownUp : " ").font(Theme.font(13, .semibold)).foregroundStyle(Theme.muted)
+                    .lineLimit(1).minimumScaleFactor(0.6)
             }
             .padding(.vertical, Tokens.Spacing.sm)
             .frame(maxWidth: .infinity)

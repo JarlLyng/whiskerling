@@ -307,6 +307,7 @@ final class World {
     }
 
     func layout(_ size: CGSize) {
+        let old = (pond: G.pond, rx: G.pondRX, u: U)
         W = max(1, size.width); H = max(1, size.height)
         U = min(W / 760, H / 560)
         G.floorY = H * 0.56
@@ -323,6 +324,11 @@ final class World {
         let pic = CGRect(x: G.win.maxX + max(60 * U, W * 0.07), y: H * 0.12, width: 110 * U, height: 84 * U)
         G.pic = pic.maxX > G.clock.x - G.clockR - 16 * U ? nil : pic
         layoutGarden()
+        // A window resized mid-game (#15): the game goes on where the things now are.
+        if old.rx > 0 { refitFish(fromPond: old.pond, rx: old.rx, u: old.u) }
+        feather.x = min(max(feather.x, 50), max(50, W - 50)); feather.tx = min(max(feather.tx, 50), max(50, W - 50))
+        feather.y = min(max(feather.y, 20 * U), G.catY - 90 * U); feather.ty = min(max(feather.ty, 20 * U), G.catY - 90 * U)
+        sponge = CGPoint(x: min(max(sponge.x, 0), W), y: min(max(sponge.y, 0), H))
         if save != nil { snapCat() }
         #if DEBUG
         if let scene = screenshotScene { stageScreenshot(scene) }
