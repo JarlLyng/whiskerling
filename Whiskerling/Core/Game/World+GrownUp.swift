@@ -22,8 +22,24 @@ extension World {
 
     func startParty(_ kind: Party.Kind) {
         party = Party(kind: kind)
+        save?.grownUpParty = true
         cat.happyT = 2
         if kind == .grownUp { say(L10n.partyForMe, 4) }
+    }
+
+    /// A cat that grew up before there were parties, in 1.0, gets its party late: on the first
+    /// visit after the update, once, when the lights are on and the cat is in the living room,
+    /// where the party is.
+    func checkLateParty() {
+        guard let s = save, s.stage == Catalog.stages.count - 1, s.grownUpParty != true,
+              !s.lightsOff, room == .living, mode == .normal else { return }
+        if party == nil {
+            sound.fanfare()
+            startParty(.grownUp)
+        } else {
+            save!.grownUpParty = true // a birthday party is on already
+        }
+        persist()
     }
 
     /// One birthday a year on the adoption date, celebrated once, also on the next visit when the

@@ -33,6 +33,7 @@ extension GameModel {
             s.stage = Catalog.stages.count - 1
             s.born = Date().addingTimeInterval(-(scene == "party" ? 366 : 30) * 86_400)
             s.birthdays = scene == "party" ? 1 : nil
+            s.grownUpParty = true
             s.wear = Wear(head: "bow")
         default:
             s.wear = Wear(head: "bow")

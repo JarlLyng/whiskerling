@@ -21,12 +21,14 @@ final class GrownUpTests: XCTestCase {
         return world
     }
 
-    /// A cat adopted `age` days ago, last seen now, with every need well looked after.
+    /// A cat adopted `age` days ago, last seen now, with every need well looked after. A grown cat
+    /// has had its party, like any cat that grows up in 1.1.
     private func cat(age days: Double, stage: Int, birthdays: Int? = nil) -> SaveState {
         var s = SaveState(name: "Mis", coat: "orange")
         s.born = Date().addingTimeInterval(-days * day)
         s.stage = stage
         s.birthdays = birthdays
+        s.grownUpParty = stage == Catalog.stages.count - 1 ? true : nil
         s.needs = Needs(food: 95, fun: 95, energy: 95, clean: 95)
         return s
     }
@@ -79,6 +81,35 @@ final class GrownUpTests: XCTestCase {
         world.loadExisting(world.save!)
         XCTAssertNil(world.party, "one party per birthday")
         XCTAssertEqual(world.save?.birthdays, 1)
+    }
+
+    func testACatThatGrewUpIn1_0GetsItsPartyLateOnce() {
+        var old = cat(age: 20, stage: Catalog.stages.count - 1)
+        old.grownUpParty = nil // a save from 1.0, before there were parties
+        let world = makeWorld()
+        world.loadExisting(old)
+        XCTAssertEqual(world.party?.kind, .grownUp, "the party comes on the first visit after the update")
+        XCTAssertEqual(world.bubble?.text, L10n.partyForMe, "and its line is the one shown")
+        XCTAssertEqual(world.save?.grownUpParty, true)
+        XCTAssertEqual(SaveStore.load(from: defaults)?.grownUpParty, true, "and is saved")
+
+        world.party = nil
+        world.loadExisting(world.save!)
+        XCTAssertNil(world.party, "only once")
+    }
+
+    func testTheLatePartyWaitsForTheLightsAndTheLivingRoom() {
+        var old = cat(age: 20, stage: Catalog.stages.count - 1)
+        old.grownUpParty = nil
+        old.room = Room.garden.rawValue
+        let world = makeWorld()
+        world.loadExisting(old)
+        XCTAssertNil(world.party, "not in the garden, where the party isn't drawn")
+        XCTAssertNil(world.save?.grownUpParty)
+
+        world.enterRoom(.living)
+        for _ in 0..<60 { world.update(0.1) }
+        XCTAssertEqual(world.party?.kind, .grownUp, "it comes once the cat is back in the living room")
     }
 
     func testAYoungCatHasNoBirthdayYet() {

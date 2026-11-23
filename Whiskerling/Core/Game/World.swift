@@ -261,6 +261,7 @@ final class World {
             if cat.activity == .sleep { wakeUp(rested: true) }
         }
         if away > 6 * 3600 { meowSay(L10n.missedYou, 3.5) } else if away > 20 * 60 { meowSay(L10n.welcomeBackLines.randomElement()!) }
+        checkLateParty() // after the greeting, so the party's line is the one shown
         hudDue = true
     }
 
@@ -314,7 +315,7 @@ final class World {
             save!.last = now
         }
         stageT -= dt
-        if stageT <= 0 { stageT = 5; checkStage(celebrate: true); checkBirthday(); dailyBonus() }
+        if stageT <= 0 { stageT = 5; checkStage(celebrate: true); checkBirthday(); checkLateParty(); dailyBonus() }
         let phase = SkyPhase.at(now)
         if phase != sky { sky = phase; season = Season.at(now) }
         updateCat(dt)

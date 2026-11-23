@@ -6,6 +6,8 @@ All notable changes to Whiskerling are listed here. The format follows
 
 ## [Unreleased]
 
+## [1.1.0] - not released yet
+
 ### Added
 - Seasons, from the iPad's date. Snow falls past the window and piles on the sill in winter,
   blossom drifts by in spring and leaves in autumn. In the garden the lawn, the fence and the
@@ -17,7 +19,8 @@ All notable changes to Whiskerling are listed here. The format follows
   the next visit if nobody was there that day. It has a birthday each year on the day it was
   adopted (28 February in other years for a 29 February cat), with its age in a speech bubble and
   a candle for each year, also when the app wasn't open on the day. A content grown-up cat now and
-  then naps on the rug, stretches with a yawn, or brings the child a ball of yarn; a tap wakes it
+  then naps on the rug, stretches with a yawn, or brings the child a ball of yarn; a tap wakes it.
+  A cat that grew up in 1.0 gets its party late, on the first visit after the update
   ([#17](https://github.com/JarlLyng/whiskerling/issues/17)).
 
 ### Changed
