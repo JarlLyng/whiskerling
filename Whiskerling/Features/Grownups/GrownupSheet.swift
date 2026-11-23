@@ -47,33 +47,45 @@ struct ParentGateView: View {
     @State private var wrong = false
 
     var body: some View {
-        VStack(spacing: Tokens.Spacing.lg) {
-            Text(verbatim: L10n.forGrownUps).font(Theme.font(28))
-            Text(verbatim: L10n.gateQuestion(a, b)).font(Theme.font(24, .semibold))
+        // Centred when it fits, smaller keys in a short window, and scrolling below that, so
+        // OK and Cancel are always within reach (#15).
+        GeometryReader { geo in
+            let short = geo.size.height < 600
+            ScrollView {
+                gate(short: short).frame(maxWidth: .infinity, minHeight: geo.size.height)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+        }
+    }
+
+    private func gate(short: Bool) -> some View {
+        VStack(spacing: short ? Tokens.Spacing.sm : Tokens.Spacing.lg) {
+            Text(verbatim: L10n.forGrownUps).font(Theme.font(short ? 22 : 28))
+            Text(verbatim: L10n.gateQuestion(a, b)).font(Theme.font(short ? 20 : 24, .semibold))
             Text(verbatim: answer.isEmpty ? " " : answer)
-                .font(Theme.font(40, .heavy)).monospacedDigit()
-                .frame(width: 200, height: 64)
+                .font(Theme.font(short ? 30 : 40, .heavy)).monospacedDigit()
+                .frame(width: 200, height: short ? 46 : 64)
                 .background(Theme.option, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
             // The line is always there, so the keypad never jumps under a grown-up's finger.
             Text(verbatim: wrong ? L10n.gateWrong : " ").font(Theme.font(16, .semibold)).foregroundStyle(Color(hex: "D64545"))
             Grid(horizontalSpacing: Tokens.Spacing.sm, verticalSpacing: Tokens.Spacing.sm) {
                 ForEach(0..<3) { row in
                     GridRow {
-                        ForEach(1...3, id: \.self) { col in key(String(row * 3 + col)) }
+                        ForEach(1...3, id: \.self) { col in key(String(row * 3 + col), short: short) }
                     }
                 }
                 GridRow {
-                    key("⌫")
-                    key("0")
-                    key(L10n.ok)
+                    key("⌫", short: short)
+                    key("0", short: short)
+                    key(L10n.ok, short: short)
                 }
             }
-            Button(L10n.cancel, action: onCancel).font(Theme.font(18)).padding(.top, Tokens.Spacing.sm)
+            Button(L10n.cancel, action: onCancel).font(Theme.font(18)).padding(.top, short ? 0 : Tokens.Spacing.sm)
         }
-        .padding(Tokens.Spacing.xxl)
+        .padding(short ? Tokens.Spacing.md : Tokens.Spacing.xxl)
     }
 
-    private func key(_ label: String) -> some View {
+    private func key(_ label: String, short: Bool) -> some View {
         Button {
             if label != L10n.ok { wrong = false }
             switch label {
@@ -82,7 +94,7 @@ struct ParentGateView: View {
             default: if answer.count < 4 { answer += label }
             }
         } label: {
-            Text(verbatim: label).font(Theme.font(26)).frame(width: 84, height: 64)
+            Text(verbatim: label).font(Theme.font(short ? 22 : 26)).frame(width: 84, height: short ? 46 : 64)
         }
         .buttonStyle(PillButtonStyle(color: label == L10n.ok ? Theme.go : Theme.feed))
     }
@@ -185,53 +197,71 @@ struct GrownupMenu: View {
         if showPaywall {
             PaywallView(store: model.store, onClose: { showPaywall = false })
         } else {
-            VStack(spacing: Tokens.Spacing.lg) {
-                Text(verbatim: L10n.menuTitle).font(Theme.font(28))
-                if let s = model.world.save {
-                    // Same day number as the top bar ("Kitten · day 1").
-                    let day = Int(Date().timeIntervalSince(s.born) / 86_400) + 1
-                    Text(verbatim: L10n.menuInfo(s.name, day, s.hearts)).font(Theme.font(17, .semibold)).foregroundStyle(Theme.muted)
-                        .multilineTextAlignment(.center)
+            // Centred when it fits, tighter in a small window, and scrolling below that, so
+            // Close is always within reach (#15).
+            GeometryReader { geo in
+                let small = geo.size.height < 640 || geo.size.width < 480
+                ScrollView {
+                    menu(small: small).frame(maxWidth: .infinity, minHeight: geo.size.height)
                 }
-                if model.store.isPro {
-                    // A status, not a button: the same green line as on the paywall.
-                    Text(verbatim: L10n.proUnlocked).font(Theme.font(20)).foregroundStyle(Theme.chosen)
-                        .padding(.vertical, Tokens.Spacing.sm)
-                } else {
-                    wide(L10n.unlockProPlain, color: Theme.dress) { showPaywall = true }
-                }
-                wide(L10n.restore, color: Theme.option) { Task { await model.store.restore() } }
-                wide(model.hud.sound ? L10n.menuSoundOn : L10n.menuSoundOff, color: Theme.option) { model.toggleSoundFromMenu() }
-                if model.hasCat {
-                    wide(resetArmed ? L10n.startOverConfirm(model.hud.name) : L10n.startOver, color: Color(hex: "FFD3D3")) {
-                        if resetArmed { model.startOver(); onClose() } else { resetArmed = true }
-                    }
-                }
-                // Links out of the app live here, behind the parental gate, as Apple's Kids
-                // category asks. Rate is a link to the App Store's review page, never a prompt.
-                VStack(spacing: Tokens.Spacing.xs) {
-                    HStack(spacing: Tokens.Spacing.xl) {
-                        Link(L10n.sendFeedback, destination: Feedback.mailURL())
-                        Link(L10n.rateApp, destination: Feedback.reviewURL)
-                        Link(L10n.privacyPolicy, destination: Feedback.privacyURL)
-                    }
-                    .font(Theme.font(16, .semibold))
-                    Text(verbatim: L10n.feedbackNote).font(Theme.font(13, .regular)).foregroundStyle(Theme.muted)
-                        .multilineTextAlignment(.center)
-                }
-                .padding(.top, Tokens.Spacing.sm)
-                Text(verbatim: "Whiskerling \(Feedback.appVersion)").font(Theme.font(13, .regular)).foregroundStyle(Theme.muted)
-                Button(L10n.close, action: onClose).font(Theme.font(18))
+                .scrollBounceBehavior(.basedOnSize)
             }
-            .padding(Tokens.Spacing.xxl)
-            .frame(maxWidth: 520)
         }
     }
 
-    private func wide(_ title: String, color: Color, _ action: @escaping () -> Void) -> some View {
+    private func menu(small: Bool) -> some View {
+        VStack(spacing: small ? Tokens.Spacing.md : Tokens.Spacing.lg) {
+            Text(verbatim: L10n.menuTitle).font(Theme.font(small ? 24 : 28)).multilineTextAlignment(.center)
+            if let s = model.world.save {
+                // Same day number as the top bar ("Kitten · day 1").
+                let day = Int(Date().timeIntervalSince(s.born) / 86_400) + 1
+                Text(verbatim: L10n.menuInfo(s.name, day, s.hearts)).font(Theme.font(17, .semibold)).foregroundStyle(Theme.muted)
+                    .multilineTextAlignment(.center)
+            }
+            if model.store.isPro {
+                // A status, not a button: the same green line as on the paywall.
+                Text(verbatim: L10n.proUnlocked).font(Theme.font(20)).foregroundStyle(Theme.chosen)
+                    .padding(.vertical, Tokens.Spacing.sm)
+            } else {
+                wide(L10n.unlockProPlain, color: Theme.dress, small: small) { showPaywall = true }
+            }
+            wide(L10n.restore, color: Theme.option, small: small) { Task { await model.store.restore() } }
+            wide(model.hud.sound ? L10n.menuSoundOn : L10n.menuSoundOff, color: Theme.option, small: small) { model.toggleSoundFromMenu() }
+            if model.hasCat {
+                wide(resetArmed ? L10n.startOverConfirm(model.hud.name) : L10n.startOver, color: Color(hex: "FFD3D3"), small: small) {
+                    if resetArmed { model.startOver(); onClose() } else { resetArmed = true }
+                }
+            }
+            // Links out of the app live here, behind the parental gate, as Apple's Kids
+            // category asks. Rate is a link to the App Store's review page, never a prompt.
+            VStack(spacing: Tokens.Spacing.xs) {
+                // Side by side when they fit, under each other in a narrow window.
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: Tokens.Spacing.xl) { links }
+                    VStack(spacing: Tokens.Spacing.sm) { links }
+                }
+                .font(Theme.font(16, .semibold))
+                Text(verbatim: L10n.feedbackNote).font(Theme.font(13, .regular)).foregroundStyle(Theme.muted)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.top, Tokens.Spacing.sm)
+            Text(verbatim: "Whiskerling \(Feedback.appVersion)").font(Theme.font(13, .regular)).foregroundStyle(Theme.muted)
+            Button(L10n.close, action: onClose).font(Theme.font(18))
+        }
+        .padding(small ? Tokens.Spacing.lg : Tokens.Spacing.xxl)
+        .frame(maxWidth: 520)
+    }
+
+    @ViewBuilder private var links: some View {
+        Link(L10n.sendFeedback, destination: Feedback.mailURL())
+        Link(L10n.rateApp, destination: Feedback.reviewURL)
+        Link(L10n.privacyPolicy, destination: Feedback.privacyURL)
+    }
+
+    private func wide(_ title: String, color: Color, small: Bool, _ action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(verbatim: title).font(Theme.font(19)).multilineTextAlignment(.center)
-                .padding(Tokens.Spacing.lg).frame(maxWidth: .infinity)
+                .padding(small ? Tokens.Spacing.md : Tokens.Spacing.lg).frame(maxWidth: .infinity)
         }
         .buttonStyle(PillButtonStyle(color: color))
     }

@@ -68,45 +68,73 @@ struct GameCanvas: View {
 
 struct HUDBar: View {
     let model: GameModel
+    /// Below this width the meters get a row of their own, so their labels never get cut (#15).
+    static let compactWidth: CGFloat = 700
+    @State private var width: CGFloat = 1000
 
     var body: some View {
         let hud = model.hud
-        HStack(spacing: Tokens.Spacing.md) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(verbatim: hud.name).font(Theme.font(24)).lineLimit(1)
-                Text(verbatim: hud.stageLabel).font(Theme.font(14, .semibold)).foregroundStyle(Theme.muted).lineLimit(1)
+        Group {
+            if width < HUDBar.compactWidth {
+                VStack(spacing: Tokens.Spacing.sm) {
+                    HStack(spacing: Tokens.Spacing.md) {
+                        nameAndStage(hud).frame(maxWidth: .infinity, alignment: .leading)
+                        hearts(hud)
+                        soundButton(hud)
+                    }
+                    meters(hud, compact: true)
+                }
+            } else {
+                HStack(spacing: Tokens.Spacing.md) {
+                    nameAndStage(hud).frame(minWidth: 118, maxWidth: 210, alignment: .leading)
+                    meters(hud).frame(maxWidth: .infinity)
+                    hearts(hud)
+                    soundButton(hud)
+                }
             }
-            .frame(minWidth: 118, maxWidth: 210, alignment: .leading)
-            .contentShape(Rectangle())
-            // The grown-up menu: hold the name for two seconds.
-            .onLongPressGesture(minimumDuration: 2) { model.adult = .menu }
-
-            HStack(spacing: Tokens.Spacing.md) {
-                Meter(icon: "🐟", label: L10n.meterFood, value: hud.needs.food)
-                Meter(icon: "😺", label: L10n.meterFun, value: hud.needs.fun)
-                Meter(icon: "⚡", label: L10n.meterEnergy, value: hud.needs.energy)
-                Meter(icon: "🛁", label: L10n.meterClean, value: hud.needs.clean)
-            }
-            .frame(maxWidth: .infinity)
-
-            Text(verbatim: "❤️ \(hud.hearts)")
-                .font(Theme.font(22))
-                .contentTransition(.numericText())
-                .animation(.spring(duration: 0.4), value: hud.hearts)
-                .accessibilityLabel(L10n.hearts(hud.hearts))
-
-            Button(action: model.toggleSound) {
-                Text(verbatim: hud.sound ? "🔊" : "🔇").font(.system(size: 22))
-                    .frame(width: 46, height: 46)
-                    .background(Theme.option, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-            }
-            .accessibilityLabel(hud.sound ? L10n.soundOn : L10n.soundOff)
         }
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
         .foregroundStyle(Theme.text)
         .padding(.horizontal, Tokens.Spacing.md)
         .padding(.vertical, Tokens.Spacing.sm)
         .background(Theme.bar)
         .overlay(alignment: .bottom) { Rectangle().fill(Theme.barLine).frame(height: 3) }
+    }
+
+    private func nameAndStage(_ hud: HUD) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(verbatim: hud.name).font(Theme.font(24)).lineLimit(1)
+            Text(verbatim: hud.stageLabel).font(Theme.font(14, .semibold)).foregroundStyle(Theme.muted).lineLimit(1)
+        }
+        .contentShape(Rectangle())
+        // The grown-up menu: hold the name for two seconds.
+        .onLongPressGesture(minimumDuration: 2) { model.adult = .menu }
+    }
+
+    private func meters(_ hud: HUD, compact: Bool = false) -> some View {
+        HStack(spacing: compact ? Tokens.Spacing.sm : Tokens.Spacing.md) {
+            Meter(icon: "🐟", label: L10n.meterFood, value: hud.needs.food, compact: compact)
+            Meter(icon: "😺", label: L10n.meterFun, value: hud.needs.fun, compact: compact)
+            Meter(icon: "⚡", label: L10n.meterEnergy, value: hud.needs.energy, compact: compact)
+            Meter(icon: "🛁", label: L10n.meterClean, value: hud.needs.clean, compact: compact)
+        }
+    }
+
+    private func hearts(_ hud: HUD) -> some View {
+        Text(verbatim: "❤️ \(hud.hearts)")
+            .font(Theme.font(22))
+            .contentTransition(.numericText())
+            .animation(.spring(duration: 0.4), value: hud.hearts)
+            .accessibilityLabel(L10n.hearts(hud.hearts))
+    }
+
+    private func soundButton(_ hud: HUD) -> some View {
+        Button(action: model.toggleSound) {
+            Text(verbatim: hud.sound ? "🔊" : "🔇").font(.system(size: 22))
+                .frame(width: 46, height: 46)
+                .background(Theme.option, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+        .accessibilityLabel(hud.sound ? L10n.soundOn : L10n.soundOff)
     }
 }
 
@@ -114,19 +142,22 @@ struct Meter: View {
     let icon: String
     let label: String
     let value: Double
+    /// Smaller, for the meters' own row in a narrow window.
+    var compact = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        HStack(spacing: 5) {
+        HStack(spacing: compact ? 3 : 5) {
             // A low need makes its icon pulse, or with Reduce Motion simply stay larger.
             Text(verbatim: icon)
-                .font(.system(size: 24))
+                .font(.system(size: compact ? 19 : 24))
                 .scaleEffect(value < 25 ? 1.25 : 1)
                 .animation(reduceMotion ? nil : (value < 25 ? .easeInOut(duration: 0.7).repeatForever() : .default),
                            value: value < 25)
                 .id(reduceMotion) // a pulse already running stops when the setting is turned on
             VStack(alignment: .leading, spacing: 2) {
-                Text(verbatim: label).font(Theme.font(12)).foregroundStyle(Theme.muted).lineLimit(1)
+                Text(verbatim: label).font(Theme.font(compact ? 11 : 12)).foregroundStyle(Theme.muted).lineLimit(1)
+                    .minimumScaleFactor(0.8)
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
                         Capsule().fill(Theme.track)

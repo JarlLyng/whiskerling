@@ -88,6 +88,26 @@ extension World {
 
     // MARK: Catch the fish
 
+    /// After a resize, moves the fish in the air and the ripples along with the pond, so a round
+    /// in progress carries on where the pond now is (#15).
+    func refitFish(fromPond old: CGPoint, rx oldRX: CGFloat, u oldU: CGFloat) {
+        let sx = G.pondRX / oldRX, sy = U / oldU
+        func mapX(_ x: CGFloat) -> CGFloat { G.pond.x + (x - old.x) * sx }
+        if var g = fishing {
+            for i in g.fish.indices {
+                g.fish[i].x0 = mapX(g.fish[i].x0)
+                g.fish[i].x1 = mapX(g.fish[i].x1)
+                g.fish[i].y0 = G.pond.y - 2 * U
+                g.fish[i].h *= sy
+                if let c = g.fish[i].caughtAt {
+                    g.fish[i].caughtAt = CGPoint(x: mapX(c.x), y: G.pond.y - (old.y - c.y) * sy)
+                }
+            }
+            fishing = g
+        }
+        for i in ripples.indices { ripples[i].x = mapX(ripples[i].x); ripples[i].y = G.pond.y }
+    }
+
     func clampToPond(_ x: CGFloat) -> CGFloat {
         min(max(x, max(G.pond.x - G.pondRX * 0.9, G.minX)), min(G.pond.x + G.pondRX * 0.9, G.maxX))
     }

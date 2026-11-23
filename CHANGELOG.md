@@ -19,6 +19,12 @@ All notable changes to Whiskerling are listed here. The format follows
 - Purchases that complete later, like a parent approving Ask to Buy, are now finished once Pro
   is unlocked, so the App Store doesn't hand them over again on every launch
   ([#13](https://github.com/JarlLyng/whiskerling/issues/13)).
+- The app works in small and resized windows. In a narrow window the needs get a row of their
+  own in the top bar, the food and game choices become a list, and the start screen's kittens
+  shrink to fit. The food and game cards, the parental gate and the grown-ups' menu scroll when
+  a window is too short for them, so they no longer cover the bars or cut off OK and Close. A
+  window resized during Catch the fish or the feather keeps the game going where things now are
+  ([#15](https://github.com/JarlLyng/whiskerling/issues/15)).
 
 ## [1.0.0] - not released yet (build 4)
 
