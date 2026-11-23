@@ -44,7 +44,7 @@ extension World {
         bowl = nil; cat.jump = nil; cat.walk = nil; cat.petT = 0; toy = nil
         sound.stopPurr()
         cat.activity = .idle; cat.timer = 2
-        cat.x = r == .garden ? G.minX : G.maxX
+        cat.x = r == .living ? G.maxX : G.minX
         cat.y = G.catY
         goTo(W * 0.55, G.catY, speed: 0.9)
         buddyFollows(into: r)
@@ -72,8 +72,8 @@ extension World {
     /// Pro went away (a refund): leave the garden and stop the game.
     func proLost() {
         guard save != nil else { return }
-        if mode == .fish || mode == .hide { setMode(.normal); post(.modeEnded) }
-        if room == .garden { enterRoom(.living) }
+        if mode == .fish || mode == .hide || mode == .bake { setMode(.normal); post(.modeEnded) }
+        if room != .living { enterRoom(.living) }
     }
 
     func updateGarden(_ dt: CGFloat) {
@@ -117,7 +117,7 @@ extension World {
     func startFishing() -> Bool {
         guard let s = save, !s.lightsOff, mode == .normal, isPro else { return false }
         if s.needs.energy < 12 { meowSay(L10n.tooTiredToPlay); return false }
-        if room == .living {
+        if room != .garden {
             enterRoom(.garden)
             cat.walk = nil
             cat.x = clampToPond(G.pond.x + G.pondRX * 0.5)

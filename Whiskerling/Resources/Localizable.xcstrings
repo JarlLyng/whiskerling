@@ -86,6 +86,23 @@
         }
       }
     },
+    "action.goTo": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gå til"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go to"
+          }
+        }
+      }
+    },
     "action.indoors": {
       "extractionState": "manual",
       "localizations": {
@@ -528,6 +545,40 @@
         }
       }
     },
+    "food.cookie": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fiskesmåkager"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fish cookies"
+          }
+        }
+      }
+    },
+    "food.cookie.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bagt i køkkenet, %lld i krukken"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Baked in the kitchen, %lld in the jar"
+          }
+        }
+      }
+    },
     "food.fish": {
       "extractionState": "manual",
       "localizations": {
@@ -847,6 +898,108 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wrong answer. Try again."
+          }
+        }
+      }
+    },
+    "hint.bake.baking": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Det bager… det dufter godt!"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Baking… it smells good!"
+          }
+        }
+      }
+    },
+    "hint.bake.cut": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryk på dejen for at stikke fisk ud!"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap the dough to cut out fish!"
+          }
+        }
+      }
+    },
+    "hint.bake.done": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Færdig! Op i krukken med dem."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ready! Into the jar they go."
+          }
+        }
+      }
+    },
+    "hint.bake.ingredients": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryk på fisken og melet!"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap the fish and the flour!"
+          }
+        }
+      }
+    },
+    "hint.bake.oven": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tryk på pladen for at sætte den i ovnen!"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap the tray to put it in the oven!"
+          }
+        }
+      }
+    },
+    "hint.bake.stir": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rør rundt og rundt i skålen!"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stir round and round in the bowl!"
           }
         }
       }
@@ -1486,13 +1639,13 @@
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "Et ekstra rum med dam, træ og sommerfugle, og legene Fang fisken og Gemmeleg."
+            "value": "En have med dam, træ og sommerfugle, et køkken at bage fiskesmåkager i, og legene Fang fisken og Gemmeleg."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "An extra room with a pond, a tree and butterflies, and the games Catch the fish and Hide and seek."
+            "value": "A garden with a pond, a tree and butterflies, a kitchen to bake fish cookies in, and the games Catch the fish and Hide and seek."
           }
         }
       }
@@ -1503,13 +1656,13 @@
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "Haven og to lege"
+            "value": "Haven, køkkenet og to lege"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The garden and two games"
+            "value": "The garden, the kitchen and two games"
           }
         }
       }
@@ -1803,6 +1956,142 @@
         }
       }
     },
+    "rooms.garden": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haven"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The garden"
+          }
+        }
+      }
+    },
+    "rooms.garden.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dammen og æbletræet"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The pond and the apple tree"
+          }
+        }
+      }
+    },
+    "rooms.here": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du er her"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're here"
+          }
+        }
+      }
+    },
+    "rooms.kitchen": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Køkkenet"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The kitchen"
+          }
+        }
+      }
+    },
+    "rooms.kitchen.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bag fiskesmåkager"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bake fish cookies"
+          }
+        }
+      }
+    },
+    "rooms.living": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The living room"
+          }
+        }
+      }
+    },
+    "rooms.living.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skål, kurv og kattebakke"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bowl, basket and litter box"
+          }
+        }
+      }
+    },
+    "rooms.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hvor skal %@ hen?"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Where shall %@ go?"
+          }
+        }
+      }
+    },
     "say.alreadyClean": {
       "extractionState": "manual",
       "localizations": {
@@ -1901,6 +2190,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Meow! There you are!"
+          }
+        }
+      }
+    },
+    "say.bakeBye": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fiskesmåkager! Nam 😺"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fish cookies! Yum 😺"
+          }
+        }
+      }
+    },
+    "say.bakeStart": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nu bager vi! 🍪"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Let's bake! 🍪"
           }
         }
       }
@@ -2228,6 +2551,23 @@
         }
       }
     },
+    "say.fridge": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Er der noget til mig derinde? 🐟"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anything for me in there? 🐟"
+          }
+        }
+      }
+    },
     "say.full": {
       "extractionState": "manual",
       "localizations": {
@@ -2530,6 +2870,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "I'm hungry! 🐟"
+          }
+        }
+      }
+    },
+    "say.jarFull": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Krukken er fuld af småkager! 🍪"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The jar is full of cookies! 🍪"
+          }
+        }
+      }
+    },
+    "say.kitchen": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skal vi bage? Tryk på skålen! 🍪"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shall we bake? Tap the bowl! 🍪"
           }
         }
       }
@@ -2853,6 +3227,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Squeaky clean! ✨"
+          }
+        }
+      }
+    },
+    "say.stoleCookie": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mmm, en småkage! 🍪"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mmm, a cookie! 🍪"
           }
         }
       }
@@ -3244,6 +3635,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Happy birthday, %@! 🎂"
+          }
+        }
+      }
+    },
+    "toast.cookies": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld fiskesmåkager i krukken! 🍪"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld fish cookies in the jar! 🍪"
           }
         }
       }

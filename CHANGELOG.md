@@ -6,6 +6,15 @@ All notable changes to Whiskerling are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+- The kitchen, a third room with Pro. A tap on the mixing bowl bakes fish cookies: fish and flour
+  into the bowl, a stir, six fish cut out of the dough, and the oven, with every tap moving it on
+  and every batch turning out. The cookies go into a jar, and Feed offers them as a treat while
+  the jar has some. The cat watches from the counter, looks in the fridge, and now and then takes
+  a cookie. "Go to" replaces the garden button and chooses between the living room, the kitchen
+  and the garden, and hide and seek has four hiding places in the kitchen
+  ([#38](https://github.com/JarlLyng/whiskerling/issues/38)).
+
 ## [1.1.0] - not released yet
 
 ### Added

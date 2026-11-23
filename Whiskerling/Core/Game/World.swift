@@ -1,9 +1,9 @@
 import SwiftUI
 
-enum GameMode { case normal, play, wash, fish, hide }
+enum GameMode { case normal, play, wash, fish, hide, bake }
 
 /// Where the cat is. The living room is free; the garden comes with Pro.
-enum Room: String, Codable { case living, garden }
+enum Room: String, Codable { case living, garden, kitchen }
 
 /// Something the world wants the SwiftUI layer to show. Collected per frame and handed over
 /// after drawing, so no observable state changes while a view is being drawn.
@@ -13,6 +13,10 @@ enum WorldEvent {
     case openFood
     case itemsChanged
     case fishingStarted
+    /// Baking started from a tap on the kitchen's bowl (#38).
+    case bakeStarted
+    /// What the bar under the room says, as a game goes from step to step.
+    case hint(String)
 }
 
 struct Bubble { var text: String; var t: CGFloat; var d: CGFloat; var buddy = false }
@@ -27,7 +31,7 @@ struct Particle {
     var ph = CGFloat.random(in: 0...(2 * .pi))
 }
 
-enum CatActivity { case idle, walk, eat, poop, sleep, play, wash, fish, nap, stretch, hide }
+enum CatActivity { case idle, walk, eat, poop, sleep, play, wash, fish, nap, stretch, hide, bake }
 
 struct Walk {
     var x: CGFloat, y: CGFloat
@@ -114,6 +118,10 @@ final class World {
     // the garden and Catch the fish
     var fishing: FishGame?
     var hiding: HideGame?
+    // the kitchen (#38)
+    var baking: BakeGame?
+    var fridgeOpenT: CGFloat = 0, kitchenT: CGFloat = 20
+    var bakeFinger: CGPoint?
     var ripples: [Ripple] = []
     var roomFade: CGFloat = 0
     // the grown-up cat (#17)
@@ -333,6 +341,8 @@ final class World {
         }
         let phase = SkyPhase.at(now)
         if phase != sky { sky = phase; season = Season.at(now) }
+        if fridgeOpenT > 0 { fridgeOpenT -= dt }
+        if kitchenT > 0 { kitchenT -= dt }
         updateCat(dt)
         updateBuddy(dt)
         updateGrownUp(dt)
@@ -402,6 +412,7 @@ final class World {
         case .poop: cat.x = G.litter.x; cat.y = G.litter.y; return
         case .fish: cat.jump = nil; cat.x = clampToPond(cat.x); cat.y = G.catY; return
         case .hide: cat.x = min(max(cat.x, G.minX), G.maxX); cat.y = G.catY; return
+        case .bake: cat.x = kCounterSeat.x; cat.y = kCounterSeat.y; return
         default: break
         }
         cat.x = min(max(cat.x == 0 ? W * 0.55 : cat.x, G.minX), G.maxX)
@@ -489,6 +500,8 @@ final class World {
             if mode == .normal && cat.timer <= 0 && cat.petT <= 0 {
                 if startHabit() {
                     // a grown-up habit now and then (#17)
+                } else if kitchenHabit() {
+                    // the fridge, or a cookie from the jar (#38)
                 } else if save!.poop < 3 && poopClock >= poopEveryNow && !(hasCompanion && litterTurnBuddy)
                             && save!.needs.food > 20 {
                     poopClock = 0
@@ -545,6 +558,8 @@ final class World {
             updateFishing(dt)
         case .hide:
             updateHide(dt)
+        case .bake:
+            updateBake(dt)
         case .wash:
             break
         case .nap, .stretch:
@@ -614,7 +629,9 @@ final class World {
             let now = Date()
             save!.treats = save!.treats.filter { now.timeIntervalSince($0) < 15 * 60 }
             if save!.treats.count >= 3 { meowSay(L10n.noMoreTreats); return }
+            if food == .cookie && cookieJar <= 0 { return }
             save!.treats.append(now)
+            if food == .cookie { save!.cookies = cookieJar - 1 } // from the jar (#38)
         }
         enterRoom(.living) // the bowl is indoors
         bowl = (food, 1); lastBowl = bowl
@@ -812,8 +829,13 @@ final class World {
             cat.jump = nil; cat.moving = false; modeEndT = 0
             if cat.walk?.tag == "wash" { cat.walk = nil; cat.activity = .idle }
             stopHide()
-            if [.play, .wash, .fish, .hide].contains(cat.activity) { cat.activity = .idle; cat.timer = 2 }
+            if cat.activity == .bake {
+                // down from the counter
+                cat.y = G.catY; cat.x = min(max(cat.x, G.minX), G.maxX); cat.hop = 0.35
+            }
+            if [.play, .wash, .fish, .hide, .bake].contains(cat.activity) { cat.activity = .idle; cat.timer = 2 }
             fishing = nil
+            baking = nil; bakeFinger = nil
         }
     }
 
@@ -866,11 +888,17 @@ final class World {
         case .wash: sponge = p; if hitLitter(p) { scoop() }; return
         case .fish: tapFish(p); return
         case .hide: tapHide(p); return
+        case .bake: tapBake(p); return
         case .normal: break
         }
         // a touch on the other cat shows it in the top bar, then strokes and taps work on it (#21)
         if !ptrOnCat && hitBuddy(p) { switchCats(); ptrOnCat = true; return }
         if s.lightsOff || ptrOnCat { return }
+        // the bowl or the oven in the kitchen: bake (#38)
+        if room == .kitchen && (hypot(p.x - kBowl.x, p.y - (kBowl.y - 20 * U)) < 70 * U || kOven.insetBy(dx: -10 * U, dy: -10 * U).contains(p)) {
+            if startBake() { post(.bakeStarted) }
+            return
+        }
         if hitLitter(p) { if !scoop() { say(L10n.litterAlreadyClean, 1.6) } } else if hitBowl(p) { post(.openFood) } else if hitPond(p) {
             if startFishing() { post(.fishingStarted) }
         }
@@ -886,6 +914,7 @@ final class World {
             sponge = p
             if cat.activity == .wash && hitCat(p) { scrub(p, d) } else if hitBuddy(p) { scrubBuddy(p, d) }
             return
+        case .bake: stirBake(p, d); return
         case .fish, .hide: return
         case .normal: break
         }
@@ -895,6 +924,7 @@ final class World {
     func pointerUp() {
         guard save != nil, ptrDown else { return }
         ptrDown = false
+        bakeFinger = nil
         if mode == .normal && ptrOnCat && ptrMoved < 12 && Date().timeIntervalSince(ptrStart) < 0.45 { tapCat() }
     }
 

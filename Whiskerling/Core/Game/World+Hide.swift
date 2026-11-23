@@ -32,6 +32,7 @@ extension World {
     /// Behind the basket's rim, behind the litter box, under the rug and behind the curtain
     /// indoors; behind the apple tree, over the fence and behind the pond in the garden.
     func hideSpots() -> [HideSpot] {
+        if room == .kitchen { return kitchenSpots() }
         let st = stage, head = st.size * st.head
         func out(_ x: CGFloat) -> CGPoint { CGPoint(x: min(max(x, G.minX), G.maxX), y: G.catY) }
         if room == .garden {
@@ -181,9 +182,11 @@ extension World {
         return [(spot.depth, { [unowned self] p in self.drawPeeks(p, spot) })]
     }
 
-    /// Behind the curtain or the fence, drawn before them so they hide the cat.
-    func drawHidePeek(onWall p: Pen) {
-        guard mode == .hide, let g = hiding, g.phase == .hidden, let spot = hideSpot(g.spot), spot.depth < 0 else { return }
+    /// Behind the curtain or the fence, drawn before them so they hide the cat. In the kitchen each
+    /// place is drawn at its own moment, so `only` picks it.
+    func drawHidePeek(onWall p: Pen, only ids: Set<String>? = nil) {
+        guard mode == .hide, let g = hiding, g.phase == .hidden, let spot = hideSpot(g.spot), spot.depth < 0,
+              ids?.contains(spot.id) ?? true else { return }
         drawPeeks(p, spot)
     }
 

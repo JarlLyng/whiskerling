@@ -16,6 +16,19 @@ enum DecorArt {
         p.closePath()
     }
 
+    /// A fish-shaped cookie (#38), pale before baking and golden after.
+    static func fishCookie(_ p: Pen, _ x: CGFloat, _ y: CGFloat, _ s: CGFloat, golden: Bool = true) {
+        let fill = golden ? Color(hex: "E3A55B") : Color(hex: "F3D9AE"), line = golden ? Color(hex: "A96A2C") : Color(hex: "CDAE7E")
+        p.save(); p.translate(x, y); p.scale(s, s)
+        p.beginPath()
+        p.moveTo(14, 0); p.quadTo(8, -11, -6, -9); p.quadTo(-12, -8, -15, -3); p.lineTo(-24, -10); p.lineTo(-21, 0)
+        p.lineTo(-24, 10); p.lineTo(-15, 3); p.quadTo(-12, 8, -6, 9); p.quadTo(8, 11, 14, 0); p.closePath()
+        p.fill(fill); p.stroke(line, 1.6)
+        p.circ(7, -2, 1.8); p.fill(line)
+        p.beginPath(); p.moveTo(-3, -5); p.quadTo(0, 0, -3, 5); p.stroke(line, 1.2)
+        p.restore()
+    }
+
     /// A plant in a pot standing at (x, y), about 150 units tall.
     static func plant(_ p: Pen, _ x: CGFloat, _ y: CGFloat, _ s: CGFloat, sway: CGFloat = 0) {
         p.save(); p.translate(x, y); p.scale(s, s)

@@ -65,6 +65,8 @@ struct SaveState: Codable, Equatable {
     var decor: [String]?
     /// A second cat that lives with the first (#21). Optional, so older saves load as one cat.
     var companion: CatRecord?
+    /// Fish cookies in the kitchen's jar (#38). Optional, so older saves load; nil is none.
+    var cookies: Int?
 
     init(name: String, coat: String, now: Date = Date()) {
         self.name = name

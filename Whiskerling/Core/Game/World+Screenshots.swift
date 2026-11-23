@@ -24,6 +24,22 @@ extension World {
             }
         case "wardrobe":
             cat.x = min(max(W * 0.68, G.minX), G.maxX); cat.happyT = 1_000
+        case "kitchen": // the kitchen (#38)
+            cat.x = min(max(W * 0.5, G.minX), G.maxX); cat.happyT = 1_000; cat.look = 0.8
+        case "bake":
+            setMode(.bake)
+            cat.x = kCounterSeat.x; cat.y = kCounterSeat.y; cat.activity = .bake
+            var g = BakeGame()
+            g.fishIn = true; g.flourIn = true
+            switch UserDefaults.standard.string(forKey: "bakeStep") ?? "cut" {
+            case "ingredients": g.step = .ingredients; g.fishIn = true; g.flourIn = false
+            case "stir": g.step = .stir; g.stir = 0.4
+            case "oven": g.step = .oven; g.cut = Array(repeating: true, count: BakeGame.batch)
+            case "baking": g.step = .baking; g.t = BakeGame.slideTime + 1; g.cut = Array(repeating: true, count: BakeGame.batch)
+            case "done": g.step = .done; g.cut = Array(repeating: true, count: BakeGame.batch)
+            default: g.step = .cut; g.cut = [true, true, true, false, false, false]
+            }
+            baking = g
         case "two": // the grown cat and its kitten (#21)
             cat.x = min(max(W * 0.64, G.minX), G.maxX); cat.happyT = 1_000; cat.look = -0.8
             placeBuddy()

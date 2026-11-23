@@ -76,6 +76,7 @@ enum L10n {
         case .kibble: return String(localized: "food.kibble", defaultValue: "Kibble")
         case .fish: return String(localized: "food.fish", defaultValue: "Fish")
         case .shrimp: return String(localized: "food.shrimp", defaultValue: "Shrimp")
+        case .cookie: return String(localized: "food.cookie", defaultValue: "Fish cookies")
         }
     }
     static func foodNote(_ food: Food) -> String {
@@ -83,11 +84,40 @@ enum L10n {
         case .kibble: return String(localized: "food.kibble.note", defaultValue: "A little filling")
         case .fish: return String(localized: "food.fish.note", defaultValue: "Very filling")
         case .shrimp: return String(localized: "food.shrimp.note", defaultValue: "A treat, makes them happy")
+        case .cookie: return cookieNote(0)
         }
+    }
+    static func cookieNote(_ n: Int) -> String {
+        String(localized: "food.cookie.note", defaultValue: "Baked in the kitchen, \(n) in the jar")
     }
 
     // MARK: Garden and games
     static var garden: String { String(localized: "action.garden", defaultValue: "Garden") }
+    // the rooms and the kitchen (#38)
+    static var goTo: String { String(localized: "action.goTo", defaultValue: "Go to") }
+    static func roomsTitle(_ name: String) -> String { String(localized: "rooms.title", defaultValue: "Where shall \(name) go?") }
+    static var livingRoom: String { String(localized: "rooms.living", defaultValue: "The living room") }
+    static var livingRoomNote: String { String(localized: "rooms.living.note", defaultValue: "Bowl, basket and litter box") }
+    static var kitchen: String { String(localized: "rooms.kitchen", defaultValue: "The kitchen") }
+    static var kitchenNote: String { String(localized: "rooms.kitchen.note", defaultValue: "Bake fish cookies") }
+    static var gardenRoom: String { String(localized: "rooms.garden", defaultValue: "The garden") }
+    static var gardenNote: String { String(localized: "rooms.garden.note", defaultValue: "The pond and the apple tree") }
+    static var youAreHere: String { String(localized: "rooms.here", defaultValue: "You're here") }
+    static var kitchenHello: String { String(localized: "say.kitchen", defaultValue: "Shall we bake? Tap the bowl! 🍪") }
+    static var fridgeLine: String { String(localized: "say.fridge", defaultValue: "Anything for me in there? 🐟") }
+    static var stoleCookie: String { String(localized: "say.stoleCookie", defaultValue: "Mmm, a cookie! 🍪") }
+    static var jarFull: String { String(localized: "say.jarFull", defaultValue: "The jar is full of cookies! 🍪") }
+    static var bakeStart: String { String(localized: "say.bakeStart", defaultValue: "Let's bake! 🍪") }
+    static var bakeBye: String { String(localized: "say.bakeBye", defaultValue: "Fish cookies! Yum 😺") }
+    static var bakeHintIngredients: String { String(localized: "hint.bake.ingredients", defaultValue: "Tap the fish and the flour!") }
+    static var bakeHintStir: String { String(localized: "hint.bake.stir", defaultValue: "Stir round and round in the bowl!") }
+    static var bakeHintCut: String { String(localized: "hint.bake.cut", defaultValue: "Tap the dough to cut out fish!") }
+    static var bakeHintOven: String { String(localized: "hint.bake.oven", defaultValue: "Tap the tray to put it in the oven!") }
+    static var bakeHintBaking: String { String(localized: "hint.bake.baking", defaultValue: "Baking… it smells good!") }
+    static var bakeHintDone: String { String(localized: "hint.bake.done", defaultValue: "Ready! Into the jar they go.") }
+    static func cookiesInJar(_ n: Int) -> String {
+        String(localized: "toast.cookies", defaultValue: "\(n) fish cookies in the jar! 🍪")
+    }
     static var indoors: String { String(localized: "action.indoors", defaultValue: "Indoors") }
     static func gamesTitle(_ name: String) -> String { String(localized: "games.title", defaultValue: "What shall \(name) play?") }
     static var featherGame: String { String(localized: "games.feather", defaultValue: "The feather") }
@@ -165,9 +195,9 @@ enum L10n {
     static var proItemsBody: String {
         String(localized: "pro.items.body", defaultValue: "Flowers, sunglasses, top hat, scarf and crown, and for the room a cat tree, heart wallpaper, a picture of the cat and fairy lights. They still unlock with hearts.")
     }
-    static var proGardenTitle: String { String(localized: "pro.garden.title", defaultValue: "The garden and two games") }
+    static var proGardenTitle: String { String(localized: "pro.garden.title", defaultValue: "The garden, the kitchen and two games") }
     static var proGardenBody: String {
-        String(localized: "pro.garden.body", defaultValue: "An extra room with a pond, a tree and butterflies, and the games Catch the fish and Hide and seek.")
+        String(localized: "pro.garden.body", defaultValue: "A garden with a pond, a tree and butterflies, a kitchen to bake fish cookies in, and the games Catch the fish and Hide and seek.")
     }
     static var proSecondCatTitle: String { String(localized: "pro.secondCat.title", defaultValue: "A second cat") }
     static var proSecondCatBody: String {

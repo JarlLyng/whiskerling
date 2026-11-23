@@ -21,6 +21,7 @@ struct GameView: View {
                 if model.overlay == .food { FoodOverlay(model: model) }
                 if model.overlay == .games { GamesOverlay(model: model) }
                 if model.overlay == .wardrobe { WardrobeOverlay(model: model) }
+                if model.overlay == .rooms { RoomsOverlay(model: model) }
             }
             .animation(.easeInOut(duration: Tokens.Motion.Duration.normal), value: model.toast)
             ActionBar(model: model)
@@ -224,11 +225,10 @@ struct ActionBar: View {
                                     .offset(x: 4, y: -6)
                             }
                         }
-                    let outside = model.hud.room == .garden
-                    action(outside ? "🏠" : "🌳", outside ? L10n.indoors : L10n.garden, Theme.garden,
-                           dim: model.hud.lightsOff, model.tapRoom)
+                    // "Go to…": the living room, the kitchen and the garden (#38)
+                    action("🚪", L10n.goTo, Theme.garden, dim: model.hud.lightsOff, model.tapRoom)
                         .overlay(alignment: .topTrailing) {
-                            if !outside && !model.isPro { LockBadge().offset(x: 4, y: -6) }
+                            if !model.isPro { LockBadge().offset(x: 4, y: -6) }
                         }
                 }
                 .frame(maxWidth: 1000)
