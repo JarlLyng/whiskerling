@@ -260,6 +260,16 @@ enum L10n {
     static var fishStart: String { String(localized: "say.fishStart", defaultValue: "Fish! Let's catch them! 🐟") }
     static var fishBye: String { String(localized: "say.fishBye", defaultValue: "Bye, fish! Swim home 🐟") }
     static var fishPerfect: String { String(localized: "say.fishPerfect", defaultValue: "Every single one! 🎉") }
+    // the grown-up cat (#17)
+    static func happyBirthday(_ name: String) -> String { String(localized: "toast.birthday", defaultValue: "Happy birthday, \(name)! 🎂") }
+    static func birthdayAge(_ n: Int) -> String {
+        n == 1 ? String(localized: "say.birthdayOne", defaultValue: "I'm 1 year old! 🎂")
+               : String(localized: "say.birthdayYears", defaultValue: "I'm \(n) years old! 🎂")
+    }
+    static var partyForMe: String { String(localized: "say.party", defaultValue: "A party for me? 🎉") }
+    static var stretchLine: String { String(localized: "say.stretch", defaultValue: "Aaah, that's better 😺") }
+    static var toyForYou: String { String(localized: "say.toy", defaultValue: "This is for you! 🧶") }
+    static var napWake: String { String(localized: "say.napWake", defaultValue: "Mrr? I was having a nap 😺") }
     static var dressedLines: [String] {
         [String(localized: "say.dressed1", defaultValue: "Don't I look nice? 😸"),
          String(localized: "say.dressed2", defaultValue: "I love it!"),

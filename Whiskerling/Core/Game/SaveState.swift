@@ -37,6 +37,8 @@ struct SaveState: Codable, Equatable {
     var bonusDay: String
     /// `Room` raw value; nil is the living room. Optional, so saves from before the garden load.
     var room: String?
+    /// How many birthdays have been celebrated (#17). Optional, so older saves load; nil is none.
+    var birthdays: Int?
 
     init(name: String, coat: String, now: Date = Date()) {
         self.name = name
@@ -49,6 +51,25 @@ struct SaveState: Codable, Equatable {
     static func dayKey(_ date: Date) -> String {
         let c = Calendar.current.dateComponents([.year, .month, .day], from: date)
         return "\(c.year ?? 0)-\(c.month ?? 0)-\(c.day ?? 0)"
+    }
+
+    /// How many birthdays a cat adopted on `born` has had by `now`: one on the adoption date each
+    /// year. A cat adopted on 29 February has its birthday on 28 February in other years (#17).
+    static func birthdaysPassed(born: Date, at now: Date, calendar: Calendar = .current) -> Int {
+        let b = calendar.dateComponents([.year, .month, .day], from: born)
+        let today = calendar.startOfDay(for: now)
+        guard let by = b.year, let bm = b.month, let bd = b.day, let ny = calendar.dateComponents([.year], from: now).year,
+              ny > by else { return 0 }
+        var count = 0
+        for year in (by + 1)...ny {
+            var day = DateComponents(year: year, month: bm, day: bd)
+            if bm == 2 && bd == 29, calendar.date(from: DateComponents(year: year, month: 2, day: 29))
+                .map({ calendar.component(.month, from: $0) }) != 2 {
+                day.day = 28 // not a leap year
+            }
+            if let date = calendar.date(from: day), date <= today { count += 1 }
+        }
+        return count
     }
 
     /// The cat sleeps from 20:00 to 07:00, so a morning cat is rested.

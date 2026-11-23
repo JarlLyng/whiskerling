@@ -1599,6 +1599,40 @@
         }
       }
     },
+    "say.birthdayOne": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeg er 1 år! 🎂"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I'm 1 year old! 🎂"
+          }
+        }
+      }
+    },
+    "say.birthdayYears": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeg er %lld år! 🎂"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I'm %lld years old! 🎂"
+          }
+        }
+      }
+    },
     "say.bored": {
       "extractionState": "manual",
       "localizations": {
@@ -2194,6 +2228,23 @@
         }
       }
     },
+    "say.napWake": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mrr? Jeg tog en lur 😺"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mrr? I was having a nap 😺"
+          }
+        }
+      }
+    },
     "say.noMoreTreats": {
       "extractionState": "manual",
       "localizations": {
@@ -2279,6 +2330,23 @@
         }
       }
     },
+    "say.party": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Er det en fest for mig? 🎉"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A party for me? 🎉"
+          }
+        }
+      }
+    },
     "say.poop1": {
       "extractionState": "manual",
       "localizations": {
@@ -2343,6 +2411,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Squeaky clean! ✨"
+          }
+        }
+      }
+    },
+    "say.stretch": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aaah, det var godt 😺"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aaah, that's better 😺"
           }
         }
       }
@@ -2462,6 +2547,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "I'm too tired to play… 💤"
+          }
+        }
+      }
+    },
+    "say.toy": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den er til dig! 🧶"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is for you! 🧶"
           }
         }
       }
@@ -2666,6 +2768,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ is asleep. Turn on the light first ☀️"
+          }
+        }
+      }
+    },
+    "toast.birthday": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tillykke med fødselsdagen, %@! 🎂"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Happy birthday, %@! 🎂"
           }
         }
       }

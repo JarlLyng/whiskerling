@@ -13,6 +13,12 @@ All notable changes to Whiskerling are listed here. The format follows
   autumn, flowers and butterflies come in spring and summer, and fireflies on summer nights.
   South of the equator the seasons are the other way round. Debug builds take
   `-debugSeason winter|spring|summer|autumn` ([#16](https://github.com/JarlLyng/whiskerling/issues/16)).
+- The grown-up cat. When it grows up there's a party in the room, with balloons and a cake, on
+  the next visit if nobody was there that day. It has a birthday each year on the day it was
+  adopted (28 February in other years for a 29 February cat), with its age in a speech bubble and
+  a candle for each year, also when the app wasn't open on the day. A content grown-up cat now and
+  then naps on the rug, stretches with a yawn, or brings the child a ball of yarn; a tap wakes it
+  ([#17](https://github.com/JarlLyng/whiskerling/issues/17)).
 
 ### Changed
 - The game follows Reduce Motion. Hearts and sparkles fade where they appear instead of flying

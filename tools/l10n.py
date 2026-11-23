@@ -187,6 +187,13 @@ DA = {
     "say.fishStart": "Fisk! Dem fanger vi! 🐟",
     "say.fishBye": "Farvel, fisk! Svøm hjem 🐟",
     "say.fishPerfect": "Alle sammen! 🎉",
+    "toast.birthday": "Tillykke med fødselsdagen, %@! 🎂",
+    "say.birthdayOne": "Jeg er 1 år! 🎂",
+    "say.birthdayYears": "Jeg er %lld år! 🎂",
+    "say.party": "Er det en fest for mig? 🎉",
+    "say.stretch": "Aaah, det var godt 😺",
+    "say.toy": "Den er til dig! 🧶",
+    "say.napWake": "Mrr? Jeg tog en lur 😺",
 }
 
 PATTERN = re.compile(r'String\(localized:\s*"([^"]+)",\s*defaultValue:\s*"((?:[^"\\]|\\.)*)"\)')

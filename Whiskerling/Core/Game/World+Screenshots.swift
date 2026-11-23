@@ -24,6 +24,14 @@ extension World {
             }
         case "wardrobe":
             cat.x = min(max(W * 0.68, G.minX), G.maxX); cat.happyT = 1_000
+        case "party": // a first birthday (#17)
+            cat.x = min(max(W * 0.6, G.minX), G.maxX); cat.happyT = 1_000
+            party = Party(kind: .birthday(1), t: Party.length / 2)
+            say(L10n.birthdayAge(1), 10_000)
+            bubble?.t = 9_999
+        case "nap": // a grown-up habit: a nap on the rug, with the yarn it brought over (#17)
+            cat.x = min(max(W * 0.6, G.minX), G.maxX); cat.activity = .nap
+            toy = Toy(x: W * 0.42, y: G.catY + 4 * U)
         default: // the room, also behind the parental gate
             cat.x = W * 0.58; cat.petT = 1_000
             bowl = (.kibble, 1)
