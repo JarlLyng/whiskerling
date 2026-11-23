@@ -100,9 +100,37 @@ extension World {
         case .dawn, .dusk:
             p.circ(w.minX + w.width * (sky == .dawn ? 0.25 : 0.75), w.minY + w.height * 0.74, 22 * U); p.fill(Color(hex: "FFB347"))
         }
-        p.ell(w.minX + w.width * 0.25, w.minY + w.height * 1.05, w.width * 0.55, w.height * 0.32); p.fill(hill[0])
-        p.ell(w.minX + w.width * 0.8, w.minY + w.height * 1.1, w.width * 0.6, w.height * 0.36); p.fill(hill[1])
+        let night = sky == .night
+        p.ell(w.minX + w.width * 0.25, w.minY + w.height * 1.05, w.width * 0.55, w.height * 0.32)
+        p.fill(season.ground(hill[0], night: night))
+        p.ell(w.minX + w.width * 0.8, w.minY + w.height * 1.1, w.width * 0.6, w.height * 0.36)
+        p.fill(season.ground(hill[1], night: night))
+        drawFalling(p, in: w, count: 16, seed: 20)
         p.restore()
+    }
+
+    /// What drifts past in this season: snow in winter, blossom in spring, leaves in autumn
+    /// (#16). Slow, and standing still with Reduce Motion.
+    func drawFalling(_ p: Pen, in r: CGRect, count: Int, seed: Double) {
+        guard season != .summer else { return }
+        let t = reduceMotion ? 0 : T
+        for i in 0..<count {
+            let speed = (season == .winter ? 14 : 20) + World.hash01(i, seed + 1) * 10
+            let span = r.height + 30 * U
+            let y = r.minY - 15 * U + (World.hash01(i, seed + 2) * span + t * speed * U).truncatingRemainder(dividingBy: span)
+            let x = r.minX + World.hash01(i, seed) * r.width + sin(t * 0.7 + CGFloat(i)) * 10 * U
+            switch season {
+            case .winter:
+                p.circ(x, y, (1.6 + World.hash01(i, seed + 3) * 1.6) * U); p.fill(.rgba(255, 255, 255, 0.9))
+            case .spring:
+                p.ell(x, y, 3.4 * U, 2.2 * U, t * 1.5 + CGFloat(i)); p.fill(Color(hex: "FFC2D6"))
+            case .autumn:
+                let leaf = [Color(hex: "E3913B"), Color(hex: "D2553F"), Color(hex: "E8B23E")][i % 3]
+                p.ell(x, y, 5 * U, 2.6 * U, t * 1.2 + CGFloat(i)); p.fill(leaf)
+            case .summer:
+                break
+            }
+        }
     }
 
     private func drawClouds(_ p: Pen) {
@@ -178,6 +206,14 @@ extension World {
         p.strokeColor = .rgba(160, 120, 80, 0.35); p.lineWidth = 1.5
         p.strokeRect(w.minX - f / 2, w.minY - f / 2, w.width + f, w.height + f)
         p.rr(w.minX - 16 * U, w.maxY + f / 2 - 2, w.width + 32 * U, 12 * U, 4 * U); p.fill(.white); p.stroke()
+        if season == .winter {
+            // snow piled against the glass, on the outside of the sill
+            p.save()
+            p.beginPath(); p.rect(w.minX, w.minY, w.width, w.height); p.clip()
+            p.ell(w.minX + w.width * 0.22, w.maxY, w.width * 0.3, 9 * U); p.fill(.white)
+            p.ell(w.minX + w.width * 0.7, w.maxY, w.width * 0.36, 7 * U); p.fill(.white)
+            p.restore()
+        }
         let ry = w.minY - 24 * U
         p.beginPath(); p.moveTo(w.minX - 46 * U, ry); p.lineTo(w.maxX + 46 * U, ry); p.stroke(Color(hex: "B07D4F"), 6 * U)
         p.fillColor = Color(hex: "B07D4F")
