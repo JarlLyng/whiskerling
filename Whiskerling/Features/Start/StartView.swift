@@ -35,7 +35,9 @@ struct StartView: View {
             VStack(spacing: low ? Tokens.Spacing.md : Tokens.Spacing.lg) {
                 Text(verbatim: "Whiskerling 🐾").font(Theme.font(44, .heavy))
                     .lineLimit(1).minimumScaleFactor(0.5)
-                Text(verbatim: L10n.chooseKitten).font(Theme.font(20, .semibold)).foregroundStyle(Theme.muted)
+                // A second kitten (#21): a friend for the cat there is
+                Text(verbatim: model.adopting ? L10n.adoptTitle(model.hud.name) : L10n.chooseKitten)
+                    .font(Theme.font(20, .semibold)).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: Tokens.Spacing.md), count: low ? 5 : 3),
                           spacing: Tokens.Spacing.md) {
                     ForEach(Catalog.coats) { c in coatButton(c) }
@@ -58,6 +60,11 @@ struct StartView: View {
                     Text(verbatim: L10n.bringHome).font(Theme.font(24)).padding(.horizontal, 36).frame(height: 68)
                 }
                 .buttonStyle(PillButtonStyle(color: Theme.go))
+                if model.adopting {
+                    Button(L10n.adoptCancel, action: model.cancelAdopt)
+                        .font(Theme.font(18))
+                        .foregroundStyle(Theme.muted)
+                }
             }
             .padding(narrow || low ? Tokens.Spacing.lg : Tokens.Spacing.xxl)
             .frame(maxWidth: low ? 860 : 680)
@@ -98,6 +105,7 @@ struct StartView: View {
         let trimmed = name.split(whereSeparator: \.isWhitespace).joined(separator: " ")
         let final = trimmed.isEmpty ? L10n.namePlaceholder : String(trimmed.prefix(14))
         let chosen = Catalog.coat(coat)
-        model.startNewCat(name: final, coat: chosen.isFree || model.isPro ? chosen.id : "orange")
+        let id = chosen.isFree || model.isPro ? chosen.id : "orange"
+        if model.adopting { model.adopt(name: final, coat: id) } else { model.startNewCat(name: final, coat: id) }
     }
 }

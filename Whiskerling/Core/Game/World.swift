@@ -15,7 +15,7 @@ enum WorldEvent {
     case fishingStarted
 }
 
-struct Bubble { var text: String; var t: CGFloat; var d: CGFloat }
+struct Bubble { var text: String; var t: CGFloat; var d: CGFloat; var buddy = false }
 
 enum ParticleKind { case heart, bubble, sparkle, zzz, text }
 
@@ -100,6 +100,10 @@ final class World {
     var bubble: Bubble?
     var parts: [Particle] = []
     var cat = CatState()
+    /// The second cat's place and what it's doing (#21); its saved state is `save.companion`.
+    var buddy = CatState()
+    var bowlServing = 0, buddyServing = -1, litterTurnBuddy = false, togetherT: CGFloat = 25
+    var lastBowl: (food: Food, amount: CGFloat)?
     var feather = Feather()
     var sponge = CGPoint.zero
     var bowl: (food: Food, amount: CGFloat)?
@@ -232,6 +236,7 @@ final class World {
 
     func removeCat() {
         save = nil
+        buddy = CatState()
         SaveStore.save(nil, to: defaults)
         bubble = nil; bowl = nil; parts.removeAll(); ripples.removeAll()
         setMode(.normal)
@@ -245,6 +250,7 @@ final class World {
             save?.room = nil // the basket is indoors
             cat.x = G.bed.x; cat.y = G.bed.y; cat.activity = .sleep; cat.zT = 1
         }
+        placeBuddy()
     }
 
     func persist() { SaveStore.save(save, to: defaults) }
@@ -259,6 +265,8 @@ final class World {
     private func afterAway(_ away: TimeInterval) {
         checkStage(celebrate: true)
         checkBirthday()
+        checkBuddyStage()
+        checkBuddyBirthday()
         dailyBonus()
         if save!.lightsOff && !SaveState.isNight(Date()) && save!.needs.energy >= 60 {
             save!.lightsOff = false
@@ -315,14 +323,18 @@ final class World {
         let now = Date()
         let gap = now.timeIntervalSince(save!.last)
         if gap > 8 { afterAway(save!.catchUp(to: now)) } else if gap > 0 {
-            save!.liveTick(seconds: gap, sleeping: cat.activity == .sleep)
+            save!.liveTick(seconds: gap, sleeping: cat.activity == .sleep, companionSleeping: buddy.activity == .sleep)
             save!.last = now
         }
         stageT -= dt
-        if stageT <= 0 { stageT = 5; checkStage(celebrate: true); checkBirthday(); checkLateParty(); dailyBonus() }
+        if stageT <= 0 {
+            stageT = 5
+            checkStage(celebrate: true); checkBirthday(); checkLateParty(); checkBuddyStage(); checkBuddyBirthday(); dailyBonus()
+        }
         let phase = SkyPhase.at(now)
         if phase != sky { sky = phase; season = Season.at(now) }
         updateCat(dt)
+        updateBuddy(dt)
         updateGrownUp(dt)
         updateParts(dt)
         updateGarden(dt)
@@ -357,7 +369,7 @@ final class World {
         feather.x = min(max(feather.x, 50), max(50, W - 50)); feather.tx = min(max(feather.tx, 50), max(50, W - 50))
         feather.y = min(max(feather.y, featherTop), G.catY - 90 * U); feather.ty = min(max(feather.ty, featherTop), G.catY - 90 * U)
         sponge = CGPoint(x: min(max(sponge.x, 0), W), y: min(max(sponge.y, 0), H))
-        if save != nil { snapCat() }
+        if save != nil { snapCat(); snapBuddy() }
         #if DEBUG
         if let scene = screenshotScene { stageScreenshot(scene) }
         #endif
@@ -414,17 +426,22 @@ final class World {
 
     var mood: String {
         guard let n = save?.needs else { return "ok" }
+        return World.moodOf(n, poop: save!.poop)
+    }
+
+    static func moodOf(_ n: Needs, poop: Int) -> String {
         if n.lowest < 15 { return "sad" }
         if n.lowest < 35 { return "meh" }
         if n.average >= 65 { return "happy" }
         return "ok"
     }
 
-    func needLine() -> String? {
+    func needLine(for needs: Needs? = nil) -> String? {
         guard let s = save else { return nil }
         if s.poop >= 2 { return L10n.litterSmells }
-        let list: [(Double, String)] = [(s.needs.food, L10n.hungry), (s.needs.energy, L10n.tired),
-                                        (s.needs.clean, L10n.dirty), (s.needs.fun, L10n.bored)]
+        let n = needs ?? s.needs
+        let list: [(Double, String)] = [(n.food, L10n.hungry), (n.energy, L10n.tired),
+                                        (n.clean, L10n.dirty), (n.fun, L10n.bored)]
         if let lowest = list.min(by: { $0.0 < $1.0 }), lowest.0 < 40 { return lowest.1 }
         if SaveState.isNight(Date()) && !s.lightsOff { return L10n.bedtime }
         return nil
@@ -472,8 +489,10 @@ final class World {
             if mode == .normal && cat.timer <= 0 && cat.petT <= 0 {
                 if startHabit() {
                     // a grown-up habit now and then (#17)
-                } else if save!.poop < 3 && poopClock >= World.poopEvery && save!.needs.food > 20 {
+                } else if save!.poop < 3 && poopClock >= poopEveryNow && !(hasCompanion && litterTurnBuddy)
+                            && save!.needs.food > 20 {
                     poopClock = 0
+                    litterTurnBuddy = hasCompanion // the other cat goes next time
                     goTo(G.litter.x, G.litter.y, speed: 0.9, tag: "litter") { [weak self] in
                         guard let self, self.mode == .normal, self.save?.lightsOff == false else { return }
                         self.cat.activity = .poop; self.cat.timer = 2.6
@@ -537,7 +556,13 @@ final class World {
         if cat.needT <= 0 {
             cat.needT = .random(in: 16...28)
             if mode == .normal && !save!.lightsOff && bubble == nil && (cat.activity == .idle || cat.activity == .walk) {
-                if let line = needLine() { meowSay(line) } else if Double.random(in: 0...1) < 0.4 { say(L10n.happyLines.randomElement()!, 2.6) }
+                if buddyNeedsMore(), let line = needLine(for: save!.companion!.needs) {
+                    buddySay(line)
+                } else if let line = needLine() {
+                    meowSay(line)
+                } else if Double.random(in: 0...1) < 0.4 {
+                    say(L10n.happyLines.randomElement()!, 2.6)
+                }
             }
         }
         if modeEndT > 0 {
@@ -583,7 +608,8 @@ final class World {
 
     func feed(_ food: Food) {
         guard save != nil else { return }
-        if save!.needs.food >= 96 { meowSay(L10n.full); return }
+        let otherHungry = (save!.companion?.needs.food ?? 100) < 96
+        if save!.needs.food >= 96 && !otherHungry { meowSay(L10n.full); return }
         if food.isTreat {
             let now = Date()
             save!.treats = save!.treats.filter { now.timeIntervalSince($0) < 15 * 60 }
@@ -591,8 +617,11 @@ final class World {
             save!.treats.append(now)
         }
         enterRoom(.living) // the bowl is indoors
-        bowl = (food, 1)
+        bowl = (food, 1); lastBowl = bowl
+        bowlServing += 1
         cat.jump = nil
+        callBuddyToBowl() // one bowl, both come and eat (#21)
+        if save!.needs.food >= 96 { return } // only the other cat is hungry
         goTo(G.bowl.x + 78 * objScale(G.catY), G.catY, speed: 1.2, tag: "bowl") { [weak self] in
             guard let self, self.bowl != nil else { return }
             self.cat.activity = .eat; self.cat.timer = 3.2; self.cat.eatT = 0
@@ -606,7 +635,8 @@ final class World {
         save!.needs.food += b.food.food
         save!.needs.fun += b.food.fun
         save!.needs.clamp()
-        bowl = nil
+        // the bowl is put away once both have eaten
+        if !(hasCompanion && (buddy.activity == .eat || buddy.walk?.tag == "bowl")) { bowl = nil }
         if needed || b.food.isTreat { addHearts(1, at: CGPoint(x: G.bowl.x, y: G.bowl.y - 60 * U)) }
         meowSay(L10n.ateLines.randomElement()!)
     }
@@ -706,7 +736,7 @@ final class World {
     @discardableResult
     func startWash() -> Bool {
         guard let s = save, !s.lightsOff else { return false }
-        if s.needs.clean >= 97 && s.poop == 0 { meowSay(L10n.alreadyClean); return false }
+        if s.needs.clean >= 97 && s.poop == 0 && (s.companion?.needs.clean ?? 100) >= 97 { meowSay(L10n.alreadyClean); return false }
         setMode(.wash)
         washGain = 0; washDone = false; bowl = nil; cat.jump = nil
         sponge = CGPoint(x: W * 0.55 - 170 * U, y: G.catY - 70 * U)
@@ -734,8 +764,9 @@ final class World {
             washDone = true
             meowSay(L10n.squeakyClean, 2.6)
             burst(.sparkle, cat.x, cat.y - 120 * U, count: 14, speed: 160 * U, life: 1, size: 9 * U)
-            // indoors the bath waits for the litter box too; it can't be reached from the garden
-            if save!.poop == 0 || room == .garden { modeEndT = 1.8 }
+            // indoors the bath waits for the litter box too (it can't be reached from the garden),
+            // and for the other cat (#21)
+            checkWashDone()
         }
     }
 
@@ -750,7 +781,7 @@ final class World {
         addHearts(1, at: CGPoint(x: G.litter.x, y: G.litter.y - 80 * s))
         if save!.poop == 0 {
             say(L10n.litterCleaned, 2.5)
-            if mode == .wash && save!.needs.clean >= 99 { modeEndT = 1.8 }
+            checkWashDone()
         }
         hudDue = true
         return true
@@ -837,6 +868,8 @@ final class World {
         case .hide: tapHide(p); return
         case .normal: break
         }
+        // a touch on the other cat shows it in the top bar, then strokes and taps work on it (#21)
+        if !ptrOnCat && hitBuddy(p) { switchCats(); ptrOnCat = true; return }
         if s.lightsOff || ptrOnCat { return }
         if hitLitter(p) { if !scoop() { say(L10n.litterAlreadyClean, 1.6) } } else if hitBowl(p) { post(.openFood) } else if hitPond(p) {
             if startFishing() { post(.fishingStarted) }
@@ -851,7 +884,7 @@ final class World {
         case .play: featherTo(p); return
         case .wash:
             sponge = p
-            if cat.activity == .wash && hitCat(p) { scrub(p, d) }
+            if cat.activity == .wash && hitCat(p) { scrub(p, d) } else if hitBuddy(p) { scrubBuddy(p, d) }
             return
         case .fish, .hide: return
         case .normal: break

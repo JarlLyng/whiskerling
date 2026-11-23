@@ -98,6 +98,13 @@ states, open issues and plans go stale: they live in `CHANGELOG.md`, GitHub and 
 - Grows from kitten (days 1 to 2) to young cat (to day 6) to grown-up cat, with a party (balloons
   and a cake) when it grows up and on each yearly birthday. A content grown-up cat now and then
   naps on the rug, stretches, or brings the child a ball of yarn.
+- A second cat (Pro): once the first is grown up and alone, a "+" next to its name lets a kitten
+  come to live with it (two cats at most). One bowl feeds both, the light puts both in the basket,
+  and the litter box is shared; the sponge and a stroke go to the cat touched. Fun and clean fall
+  at two thirds of the speed with two, and each visits the litter box every six awake hours. The
+  top bar shows one cat, the other is a small picture to tap; hearts and the room are shared.
+  They groom each other, chase, nap together and sit at the window. Losing Pro removes no cat;
+  Start over removes both.
 - A real-time cat clock, and a window whose sky follows the time of day.
 - Seasons from the iPad's date (the other way round south of the equator): snow, blossom or
   leaves past the window, and in the garden snow, blossom, apples or orange leaves.
@@ -114,7 +121,7 @@ states, open issues and plans go stale: they live in `CHANGELOG.md`, GitHub and 
 - No ads, subscription, analytics or crash reporting (Kids category).
 - No multiplayer, chat, sharing or social features. No push notifications.
 - No iPhone, Mac or Apple Watch version (iPad only for now).
-- The cat cannot die or run away.
+- The cat cannot die or run away, and neither can a second cat; only Start over removes cats.
 - No games besides the feather, Catch the fish and hide and seek; no rooms besides the living room and garden.
 - No languages beyond English and Danish.
 

@@ -24,6 +24,14 @@ extension World {
             }
         case "wardrobe":
             cat.x = min(max(W * 0.68, G.minX), G.maxX); cat.happyT = 1_000
+        case "two": // the grown cat and its kitten (#21)
+            cat.x = min(max(W * 0.64, G.minX), G.maxX); cat.happyT = 1_000; cat.look = -0.8
+            placeBuddy()
+            buddy.x = min(max(W * 0.4, G.minX), G.maxX); buddy.happyT = 1_000; buddy.look = 0.8
+            buddy.timer = 1_000; buddy.blinkT = 1_000
+        case "twonight":
+            cat.x = G.bed.x; cat.y = G.bed.y; cat.activity = .sleep
+            placeBuddy()
         case "hide": // hidden, or counting (#20)
             let spot = UserDefaults.standard.string(forKey: "hideSpot") ?? "basket"
             setMode(.hide); cat.activity = .hide

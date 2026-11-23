@@ -143,6 +143,7 @@ extension World {
         hiding = g
         cat.x = spot.out.x; cat.y = spot.out.y
         cat.hop = 0.35; cat.happyT = 1.4; cat.activity = .hide
+        buddy.happyT = 1.4 // the other cat cheers (#21)
         save!.needs.fun = min(100, save!.needs.fun + 3)
         save!.needs.energy = max(0, save!.needs.energy - 0.6)
         let at = hidePoints(spot).first ?? spot.out

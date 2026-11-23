@@ -10,6 +10,12 @@ struct HUD: Equatable {
     var sound = true
     var hasNewItems = false
     var room = Room.living
+    /// The other cat, shown small next to the name (#21).
+    var otherName: String?
+    var otherCoat: String?
+    var otherWear = Wear()
+    /// The first cat is grown up and alone: a "+" offers a kitten.
+    var canAdopt = false
 }
 
 enum Overlay { case food, wardrobe, games }
@@ -22,7 +28,7 @@ enum AdultRoute: String, Identifiable {
 /// The locked thing a child tapped on the way to the paywall. Once Pro is bought (or restored),
 /// the paywall closes by itself and the tap is finished, so the child doesn't have to tap again.
 enum ProUnlock: Equatable {
-    case garden, fish, hide, coat(String), item(String), startCoat(String), decor(String)
+    case garden, fish, hide, adopt, coat(String), item(String), startCoat(String), decor(String)
 }
 
 /// The bridge between the game world (drawn every frame) and the SwiftUI screens.
@@ -42,6 +48,8 @@ final class GameModel {
     var toast: String?
     /// A Pro coat bought from the start screen, for the start screen to pick.
     var startCoat: String?
+    /// The start screen is open for a second kitten (#21).
+    var adopting = false
 
     @ObservationIgnored private var toastQueue: [String] = []
     @ObservationIgnored private var syncScheduled = false
@@ -95,7 +103,9 @@ final class GameModel {
         let day = Int(Date().timeIntervalSince(s.born) / 86_400) + 1
         let newItems = Catalog.items.contains { $0.cost > s.seenHearts && $0.cost <= s.hearts && ($0.isFree || isPro) }
         let next = HUD(name: s.name, needs: s.needs, hearts: s.hearts, stageLabel: L10n.stageDay(stage.name, day),
-                       lightsOff: s.lightsOff, sound: s.sound, hasNewItems: newItems, room: world.room)
+                       lightsOff: s.lightsOff, sound: s.sound, hasNewItems: newItems, room: world.room,
+                       otherName: s.companion?.name, otherCoat: s.companion?.coat, otherWear: s.companion?.wear ?? Wear(),
+                       canAdopt: world.canAdopt)
         if next != hud { hud = next }
     }
 
@@ -211,6 +221,36 @@ final class GameModel {
         sync()
     }
 
+    // MARK: Two cats (#21)
+
+    /// The "+" next to a grown-up cat's name: a kitten to live with it, with Pro.
+    func tapAdopt() {
+        sound.click()
+        guard world.canAdopt, mode == .normal else { return }
+        if !isPro { askForPro(.adopt); return }
+        adopting = true
+    }
+
+    func adopt(name: String, coat: String) {
+        world.adopt(name: name, coat: coat)
+        adopting = false
+        overlay = nil
+        sync()
+    }
+
+    func cancelAdopt() {
+        sound.click()
+        adopting = false
+    }
+
+    /// The other cat's picture next to the name: show that cat instead.
+    func switchCats() {
+        sound.click()
+        guard mode == .normal else { return }
+        world.switchCats()
+        sync()
+    }
+
     func tapDone() {
         sound.click()
         world.setMode(.normal)
@@ -271,6 +311,7 @@ final class GameModel {
     func startOver() {
         world.removeCat()
         hasCat = false
+        adopting = false
         overlay = nil
         adult = nil
         mode = .normal
@@ -311,6 +352,7 @@ final class GameModel {
         case .coat(let id): choose(coat: Catalog.coat(id))
         case .item(let id): if let item = Catalog.items.first(where: { $0.id == id }) { choose(item: item) }
         case .startCoat(let id): startCoat = id
+        case .adopt: if world.canAdopt { adopting = true }
         case .decor(let id): if let decor = Catalog.decor.first(where: { $0.id == id }) { choose(decor: decor) }
         }
     }

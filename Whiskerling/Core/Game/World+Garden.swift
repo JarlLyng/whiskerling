@@ -47,6 +47,7 @@ extension World {
         cat.x = r == .garden ? G.minX : G.maxX
         cat.y = G.catY
         goTo(W * 0.55, G.catY, speed: 0.9)
+        buddyFollows(into: r)
         ripples.removeAll()
         hudDue = true
         persist()

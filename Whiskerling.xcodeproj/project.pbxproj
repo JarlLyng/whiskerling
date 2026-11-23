@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		049A993A168384DF2E878AB9 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACB9678040E3EF80CC7DD4B7 /* GameView.swift */; };
+		11C6706D1DA074ADA65A75C2 /* World+Buddy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49F37AC0D149DBA4110B0E5 /* World+Buddy.swift */; };
 		13D63195C6D28CBC4B500CD4 /* SeasonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6405745A7C70464ED1BC2530 /* SeasonTests.swift */; };
 		18575D2570BFBCC69022667E /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3E6C17EAFADD397824EAEE /* L10n.swift */; };
 		18C668CCFD205BE9DF290312 /* World+Garden.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64267EE8E0C5A51C873A6175 /* World+Garden.swift */; };
@@ -35,6 +36,7 @@
 		8675F6646AC523094B4895B1 /* SoundEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C24FDBE6FA7727580A2F9573 /* SoundEngine.swift */; };
 		89E26B58F8983AA549EE124A /* SaveState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53846425C040C79A5635B3EF /* SaveState.swift */; };
 		971D780F1050A87066B7464B /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = CE78C16871B13419E0CBD6AF /* Localizable.xcstrings */; };
+		A13ECACB7671516603E64C7F /* SecondCatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDE422BC40647529452A4EAF /* SecondCatTests.swift */; };
 		A2C5EA8B66459550BC005D64 /* GardenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B26C0DEBDE3739A16B4234E0 /* GardenTests.swift */; };
 		A88E73DE7B7B2186EDB3C373 /* World+Decor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0779754160B2F19FC68218E3 /* World+Decor.swift */; };
 		AF632B934329217F1431DC06 /* Overlays.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13930A045131887F7ABFD5C6 /* Overlays.swift */; };
@@ -100,7 +102,9 @@
 		C62752AD9D8AE9B7D187B1EF /* FeedbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedbackTests.swift; sourceTree = "<group>"; };
 		CE78C16871B13419E0CBD6AF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		CE9E3DC534301465458C0D09 /* StoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreTests.swift; sourceTree = "<group>"; };
+		D49F37AC0D149DBA4110B0E5 /* World+Buddy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "World+Buddy.swift"; sourceTree = "<group>"; };
 		D6B61CE4EF998800238892EA /* Whiskerling.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Whiskerling.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDE422BC40647529452A4EAF /* SecondCatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondCatTests.swift; sourceTree = "<group>"; };
 		DE39C7A043E3E8A4D5304E48 /* CatArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatArt.swift; sourceTree = "<group>"; };
 		E354AACFC6E3D4BE33D2F94A /* CoatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoatTests.swift; sourceTree = "<group>"; };
 		E3B37DB8A83629A51FAC38D6 /* DecorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecorTests.swift; sourceTree = "<group>"; };
@@ -138,6 +142,7 @@
 				97DB26A85C60085B08433E7B /* ReduceMotionTests.swift */,
 				EEDD935FE447057E479FBF0B /* SaveStateTests.swift */,
 				6405745A7C70464ED1BC2530 /* SeasonTests.swift */,
+				DDE422BC40647529452A4EAF /* SecondCatTests.swift */,
 				CE9E3DC534301465458C0D09 /* StoreTests.swift */,
 				85BEE0D8C66DB3E55C9049B8 /* WindowSizeTests.swift */,
 			);
@@ -187,6 +192,7 @@
 				53846425C040C79A5635B3EF /* SaveState.swift */,
 				F8F2A5B2B6926AF2A1A33D60 /* Season.swift */,
 				EF7A541ECB55663A3F9B05DB /* World.swift */,
+				D49F37AC0D149DBA4110B0E5 /* World+Buddy.swift */,
 				0779754160B2F19FC68218E3 /* World+Decor.swift */,
 				0DC68B27F5A3D3309FEABF21 /* World+Draw.swift */,
 				64267EE8E0C5A51C873A6175 /* World+Garden.swift */,
@@ -417,6 +423,7 @@
 				D5E89C9F4931FAFB14312EF4 /* Store.swift in Sources */,
 				B72E66F18E66C1C365029B2C /* Theme.swift in Sources */,
 				5F634D50BC15C8C8E2A91CBB /* WhiskerlingApp.swift in Sources */,
+				11C6706D1DA074ADA65A75C2 /* World+Buddy.swift in Sources */,
 				A88E73DE7B7B2186EDB3C373 /* World+Decor.swift in Sources */,
 				6E60A221E41E1A2686E27C2C /* World+Draw.swift in Sources */,
 				18C668CCFD205BE9DF290312 /* World+Garden.swift in Sources */,
@@ -443,6 +450,7 @@
 				2737322097B86D5724175E7D /* ReduceMotionTests.swift in Sources */,
 				C406B795EED0027E68BA2150 /* SaveStateTests.swift in Sources */,
 				13D63195C6D28CBC4B500CD4 /* SeasonTests.swift in Sources */,
+				A13ECACB7671516603E64C7F /* SecondCatTests.swift in Sources */,
 				F4095287E79673134967B498 /* StoreTests.swift in Sources */,
 				F5629FBF75919BF41FE9ABD0 /* WindowSizeTests.swift in Sources */,
 			);

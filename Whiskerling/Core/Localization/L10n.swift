@@ -151,6 +151,7 @@ enum L10n {
     static var menuSoundOn: String { String(localized: "menu.soundOn", defaultValue: "Sound: on") }
     static var menuSoundOff: String { String(localized: "menu.soundOff", defaultValue: "Sound: off") }
     static var startOver: String { String(localized: "menu.startOver", defaultValue: "Start over with a new cat") }
+    static func twoNames(_ first: String, _ second: String) -> String { String(localized: "menu.twoNames", defaultValue: "\(first) and \(second)") }
     static func startOverConfirm(_ name: String) -> String {
         String(localized: "menu.startOverConfirm", defaultValue: "Are you sure? Tap again to say goodbye to \(name).")
     }
@@ -167,6 +168,20 @@ enum L10n {
     static var proGardenTitle: String { String(localized: "pro.garden.title", defaultValue: "The garden and two games") }
     static var proGardenBody: String {
         String(localized: "pro.garden.body", defaultValue: "An extra room with a pond, a tree and butterflies, and the games Catch the fish and Hide and seek.")
+    }
+    static var proSecondCatTitle: String { String(localized: "pro.secondCat.title", defaultValue: "A second cat") }
+    static var proSecondCatBody: String {
+        String(localized: "pro.secondCat.body", defaultValue: "Once the first cat is grown up, a kitten can come to live with it.")
+    }
+    static var adoptButton: String { String(localized: "adopt.button", defaultValue: "A kitten to live with your cat") }
+    static func adoptTitle(_ name: String) -> String {
+        String(localized: "adopt.title", defaultValue: "Choose a kitten to live with \(name)")
+    }
+    static var adoptCancel: String { String(localized: "adopt.cancel", defaultValue: "Not now") }
+    static func showCat(_ name: String) -> String { String(localized: "adopt.show", defaultValue: "Show \(name)") }
+    static func newFriend(_ name: String) -> String { String(localized: "say.newFriend", defaultValue: "Hi, \(name)! Welcome home 😺") }
+    static func adopted(_ name: String, _ friend: String) -> String {
+        String(localized: "toast.adopted", defaultValue: "\(name) has come to live with \(friend)! 🏠")
     }
     static var proFutureTitle: String { String(localized: "pro.future.title", defaultValue: "More to come") }
     static var proFutureBody: String {

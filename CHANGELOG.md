@@ -7,6 +7,14 @@ All notable changes to Whiskerling are listed here. The format follows
 ## [Unreleased]
 
 ### Added
+- A second cat with Pro. Once the first cat is grown up, a "+" next to its name lets a kitten come
+  to live with it. One bowl feeds both, the light puts both to bed in the basket, and the litter
+  box is shared, while the sponge and a stroke go to the cat that's touched. With company, fun
+  and clean fall more slowly and each cat visits the litter box less often, so two cats aren't
+  twice the chores. The top bar shows one cat at a time, with the other as a small picture to
+  tap. Each grows from its own adoption date, and the two groom each other, chase, nap together
+  and sit at the window. Losing Pro removes no cat, and Start over removes both
+  ([#21](https://github.com/JarlLyng/whiskerling/issues/21)).
 - Hide and seek, a new game with Pro, in the living room or the garden. While a big 1, 2, 3 counts,
   the cat hides with its ears or its tail peeking out: in the basket, behind the litter box, under
   the rug or behind the curtain indoors, and behind the apple tree, over the fence or behind the
