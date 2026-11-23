@@ -473,7 +473,7 @@ extension World {
         let bx = min(max(ax - bw / 2, 8), W - bw - 8)
         let by = max(6, ay - bh - 16)
         let age = b.d - b.t
-        let pop = 0.85 + 0.15 * min(max(age * 6, 0), 1)
+        let pop = reduceMotion ? 1 : 0.85 + 0.15 * min(max(age * 6, 0), 1)
         p.save()
         p.alpha = Double(min(max(min(age * 6, b.t * 3), 0), 1))
         p.translate(ax, by + bh); p.scale(pop, pop); p.translate(-ax, -(by + bh))
