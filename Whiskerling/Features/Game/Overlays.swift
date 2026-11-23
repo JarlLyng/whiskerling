@@ -5,14 +5,43 @@ struct FoodOverlay: View {
     let model: GameModel
 
     var body: some View {
-        ChoiceCard(title: L10n.foodTitle(model.hud.name), maxWidth: 600, onClose: { model.overlay = nil }) { fit in
-            ForEach(Food.allCases) { food in
+        // wider with the fourth choice, fish cookies (#38), so no name breaks in the middle
+        ChoiceCard(title: L10n.foodTitle(model.hud.name), maxWidth: model.hud.cookies > 0 ? 800 : 600,
+                   onClose: { model.overlay = nil }) { fit in
+            // fish cookies only while the kitchen's jar has some (#38)
+            ForEach(Food.allCases.filter { $0 != .cookie || model.hud.cookies > 0 }) { food in
                 Button { model.feed(food) } label: {
-                    ChoiceLabel(icon: food.icon, title: L10n.foodName(food), note: L10n.foodNote(food), fit: fit, tall: 150)
+                    ChoiceLabel(icon: food.icon, title: L10n.foodName(food),
+                                note: food == .cookie ? L10n.cookieNote(model.hud.cookies) : L10n.foodNote(food), fit: fit, tall: 150)
                 }
                 .buttonStyle(PillButtonStyle(color: Theme.feed))
             }
         }
+    }
+}
+
+/// Go to another room (#38): the living room, and with Pro the kitchen and the garden.
+struct RoomsOverlay: View {
+    let model: GameModel
+
+    var body: some View {
+        ChoiceCard(title: L10n.roomsTitle(model.hud.name), maxWidth: 720, onClose: { model.overlay = nil }) { fit in
+            room(.living, "🛋️", L10n.livingRoom, L10n.livingRoomNote, fit: fit)
+            room(.kitchen, "🍪", L10n.kitchen, L10n.kitchenNote, fit: fit)
+            room(.garden, "🌳", L10n.gardenRoom, L10n.gardenNote, fit: fit)
+        }
+    }
+
+    private func room(_ r: Room, _ icon: String, _ title: String, _ note: String, fit: ChoiceFit) -> some View {
+        let locked = r != .living && !model.isPro, here = model.hud.room == r
+        return Button { model.go(to: r) } label: {
+            ChoiceLabel(icon: icon, title: title, note: here ? L10n.youAreHere : (locked ? "🔒 " + L10n.askGrownUp : note),
+                        fit: fit, tall: 170, iconSize: 54, titleSize: 19)
+        }
+        .buttonStyle(PillButtonStyle(color: locked ? Theme.option : Theme.garden))
+        .opacity(locked ? 0.75 : (here ? 0.6 : 1))
+        .disabled(here)
+        .accessibilityLabel(Text(verbatim: locked ? "\(title), \(L10n.pro)" : title))
     }
 }
 

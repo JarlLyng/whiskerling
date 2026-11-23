@@ -61,12 +61,13 @@ struct Decor: Identifiable {
 }
 
 enum Food: String, CaseIterable, Identifiable {
-    case kibble, fish, shrimp
+    /// `cookie`: fish cookies baked in the kitchen (#38), offered only while the jar has some.
+    case kibble, fish, shrimp, cookie
     var id: String { rawValue }
-    var food: Double { switch self { case .kibble: 25; case .fish: 40; case .shrimp: 8 } }
-    var fun: Double { switch self { case .kibble: 0; case .fish: 5; case .shrimp: 15 } }
-    var isTreat: Bool { self == .shrimp }
-    var icon: String { switch self { case .kibble: "🥣"; case .fish: "🐟"; case .shrimp: "🦐" } }
+    var food: Double { switch self { case .kibble: 25; case .fish: 40; case .shrimp: 8; case .cookie: 10 } }
+    var fun: Double { switch self { case .kibble: 0; case .fish: 5; case .shrimp: 15; case .cookie: 12 } }
+    var isTreat: Bool { self == .shrimp || self == .cookie }
+    var icon: String { switch self { case .kibble: "🥣"; case .fish: "🐟"; case .shrimp: "🦐"; case .cookie: "🍪" } }
 }
 
 enum Catalog {

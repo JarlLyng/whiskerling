@@ -7,7 +7,8 @@ import Foundation
 /// checking the grown-up cat, `decor` and `decornight` for the room with everything put up, and
 /// `hide` for hide and seek: the cat hidden at `-hideSpot <id>` (basket, litter, rug or curtain
 /// indoors; tree, fenceLeft, fenceRight or pond in the garden), or `-hideSpot count` for the
-/// counting, and `two` and `twonight` for two cats (#21). The sample cat lives in its own UserDefaults suite, so a real cat is
+/// counting, `two` and `twonight` for two cats (#21), and `kitchen` and `bake` for the kitchen (#38),
+/// `bake` at `-bakeStep ingredients|stir|cut|oven|baking|done`. The sample cat lives in its own UserDefaults suite, so a real cat is
 /// never touched, and Pro is shown as bought.
 extension GameModel {
     static var screenshotScene: String? {
@@ -39,9 +40,14 @@ extension GameModel {
             kitten.wear = Wear(neck: "bell")
             s.companion = kitten
             if scene == "twonight" { s.lightsOff = true; s.needs.energy = 46; s.companion!.needs.energy = 46 }
+        case "kitchen", "bake": // the kitchen (#38)
+            s.room = Room.kitchen.rawValue
+            s.cookies = 5
+            s.wear = Wear(head: "bow")
         case "hide": // hide and seek (#20)
             let spot = UserDefaults.standard.string(forKey: "hideSpot") ?? "basket"
             if ["tree", "fenceLeft", "fenceRight", "pond"].contains(spot) { s.room = Room.garden.rawValue }
+            if ["sink", "fridgeTop", "fridgeSide", "cupboard"].contains(spot) { s.room = Room.kitchen.rawValue }
             s.wear = Wear(head: "bow")
         case "night":
             s.lightsOff = true
@@ -79,6 +85,9 @@ extension GameModel {
         case "hide":
             mode = .hide
             modeHint = L10n.hideHint(s.name)
+        case "bake":
+            mode = .bake
+            modeHint = L10n.bakeHintCut
         default:
             break
         }

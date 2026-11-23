@@ -13,9 +13,12 @@ extension World {
 
     func draw(_ p: Pen) {
         let garden = room == .garden
-        if garden {
+        switch room {
+        case .garden:
             drawGardenScenery(p)
-        } else {
+        case .kitchen:
+            drawKitchenScenery(p) // #38
+        case .living:
             drawRoom(p)
             drawSky(p)
             drawClouds(p)
@@ -24,11 +27,17 @@ extension World {
             drawClock(p)
         }
         guard save != nil else { return }
-        var list: [(CGFloat, (Pen) -> Void)] = garden ? gardenProps() : [
-            (G.litter.y - 0.5, drawLitterBack), (G.litter.y + 0.5, drawLitterFront),
-            (G.bowl.y, drawBowl),
-            (G.bed.y - 0.5, drawBedBack), (G.bed.y + 0.5, drawBedFront)
-        ] + decorProps()
+        var list: [(CGFloat, (Pen) -> Void)]
+        switch room {
+        case .garden: list = gardenProps()
+        case .kitchen: list = []
+        case .living:
+            list = [
+                (G.litter.y - 0.5, drawLitterBack), (G.litter.y + 0.5, drawLitterFront),
+                (G.bowl.y, drawBowl),
+                (G.bed.y - 0.5, drawBedBack), (G.bed.y + 0.5, drawBedFront)
+            ] + decorProps()
+        }
         list += hideProps()
         list += buddyProps()
         if !catHidden { list.append((cat.y, drawTheCat)) }
@@ -36,12 +45,13 @@ extension World {
         if let toy { list.append((toy.carried ? cat.y + 1 : toy.y, drawToy)) }
         list.sort { $0.0 < $1.0 }
         for item in list { item.1(p) }
+        if mode == .bake { drawBake(p) }
         if mode == .play { drawFeather(p) }
         if mode == .wash { drawSponge(p) }
         if garden { drawGardenAir(p) }
         if save!.lightsOff {
             drawDark(p)
-            if !garden && shows("lights") { drawLights(p, glow: true) } // they shine in the dark
+            if room == .living && shows("lights") { drawLights(p, glow: true) } // they shine in the dark
         }
         drawParts(p)
         drawHideCount(p)
@@ -329,6 +339,8 @@ extension World {
                 for i in 0..<Int(ceil(3 * b.amount)) {
                     p.beginPath(); p.arc(-20 + CGFloat(i) * 20, -40, 8, 0.2 * .pi, 1.4 * .pi); p.stroke(Color(hex: "FF8A80"), 7)
                 }
+            case .cookie:
+                for i in 0..<Int(ceil(2 * b.amount)) { DecorArt.fishCookie(p, -12 + CGFloat(i) * 24, -40, 0.9) }
             }
         }
         p.restore()
@@ -397,6 +409,9 @@ extension World {
             pose.lookX = min(max((feather.x - hp.x) / (120 * U), -1), 1)
             pose.lookY = min(max((feather.y - hp.y) / (120 * U), -1), 1)
             pose.tilt = min(max((feather.x - cat.x) / (600 * U), -0.25), 0.25)
+        case .bake:
+            // up on the counter, watching the baking at the front
+            pose.eyes = baking?.step == .baking ? .wide : pose.eyes; pose.lookX = 0.6; pose.lookY = 0.8
         case .fish:
             pose.eyes = .wide; pose.lid = 0; pose.mouth = cat.jump != nil ? .open : .smile
             if let f = watchedFish() {

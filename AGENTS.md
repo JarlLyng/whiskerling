@@ -79,7 +79,7 @@ states, open issues and plans go stale: they live in `CHANGELOG.md`, GitHub and 
 
 - Start screen: choose one of nine coats (two free, seven with Pro) and type a name.
 - Four needs as bars: full, happy, energy, clean. They fall in real time, slower at night.
-- Feed (kibble, fish, shrimp treats with a limit), wash with a sponge, sleep (lights off, the cat
+- Feed (kibble, fish, shrimp treats and baked fish cookies, treats with a limit), wash with a sponge, sleep (lights off, the cat
   in its basket), and a litter box the cat uses now and then; tap it to clean it.
 - Play: the feather (free; the cat chases and pounces) or Catch the fish (Pro): twelve fish leap
   from the garden pond, the child taps them and the cat leaps after them. Nobody loses.
@@ -89,6 +89,11 @@ states, open issues and plans go stale: they live in `CHANGELOG.md`, GitHub and 
   meow from the hiding place as a hint now and then. Nobody loses.
 - The garden (Pro): a second room with a pond, an apple tree, flowers and butterflies, and stars
   and fireflies at night. Food and sleep bring the cat inside; the litter box is indoors.
+- The kitchen (Pro): a third room with a fridge, a counter, an oven and a cookie jar. A tap on the
+  mixing bowl bakes fish cookies: fish and flour, a stir, six fish cut out, the oven, and the
+  cookies go into the jar (24 at most), every tap moving it on. Feed offers them while the jar has
+  some. The cat sits on the counter while it bakes, looks in the fridge and now and then takes a
+  cookie. "Go to" chooses between the living room, the kitchen and the garden.
 - Stroke the cat to pet it (purring); tap it to hear what it needs.
 - Hearts come from caring and are never spent. They unlock accessories: bow and bell free;
   flowers, sunglasses, top hat, scarf and crown with Pro. Coats change in the wardrobe.
@@ -122,7 +127,7 @@ states, open issues and plans go stale: they live in `CHANGELOG.md`, GitHub and 
 - No multiplayer, chat, sharing or social features. No push notifications.
 - No iPhone, Mac or Apple Watch version (iPad only for now).
 - The cat cannot die or run away, and neither can a second cat; only Start over removes cats.
-- No games besides the feather, Catch the fish and hide and seek; no rooms besides the living room and garden.
+- No games besides the feather, Catch the fish and hide and seek; no rooms besides the living room, the kitchen and the garden.
 - No languages beyond English and Danish.
 
 ## Requirements
@@ -151,7 +156,8 @@ Under `Whiskerling/`:
 
 - `Core/Game/World.swift`: the game. `World+Draw.swift` and `Core/Drawing/CatArt.swift` draw the
   room and the cat; `World+Garden.swift` and `World+GardenDraw.swift` the garden and Catch the fish;
-  `World+Hide.swift` hide and seek.
+  `World+Hide.swift` hide and seek; `World+Kitchen.swift` and `World+Bake.swift` the kitchen and
+  baking; `World+Buddy.swift` the second cat.
 - `Core/Game/SaveState.swift`: the saved cat and time passing. `GameModel.swift`: the SwiftUI
   bridge and Pro unlocks. `Core/Store/Store.swift`: StoreKit 2.
 - `Features/`: the SwiftUI screens. At the repo root: `appstore/` (screenshots) and `public/`

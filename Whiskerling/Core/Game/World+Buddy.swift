@@ -118,9 +118,9 @@ extension World {
     func buddyFollows(into r: Room) {
         guard hasCompanion else { return }
         buddy.walk = nil; buddy.jump = nil; buddy.activity = .idle
-        buddy.x = r == .garden ? G.minX - 40 * U : G.maxX + 40 * U
+        buddy.x = r == .living ? G.maxX + 40 * U : G.minX - 40 * U
         buddy.y = G.catY
-        buddyGo(W * (r == .garden ? 0.35 : 0.7), G.catY, speed: 0.9)
+        buddyGo(W * (r == .living ? 0.7 : 0.35), G.catY, speed: 0.9)
     }
 
     func buddyGo(_ x: CGFloat, _ y: CGFloat, speed: CGFloat = 1, tag: String? = nil) {
@@ -183,7 +183,7 @@ extension World {
             glide(toward: clampToPond(cat.x + (cat.x > G.pond.x ? -1 : 1) * 170 * U), dt)
             buddy.activity = .fish
             return
-        case .hide, .wash:
+        case .hide, .wash, .bake:
             // watches the game or the bath, and stays put
             if buddy.activity == .walk { stepBuddy(dt) } else if buddy.activity != .sleep { buddy.activity = .idle }
             return
@@ -406,7 +406,7 @@ extension World {
     var buddyClean: Bool { (save?.companion?.needs.clean ?? 100) >= 99 }
 
     func checkWashDone() {
-        guard mode == .wash, save!.needs.clean >= 99, buddyClean, save!.poop == 0 || room == .garden else { return }
+        guard mode == .wash, save!.needs.clean >= 99, buddyClean, save!.poop == 0 || room != .living else { return }
         modeEndT = 1.8
     }
 

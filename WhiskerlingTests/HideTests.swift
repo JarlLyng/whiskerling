@@ -62,7 +62,7 @@ final class HideTests: XCTestCase {
 
     func testARoundInTheGarden() {
         let model = makeModel()
-        model.tapRoom()
+        model.go(to: .garden)
         XCTAssertEqual(model.world.room, .garden)
         playARound(model)
         XCTAssertEqual(model.world.room, .garden, "it's played where the cat is")
@@ -111,7 +111,7 @@ final class HideTests: XCTestCase {
         let world = model.world
         for size in [CGSize(width: 1032, height: 1100), CGSize(width: 1376, height: 900), CGSize(width: 500, height: 900)] {
             world.layout(size)
-            for room in [Room.living, .garden] {
+            for room in [Room.living, .garden, .kitchen] {
                 world.enterRoom(room)
                 let spots = world.hideSpots()
                 XCTAssertGreaterThanOrEqual(spots.count, 4)

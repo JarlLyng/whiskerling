@@ -35,6 +35,8 @@ final class ProUnlockTests: XCTestCase {
     func testBuyingFromTheGardenButtonGoesOutside() {
         let model = makeModel()
         model.tapRoom()
+        XCTAssertEqual(model.overlay, .rooms, "Go to… offers the rooms (#38)")
+        model.go(to: .garden)
         XCTAssertEqual(model.adult, .paywall)
         XCTAssertEqual(model.world.room, .living)
 
@@ -90,7 +92,7 @@ final class ProUnlockTests: XCTestCase {
 
     func testCancellingChangesNothing() {
         let model = makeModel()
-        model.tapRoom()
+        model.go(to: .garden)
         // Cancel at the gate, "Not now" or a swipe: the sheet closes without Pro.
         model.adult = nil
         model.adultClosed()

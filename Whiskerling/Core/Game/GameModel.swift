@@ -16,9 +16,11 @@ struct HUD: Equatable {
     var otherWear = Wear()
     /// The first cat is grown up and alone: a "+" offers a kitten.
     var canAdopt = false
+    /// Fish cookies in the kitchen's jar (#38).
+    var cookies = 0
 }
 
-enum Overlay { case food, wardrobe, games }
+enum Overlay { case food, wardrobe, games, rooms }
 
 enum AdultRoute: String, Identifiable {
     case paywall, menu
@@ -28,7 +30,7 @@ enum AdultRoute: String, Identifiable {
 /// The locked thing a child tapped on the way to the paywall. Once Pro is bought (or restored),
 /// the paywall closes by itself and the tap is finished, so the child doesn't have to tap again.
 enum ProUnlock: Equatable {
-    case garden, fish, hide, adopt, coat(String), item(String), startCoat(String), decor(String)
+    case garden, kitchen, fish, hide, adopt, coat(String), item(String), startCoat(String), decor(String)
 }
 
 /// The bridge between the game world (drawn every frame) and the SwiftUI screens.
@@ -96,6 +98,8 @@ final class GameModel {
             case .openFood: if mode == .normal { overlay = .food }
             case .itemsChanged: break
             case .fishingStarted: mode = .fish; modeHint = L10n.fishHint
+            case .bakeStarted: mode = .bake; overlay = nil
+            case .hint(let text): modeHint = text
             }
         }
         guard let s = world.save else { return }
@@ -105,7 +109,7 @@ final class GameModel {
         let next = HUD(name: s.name, needs: s.needs, hearts: s.hearts, stageLabel: L10n.stageDay(stage.name, day),
                        lightsOff: s.lightsOff, sound: s.sound, hasNewItems: newItems, room: world.room,
                        otherName: s.companion?.name, otherCoat: s.companion?.coat, otherWear: s.companion?.wear ?? Wear(),
-                       canAdopt: world.canAdopt)
+                       canAdopt: world.canAdopt, cookies: s.cookies ?? 0)
         if next != hud { hud = next }
     }
 
@@ -192,16 +196,21 @@ final class GameModel {
     }
 
     /// Out to the garden (Pro) or back into the living room.
+    /// "Go to…": a choice of the living room, the kitchen (#38) and the garden.
     func tapRoom() {
         sound.click()
         if hud.lightsOff { showToast(L10n.asleep(hud.name)); return }
-        if world.room == .garden {
-            world.comeInside()
-        } else if !isPro {
-            askForPro(.garden)
-        } else {
-            world.goOutside()
-        }
+        overlay = .rooms
+    }
+
+    /// The garden and the kitchen need Pro: locked, the gate and the paywall open, and the move is
+    /// finished after buying.
+    func go(to r: Room) {
+        sound.click()
+        overlay = nil
+        guard world.room != r else { return }
+        if r != .living && !isPro { askForPro(r == .garden ? .garden : .kitchen); return }
+        world.go(to: r)
         sync()
     }
 
@@ -346,7 +355,8 @@ final class GameModel {
         pendingUnlock = nil
         adult = nil
         switch unlock {
-        case .garden: if world.room == .living { world.goOutside() }
+        case .garden: world.go(to: .garden)
+        case .kitchen: world.go(to: .kitchen)
         case .fish: startFishing()
         case .hide: startHide()
         case .coat(let id): choose(coat: Catalog.coat(id))
