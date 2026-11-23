@@ -6,6 +6,12 @@ All notable changes to Whiskerling are listed here. The format follows
 
 ## [Unreleased]
 
+### Changed
+- The game follows Reduce Motion. Hearts and sparkles fade where they appear instead of flying
+  out, the cat hops a little instead of leaping, fish rise low and slow and slip back without
+  spinning, and a low need's icon stays large instead of pulsing. The games and their hearts are
+  the same ([#14](https://github.com/JarlLyng/whiskerling/issues/14)).
+
 ### Fixed
 - Rate in the grown-ups' menu opens Whiskerling's review page in the App Store. It asked for
   Apple's rating prompt, which the system may choose not to show, so the button could do nothing

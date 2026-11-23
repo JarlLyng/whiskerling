@@ -33,6 +33,7 @@ struct GameView: View {
 struct GameCanvas: View {
     let model: GameModel
     @State private var down = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         TimelineView(.animation) { timeline in
@@ -41,6 +42,8 @@ struct GameCanvas: View {
                 if model.world.wantsSync { model.scheduleSync() }
             }
         }
+        // Follows the setting live, also when it changes while the app is open (#14).
+        .onChange(of: reduceMotion, initial: true) { _, on in model.world.reduceMotion = on }
         .contentShape(Rectangle())
         .gesture(
             DragGesture(minimumDistance: 0)
@@ -141,13 +144,17 @@ struct Meter: View {
     let value: Double
     /// Smaller, for the meters' own row in a narrow window.
     var compact = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         HStack(spacing: compact ? 3 : 5) {
+            // A low need makes its icon pulse, or with Reduce Motion simply stay larger.
             Text(verbatim: icon)
                 .font(.system(size: compact ? 19 : 24))
                 .scaleEffect(value < 25 ? 1.25 : 1)
-                .animation(value < 25 ? .easeInOut(duration: 0.7).repeatForever() : .default, value: value < 25)
+                .animation(reduceMotion ? nil : (value < 25 ? .easeInOut(duration: 0.7).repeatForever() : .default),
+                           value: value < 25)
+                .id(reduceMotion) // a pulse already running stops when the setting is turned on
             VStack(alignment: .leading, spacing: 2) {
                 Text(verbatim: label).font(Theme.font(compact ? 11 : 12)).foregroundStyle(Theme.muted).lineLimit(1)
                     .minimumScaleFactor(0.8)

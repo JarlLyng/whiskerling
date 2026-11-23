@@ -134,14 +134,15 @@ extension World {
         if let c = f.caughtAt {
             // a little hop of joy, then back into the water
             let p = min(f.fallT / LeapingFish.fallTime, 1)
-            return CGPoint(x: c.x, y: c.y + (f.y0 - c.y) * p * p - sin(p * .pi) * 30 * U)
+            let hop = reduceMotion ? 0 : sin(p * .pi) * 30 * U
+            return CGPoint(x: c.x, y: c.y + (f.y0 - c.y) * p * p - hop)
         }
         let p = f.progress
         return CGPoint(x: f.x0 + (f.x1 - f.x0) * p, y: f.y0 - f.h * 4 * p * (1 - p))
     }
 
     func fishAngle(_ f: LeapingFish) -> CGFloat {
-        if f.caughtAt != nil { return f.fallT * 12 }
+        if f.caughtAt != nil { return reduceMotion ? .pi / 2 : f.fallT * 12 } // no spin: it slips back in
         let dx = (f.x1 - f.x0) / f.dur, dy = -f.h * 4 * (1 - 2 * f.progress) / f.dur
         return atan2(dy, dx)
     }
@@ -162,8 +163,10 @@ extension World {
                 let span = G.pondRX * 0.7, edge = G.pondRX * 0.8
                 let x0 = G.pond.x + .random(in: -span...span)
                 let x1 = min(max(x0 + (Bool.random() ? 1 : -1) * .random(in: 50...130) * U, G.pond.x - edge), G.pond.x + edge)
-                g.fish.append(LeapingFish(x0: x0, x1: x1, y0: G.pond.y - 2 * U, h: .random(in: 130...210) * U,
-                                          dur: .random(in: 1.7...2.2), hue: .random(in: 0..<4)))
+                // With Reduce Motion the fish rise low and slow, and stay in the air as long.
+                let h: CGFloat = reduceMotion ? .random(in: 80...110) : .random(in: 130...210)
+                let dur: CGFloat = reduceMotion ? .random(in: 2.4...2.9) : .random(in: 1.7...2.2)
+                g.fish.append(LeapingFish(x0: x0, x1: x1, y0: G.pond.y - 2 * U, h: h * U, dur: dur, hue: .random(in: 0..<4)))
                 ripples.append(Ripple(x: x0, y: G.pond.y))
                 sound.pop()
             }
@@ -234,7 +237,9 @@ extension World {
         burst(.sparkle, fp.x, fp.y, count: 10, speed: 170 * U, life: 0.8, size: 9 * U)
         if g.caught % 3 == 0 { addHearts(1, at: CGPoint(x: fp.x, y: fp.y - 30 * U)) } else { sound.chime() }
         if Double.random(in: 0...1) < 0.45 { say(L10n.caughtLines.randomElement()!, 1.3) }
-        if cat.jump == nil {
+        if reduceMotion {
+            cat.hop = 0.35 // a small happy hop where it stands, instead of a leap across the pond
+        } else if cat.jump == nil {
             cat.jump = Jump(h: 70 * U, vx: min(max((fp.x - cat.x) / 0.62, -300 * U), 300 * U))
             sound.jump()
         }
