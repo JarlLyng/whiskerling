@@ -42,6 +42,9 @@ struct SaveState: Codable, Equatable {
     /// Whether the cat has had its grown-up party (#17). Optional, so older saves load; a cat that
     /// had already grown up in one gets its party late, once.
     var grownUpParty: Bool?
+    /// The living room's decorations that are put up (#18), by `Decor` id. Optional, so older saves
+    /// load; nil or empty is the room as it always was.
+    var decor: [String]?
 
     init(name: String, coat: String, now: Date = Date()) {
         self.name = name

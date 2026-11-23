@@ -6,6 +6,13 @@ All notable changes to Whiskerling are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+- Things for the living room, unlocked with hearts after the crown, so the hearts keep leading
+  somewhere. A plant and a pink rug are free; a cat tree, heart wallpaper, a picture of the cat
+  in its own coat and fairy lights, which shine when the light is off, come with Pro. They're put
+  up and taken away in a new Room section of the wardrobe, and the bowl, the basket and the litter
+  box stay where they are ([#18](https://github.com/JarlLyng/whiskerling/issues/18)).
+
 ## [1.1.0] - not released yet
 
 ### Added

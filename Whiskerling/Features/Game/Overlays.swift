@@ -131,7 +131,8 @@ struct ChoiceLabel: View {
     }
 }
 
-/// Dress up: coats and accessories. Sits at the side (or top) so the cat stays in view.
+/// Dress up: accessories, coats and things for the room. Sits at the side (or top) so the cat
+/// and the room stay in view.
 struct WardrobeOverlay: View {
     let model: GameModel
 
@@ -189,6 +190,23 @@ struct WardrobeOverlay: View {
                     }
                 }
 
+                // Things for the living room (#18), after the crown, with hearts the same way.
+                Text(verbatim: L10n.wardrobeRoom).font(Theme.font(19)).padding(.top, Tokens.Spacing.sm)
+                LazyVGrid(columns: grid, spacing: Tokens.Spacing.md) {
+                    ForEach(Catalog.decor) { decor in
+                        let locked = !decor.isFree && !model.isPro
+                        let shown = save?.decor?.contains(decor.id) == true
+                        let earned = model.hud.hearts >= decor.cost
+                        Button { model.choose(decor: decor) } label: {
+                            tile(icon: DecorIcon(id: decor.id, pose: model.world.portraitPose).frame(width: 64, height: 54),
+                                 title: decor.name,
+                                 note: locked ? L10n.pro : (!earned ? "🔒 \(decor.cost) ❤️" : (shown ? L10n.takeDown : L10n.putUp)),
+                                 chosen: shown, dim: locked || !earned)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
                 Button(L10n.done) { model.overlay = nil }
                     .font(Theme.font(20))
                     .padding(.horizontal, 34).frame(height: 56)
@@ -232,6 +250,47 @@ struct KittenPortrait: View {
             pose.x = size.width * 0.48; pose.y = size.height * 0.95; pose.s = s
             pose.blush = true; pose.tail = 0.6; pose.shadow = false; pose.wear = wear
             CatArt.drawCat(p, pose)
+        }
+        .accessibilityHidden(true)
+    }
+}
+
+/// A small drawing of a decoration for the room, for the wardrobe's tiles (#18).
+struct DecorIcon: View {
+    let id: String
+    var pose: CatPose?
+
+    var body: some View {
+        Canvas { ctx, size in
+            let p = Pen(ctx)
+            let w = size.width, h = size.height
+            switch id {
+            case "plant":
+                DecorArt.plant(p, w / 2, h * 0.97, h / 160)
+            case "cattree":
+                DecorArt.catTree(p, w / 2 - 3, h * 0.97, h / 222)
+            case "rug":
+                p.ell(w / 2, h * 0.6, w * 0.46, h * 0.28); p.fill(DecorArt.pinkRug)
+                p.dash = [5, 4]
+                p.ell(w / 2, h * 0.6, w * 0.4, h * 0.2); p.stroke(.white, 2)
+                p.dash = []
+            case "wallpaper":
+                p.rr(4, 2, w - 8, h - 4, 8); p.fill(Color(hex: "FDF0DD"))
+                p.fillColor = Color(hex: "F2A7B8")
+                for row in 0..<3 {
+                    for col in 0..<3 {
+                        let x = w * (0.24 + 0.26 * CGFloat(col)) + (row % 2 == 0 ? 0 : w * 0.06)
+                        DecorArt.heart(p, x, h * (0.24 + 0.27 * CGFloat(row)), w * 0.06); p.fill()
+                    }
+                }
+            case "portrait":
+                let r = CGRect(x: w * 0.16, y: h * 0.12, width: w * 0.68, height: h * 0.72)
+                p.rr(r.minX - 4, r.minY - 4, r.width + 8, r.height + 8, 4); p.fill(Color(hex: "C98B4F"))
+                if let pose { DecorArt.portrait(p, r, cat: pose, unit: 1) }
+            default: // the fairy lights
+                DecorArt.lights(p, from: CGPoint(x: 2, y: h * 0.28), to: CGPoint(x: w - 2, y: h * 0.28),
+                                sag: h * 0.14, bulb: w * 0.05, glow: false, t: 0, perSwag: 3)
+            }
         }
         .accessibilityHidden(true)
     }

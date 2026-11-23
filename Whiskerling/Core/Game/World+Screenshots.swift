@@ -29,6 +29,10 @@ extension World {
             party = Party(kind: .birthday(1), t: Party.length / 2)
             say(L10n.birthdayAge(1), 10_000)
             bubble?.t = 9_999
+        case "decor": // the room with everything put up (#18)
+            cat.x = min(max(W * 0.6, G.minX), G.maxX); cat.happyT = 1_000
+        case "decornight":
+            cat.x = G.bed.x; cat.y = G.bed.y; cat.activity = .sleep
         case "nap": // a grown-up habit: a nap on the rug, with the yarn it brought over (#17)
             cat.x = min(max(W * 0.6, G.minX), G.maxX); cat.activity = .nap
             toy = Toy(x: W * 0.42, y: G.catY + 4 * U)

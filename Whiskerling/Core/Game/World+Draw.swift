@@ -28,7 +28,7 @@ extension World {
             (G.litter.y - 0.5, drawLitterBack), (G.litter.y + 0.5, drawLitterFront),
             (G.bowl.y, drawBowl),
             (G.bed.y - 0.5, drawBedBack), (G.bed.y + 0.5, drawBedFront)
-        ]
+        ] + decorProps()
         list.append((cat.y, drawTheCat))
         if party != nil { list.append((partySpot.y, drawParty)) }
         if let toy { list.append((toy.carried ? cat.y + 1 : toy.y, drawToy)) }
@@ -37,7 +37,10 @@ extension World {
         if mode == .play { drawFeather(p) }
         if mode == .wash { drawSponge(p) }
         if garden { drawGardenAir(p) }
-        if save!.lightsOff { drawDark(p) }
+        if save!.lightsOff {
+            drawDark(p)
+            if !garden && shows("lights") { drawLights(p, glow: true) } // they shine in the dark
+        }
         drawParts(p)
         drawBubble(p)
         drawRoomFade(p)
@@ -48,10 +51,14 @@ extension World {
     private func drawRoom(_ p: Pen) {
         let fy = G.floorY
         p.fillColor = Color(hex: "FDF0DD"); p.fillRect(0, 0, W, fy)
-        p.fillColor = Color(hex: "FAE4C8")
-        let sw = 24 * U
-        var x: CGFloat = 0
-        while x < W { p.fillRect(x, 0, sw, fy); x += sw * 2 }
+        if shows("wallpaper") {
+            drawHeartWallpaper(p)
+        } else {
+            p.fillColor = Color(hex: "FAE4C8")
+            let sw = 24 * U
+            var x: CGFloat = 0
+            while x < W { p.fillRect(x, 0, sw, fy); x += sw * 2 }
+        }
         p.fillGradient([Color(hex: "D99A5B"), Color(hex: "E9B47A")], from: CGPoint(x: 0, y: fy), to: CGPoint(x: 0, y: H))
         p.fillRect(0, fy, W, H - fy)
         p.strokeColor = .rgba(140, 80, 30, 0.22); p.lineWidth = 2
@@ -66,7 +73,7 @@ extension World {
         }
         p.fillColor = Color(hex: "FFF7EA"); p.fillRect(0, fy - 12 * U, W, 12 * U)
         p.fillColor = .rgba(140, 90, 40, 0.25); p.fillRect(0, fy - 1, W, 2)
-        p.ell(W * 0.55, H * 0.885, W * 0.3, H * 0.075); p.fill(Color(hex: "A9DCD7"))
+        p.ell(W * 0.55, H * 0.885, W * 0.3, H * 0.075); p.fill(shows("rug") ? DecorArt.pinkRug : DecorArt.rug)
         p.dash = [10 * U, 8 * U]
         p.ell(W * 0.55, H * 0.885, W * 0.27, H * 0.058); p.stroke(.white, 3 * U)
         p.dash = []
@@ -157,6 +164,10 @@ extension World {
         p.stroke(Color(hex: "8B5A2B"), 2)
         p.circ(r.midX, r.minY - 26 * U, 3 * U); p.fill(Color(hex: "8B5A2B"))
         p.rr(r.minX - 7 * U, r.minY - 7 * U, r.width + 14 * U, r.height + 14 * U, 6 * U); p.fill(Color(hex: "C98B4F"))
+        if shows("portrait"), let pose = portraitPose { // a picture of the cat itself (#18)
+            DecorArt.portrait(p, r, cat: pose, unit: U)
+            return
+        }
         p.fillColor = Color(hex: "DFF3FF"); p.fillRect(r.minX, r.minY, r.width, r.height)
         p.save()
         p.translate(r.midX + 6 * U, r.midY + 4 * U); p.scale(U, U)
@@ -220,6 +231,7 @@ extension World {
         p.circ(w.minX - 48 * U, ry, 7 * U); p.fill(); p.circ(w.maxX + 48 * U, ry, 7 * U); p.fill()
         curtain(p, w, ry)
         p.save(); p.translate(2 * w.minX + w.width, 0); p.scale(-1, 1); curtain(p, w, ry); p.restore()
+        if shows("lights") { drawLights(p, glow: sky == .night) }
     }
 
     /// A cat clock that shows the real time.
