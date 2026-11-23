@@ -647,6 +647,40 @@
         }
       }
     },
+    "games.hide": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gemmeleg"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hide and seek"
+          }
+        }
+      }
+    },
+    "games.hide.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find katten"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find the cat"
+          }
+        }
+      }
+    },
     "games.title": {
       "extractionState": "manual",
       "localizations": {
@@ -762,6 +796,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tap the fish when they jump!"
+          }
+        }
+      }
+    },
+    "hint.hide": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find %@! Kig efter en hale eller to ører."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Find %@! Look for a tail or two ears."
           }
         }
       }
@@ -1350,13 +1401,13 @@
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "Et ekstra rum med dam, træ og sommerfugle, og et spil ved dammen."
+            "value": "Et ekstra rum med dam, træ og sommerfugle, og legene Fang fisken og Gemmeleg."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "An extra room with a pond, a tree and butterflies, and a game at the pond."
+            "value": "An extra room with a pond, a tree and butterflies, and the games Catch the fish and Hide and seek."
           }
         }
       }
@@ -1367,13 +1418,13 @@
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "Haven og Fang fisken"
+            "value": "Haven og to lege"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The garden and Catch the fish"
+            "value": "The garden and two games"
           }
         }
       }
@@ -1990,6 +2041,74 @@
         }
       }
     },
+    "say.found1": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du fandt mig! 😸"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You found me! 😸"
+          }
+        }
+      }
+    },
+    "say.found2": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Borte, tittut!"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peekaboo!"
+          }
+        }
+      }
+    },
+    "say.found3": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hvordan vidste du det?"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How did you know?"
+          }
+        }
+      }
+    },
+    "say.found4": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Igen, igen!"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Again, again!"
+          }
+        }
+      }
+    },
     "say.full": {
       "extractionState": "manual",
       "localizations": {
@@ -2224,6 +2343,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hi! My name is %@! 🐾"
+          }
+        }
+      }
+    },
+    "say.hideBye": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Det var sjovt! Igen snart? 😺"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That was fun! Again soon? 😺"
+          }
+        }
+      }
+    },
+    "say.hideStart": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gemmeleg! Luk øjnene… 🙈"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hide and seek! Close your eyes… 🙈"
           }
         }
       }
@@ -3023,6 +3176,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ is a young cat now! 🎉"
+          }
+        }
+      }
+    },
+    "toast.hideResult": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du fandt %@ %lld gange! 🙈"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You found %@ %lld times! 🙈"
           }
         }
       }

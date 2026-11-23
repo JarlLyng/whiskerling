@@ -32,7 +32,7 @@ Whiskerling is made for children, and for the grown-ups who hand them the iPad. 
 - **Care:** four needs (full, happy, energy, clean) that fall in real time, kibble, fish and treats, a sponge bath, the litter box and sleep in the basket.
 - **The cat:** strokes make it purr, a tap tells you what it needs, and it grows from kitten to young cat to grown-up cat over a week.
 - **Hearts:** earned by caring for the cat and never spent; they unlock accessories, and after the crown things for the room, like a plant, a cat tree and fairy lights.
-- **Pro (one purchase):** seven more coats, five more accessories, the garden and Catch the fish, a mini-game at the garden pond.
+- **Pro (one purchase):** seven more coats, five more accessories, the garden, Catch the fish, a mini-game at the garden pond, and hide and seek.
 - **The room:** a cat clock with the real time and a window whose sky follows the time of day. Everything is drawn in code, and the sounds are synthesised in code too.
 - **English and Danish.**
 

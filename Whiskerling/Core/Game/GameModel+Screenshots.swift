@@ -4,7 +4,10 @@ import Foundation
 /// App Store screenshots, the pattern from `DESIGN.md` (debug builds only): launch with
 /// `-screenshots -screen <scene>` and `-debugSky day|night`, then `xcrun simctl io <device>
 /// screenshot`. Scenes: `room`, `gate`, `fish`, `wardrobe`, `night`, `party` and `nap` for
-/// checking the grown-up cat, and `decor` and `decornight` for the room with everything put up. The sample cat lives in its own UserDefaults suite, so a real cat is
+/// checking the grown-up cat, `decor` and `decornight` for the room with everything put up, and
+/// `hide` for hide and seek: the cat hidden at `-hideSpot <id>` (basket, litter, rug or curtain
+/// indoors; tree, fenceLeft, fenceRight or pond in the garden), or `-hideSpot count` for the
+/// counting. The sample cat lives in its own UserDefaults suite, so a real cat is
 /// never touched, and Pro is shown as bought.
 extension GameModel {
     static var screenshotScene: String? {
@@ -26,6 +29,10 @@ extension GameModel {
             s.wear = Wear(head: "hat")
         case "wardrobe":
             s.wear = Wear(head: "flowers", neck: "bell")
+        case "hide": // hide and seek (#20)
+            let spot = UserDefaults.standard.string(forKey: "hideSpot") ?? "basket"
+            if ["tree", "fenceLeft", "fenceRight", "pond"].contains(spot) { s.room = Room.garden.rawValue }
+            s.wear = Wear(head: "bow")
         case "night":
             s.lightsOff = true
             s.needs.energy = 46
@@ -59,6 +66,9 @@ extension GameModel {
             overlay = .wardrobe
         case "gate":
             adult = .menu
+        case "hide":
+            mode = .hide
+            modeHint = L10n.hideHint(s.name)
         default:
             break
         }

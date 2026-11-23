@@ -21,10 +21,12 @@ struct GamesOverlay: View {
     let model: GameModel
 
     var body: some View {
-        ChoiceCard(title: L10n.gamesTitle(model.hud.name), maxWidth: 520, onClose: { model.overlay = nil }) { fit in
+        ChoiceCard(title: L10n.gamesTitle(model.hud.name), maxWidth: 720, onClose: { model.overlay = nil }) { fit in
             game("🪶", L10n.featherGame, L10n.featherGameNote, locked: false, fit: fit, action: model.playFeather)
             game("🐟", L10n.fishGame, model.isPro ? L10n.fishGameNote : "🔒 " + L10n.askGrownUp,
                  locked: !model.isPro, fit: fit, action: model.playFish)
+            game("🙈", L10n.hideGame, model.isPro ? L10n.hideGameNote : "🔒 " + L10n.askGrownUp,
+                 locked: !model.isPro, fit: fit, action: model.playHide)
         }
     }
 

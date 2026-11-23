@@ -71,7 +71,7 @@ extension World {
     /// Pro went away (a refund): leave the garden and stop the game.
     func proLost() {
         guard save != nil else { return }
-        if mode == .fish { setMode(.normal); post(.modeEnded) }
+        if mode == .fish || mode == .hide { setMode(.normal); post(.modeEnded) }
         if room == .garden { enterRoom(.living) }
     }
 

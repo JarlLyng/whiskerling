@@ -95,6 +95,14 @@ enum L10n {
     static var fishGame: String { String(localized: "games.fish", defaultValue: "Catch the fish") }
     static var fishGameNote: String { String(localized: "games.fish.note", defaultValue: "At the garden pond") }
     static var fishHint: String { String(localized: "hint.fish", defaultValue: "Tap the fish when they jump!") }
+    static var hideGame: String { String(localized: "games.hide", defaultValue: "Hide and seek") }
+    static var hideGameNote: String { String(localized: "games.hide.note", defaultValue: "Find the cat") }
+    static func hideHint(_ name: String) -> String {
+        String(localized: "hint.hide", defaultValue: "Find \(name)! Look for a tail or two ears.")
+    }
+    static func hideResult(_ name: String, _ n: Int) -> String {
+        String(localized: "toast.hideResult", defaultValue: "You found \(name) \(n) times! 🙈")
+    }
     static func fishResult(_ name: String, _ n: Int) -> String {
         String(localized: "toast.fishResult", defaultValue: "\(name) caught \(n) fish! 🐟")
     }
@@ -156,9 +164,9 @@ enum L10n {
     static var proItemsBody: String {
         String(localized: "pro.items.body", defaultValue: "Flowers, sunglasses, top hat, scarf and crown, and for the room a cat tree, heart wallpaper, a picture of the cat and fairy lights. They still unlock with hearts.")
     }
-    static var proGardenTitle: String { String(localized: "pro.garden.title", defaultValue: "The garden and Catch the fish") }
+    static var proGardenTitle: String { String(localized: "pro.garden.title", defaultValue: "The garden and two games") }
     static var proGardenBody: String {
-        String(localized: "pro.garden.body", defaultValue: "An extra room with a pond, a tree and butterflies, and a game at the pond.")
+        String(localized: "pro.garden.body", defaultValue: "An extra room with a pond, a tree and butterflies, and the games Catch the fish and Hide and seek.")
     }
     static var proFutureTitle: String { String(localized: "pro.future.title", defaultValue: "More to come") }
     static var proFutureBody: String {
@@ -276,6 +284,14 @@ enum L10n {
     static var gardenNight: String { String(localized: "say.gardenNight", defaultValue: "Look at the stars! ✨") }
     static var homeAgain: String { String(localized: "say.home", defaultValue: "Home again! 🏠") }
     static var fishStart: String { String(localized: "say.fishStart", defaultValue: "Fish! Let's catch them! 🐟") }
+    static var hideStart: String { String(localized: "say.hideStart", defaultValue: "Hide and seek! Close your eyes… 🙈") }
+    static var hideBye: String { String(localized: "say.hideBye", defaultValue: "That was fun! Again soon? 😺") }
+    static var foundLines: [String] {
+        [String(localized: "say.found1", defaultValue: "You found me! 😸"),
+         String(localized: "say.found2", defaultValue: "Peekaboo!"),
+         String(localized: "say.found3", defaultValue: "How did you know?"),
+         String(localized: "say.found4", defaultValue: "Again, again!")]
+    }
     static var fishBye: String { String(localized: "say.fishBye", defaultValue: "Bye, fish! Swim home 🐟") }
     static var fishPerfect: String { String(localized: "say.fishPerfect", defaultValue: "Every single one! 🎉") }
     // the grown-up cat (#17)
