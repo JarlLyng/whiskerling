@@ -17,7 +17,7 @@ struct RootView: View {
 
     var body: some View {
         ZStack {
-            if model.hasCat {
+            if model.hasCat && !model.adopting {
                 GameView(model: model)
             } else {
                 StartView(model: model)

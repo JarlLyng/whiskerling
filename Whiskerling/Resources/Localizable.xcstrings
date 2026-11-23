@@ -171,6 +171,74 @@
         }
       }
     },
+    "adopt.button": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En killing, der kan bo hos din kat"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A kitten to live with your cat"
+          }
+        }
+      }
+    },
+    "adopt.cancel": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ikke nu"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not now"
+          }
+        }
+      }
+    },
+    "adopt.show": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vis %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show %@"
+          }
+        }
+      }
+    },
+    "adopt.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vælg en killing, der skal bo hos %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a kitten to live with %@"
+          }
+        }
+      }
+    },
     "badge.askGrownUp": {
       "extractionState": "manual",
       "localizations": {
@@ -1225,6 +1293,23 @@
         }
       }
     },
+    "menu.twoNames": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ og %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ and %@"
+          }
+        }
+      }
+    },
     "meter.clean": {
       "extractionState": "manual",
       "localizations": {
@@ -1561,6 +1646,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Restore purchase"
+          }
+        }
+      }
+    },
+    "pro.secondCat.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Når den første kat er voksen, kan en killing flytte ind hos den."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Once the first cat is grown up, a kitten can come to live with it."
+          }
+        }
+      }
+    },
+    "pro.secondCat.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En kat mere"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A second cat"
           }
         }
       }
@@ -2551,6 +2670,23 @@
         }
       }
     },
+    "say.newFriend": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hej, %@! Velkommen hjem 😺"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hi, %@! Welcome home 😺"
+          }
+        }
+      }
+    },
     "say.noMoreTreats": {
       "extractionState": "manual",
       "localizations": {
@@ -3057,6 +3193,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "What will you call it?"
+          }
+        }
+      }
+    },
+    "toast.adopted": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ er flyttet ind hos %@! 🏠"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ has come to live with %@! 🏠"
           }
         }
       }

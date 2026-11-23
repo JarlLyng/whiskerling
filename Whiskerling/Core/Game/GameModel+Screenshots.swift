@@ -7,7 +7,7 @@ import Foundation
 /// checking the grown-up cat, `decor` and `decornight` for the room with everything put up, and
 /// `hide` for hide and seek: the cat hidden at `-hideSpot <id>` (basket, litter, rug or curtain
 /// indoors; tree, fenceLeft, fenceRight or pond in the garden), or `-hideSpot count` for the
-/// counting. The sample cat lives in its own UserDefaults suite, so a real cat is
+/// counting, and `two` and `twonight` for two cats (#21). The sample cat lives in its own UserDefaults suite, so a real cat is
 /// never touched, and Pro is shown as bought.
 extension GameModel {
     static var screenshotScene: String? {
@@ -29,6 +29,16 @@ extension GameModel {
             s.wear = Wear(head: "hat")
         case "wardrobe":
             s.wear = Wear(head: "flowers", neck: "bell")
+        case "two", "twonight": // two cats (#21): a grown cat and the kitten that came to live with it
+            s.stage = Catalog.stages.count - 1
+            s.born = Date().addingTimeInterval(-12 * 86_400)
+            s.grownUpParty = true
+            s.wear = Wear(head: "bow")
+            var kitten = CatRecord(name: "Pip", coat: "tuxedo", born: Date().addingTimeInterval(-3 * 3600))
+            kitten.needs = Needs(food: 90, fun: 90, energy: 80, clean: 95)
+            kitten.wear = Wear(neck: "bell")
+            s.companion = kitten
+            if scene == "twonight" { s.lightsOff = true; s.needs.energy = 46; s.companion!.needs.energy = 46 }
         case "hide": // hide and seek (#20)
             let spot = UserDefaults.standard.string(forKey: "hideSpot") ?? "basket"
             if ["tree", "fenceLeft", "fenceRight", "pond"].contains(spot) { s.room = Room.garden.rawValue }

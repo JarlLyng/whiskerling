@@ -30,6 +30,7 @@ extension World {
             (G.bed.y - 0.5, drawBedBack), (G.bed.y + 0.5, drawBedFront)
         ] + decorProps()
         list += hideProps()
+        list += buddyProps()
         if !catHidden { list.append((cat.y, drawTheCat)) }
         if party != nil { list.append((partySpot.y, drawParty)) }
         if let toy { list.append((toy.carried ? cat.y + 1 : toy.y, drawToy)) }
@@ -526,12 +527,15 @@ extension World {
 
     private func drawBubble(_ p: Pen) {
         guard let b = bubble else { return }
-        let s = catScale
+        // anchored on whichever cat is speaking (#21)
+        let c = b.buddy && hasCompanion ? buddy : cat
+        let s = b.buddy && hasCompanion ? buddyScale : catScale, head = b.buddy && hasCompanion ? buddyStage.head : stage.head
         var ax: CGFloat, ay: CGFloat
-        if cat.activity == .sleep || cat.activity == .nap {
-            ax = cat.x - 40 * s; ay = cat.y - (cat.activity == .nap ? 100 : 120) * s
+        if c.activity == .sleep || c.activity == .nap {
+            let flip: CGFloat = b.buddy && hasCompanion && c.activity == .sleep ? -1 : 1
+            ax = c.x - 40 * s * flip; ay = c.y - (c.activity == .nap ? 100 : 120) * s
         } else {
-            let hp = catHeadPos(); ax = hp.x; ay = hp.y - 72 * stage.head * s
+            let hp = b.buddy && hasCompanion ? buddyHeadPos() : catHeadPos(); ax = hp.x; ay = hp.y - 72 * head * s
         }
         let fs = min(max(22 * U, 17), 30)
         let tw = p.measure(b.text, size: fs).width

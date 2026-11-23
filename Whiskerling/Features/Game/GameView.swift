@@ -86,7 +86,7 @@ struct HUDBar: View {
                 }
             } else {
                 HStack(spacing: Tokens.Spacing.md) {
-                    nameAndStage(hud).frame(minWidth: 118, maxWidth: 210, alignment: .leading)
+                    nameAndStage(hud).frame(minWidth: 118, maxWidth: 260, alignment: .leading)
                     meters(hud).frame(maxWidth: .infinity)
                     hearts(hud)
                     soundButton(hud)
@@ -102,13 +102,42 @@ struct HUDBar: View {
     }
 
     private func nameAndStage(_ hud: HUD) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(verbatim: hud.name).font(Theme.font(24)).lineLimit(1)
-            Text(verbatim: hud.stageLabel).font(Theme.font(14, .semibold)).foregroundStyle(Theme.muted).lineLimit(1)
+        HStack(spacing: Tokens.Spacing.sm) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(verbatim: hud.name).font(Theme.font(24)).lineLimit(1)
+                Text(verbatim: hud.stageLabel).font(Theme.font(14, .semibold)).foregroundStyle(Theme.muted).lineLimit(1)
+            }
+            .contentShape(Rectangle())
+            // The grown-up menu: hold the name for two seconds.
+            .onLongPressGesture(minimumDuration: 2) { model.adult = .menu }
+            otherCat(hud)
         }
-        .contentShape(Rectangle())
-        // The grown-up menu: hold the name for two seconds.
-        .onLongPressGesture(minimumDuration: 2) { model.adult = .menu }
+    }
+
+    /// The other cat, small: a tap shows it instead. Or, for a grown cat on its own, a "+" for a
+    /// kitten to live with it (#21).
+    @ViewBuilder private func otherCat(_ hud: HUD) -> some View {
+        if let name = hud.otherName, let coat = hud.otherCoat {
+            Button(action: model.switchCats) {
+                KittenPortrait(coat: Catalog.coat(coat), wear: hud.otherWear)
+                    .frame(width: 40, height: 40)
+                    .padding(3)
+                    .background(Theme.option, in: Circle())
+            }
+            .buttonStyle(.plain)
+            .disabled(model.mode != .normal)
+            .accessibilityLabel(L10n.showCat(name))
+        } else if hud.canAdopt {
+            Button(action: model.tapAdopt) {
+                Image(systemName: "plus")
+                    .font(.system(size: 18, weight: .heavy))
+                    .frame(width: 40, height: 40)
+                    .background(Theme.option, in: Circle())
+            }
+            .buttonStyle(.plain)
+            .disabled(model.mode != .normal)
+            .accessibilityLabel(L10n.adoptButton)
+        }
     }
 
     private func meters(_ hud: HUD, compact: Bool = false) -> some View {

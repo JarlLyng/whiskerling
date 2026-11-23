@@ -142,6 +142,7 @@ struct PaywallView: View {
                 row("paintpalette.fill", L10n.proCoatsTitle, L10n.proCoatsBody)
                 row("crown.fill", L10n.proItemsTitle, L10n.proItemsBody)
                 row("leaf.fill", L10n.proGardenTitle, L10n.proGardenBody)
+                row("pawprint.fill", L10n.proSecondCatTitle, L10n.proSecondCatBody)
                 row("sparkles", L10n.proFutureTitle, L10n.proFutureBody)
                 row("lock.shield.fill", L10n.proPrivateTitle, L10n.proPrivateBody)
             }
@@ -228,7 +229,7 @@ struct GrownupMenu: View {
             wide(L10n.restore, color: Theme.option, small: small) { Task { await model.store.restore() } }
             wide(model.hud.sound ? L10n.menuSoundOn : L10n.menuSoundOff, color: Theme.option, small: small) { model.toggleSoundFromMenu() }
             if model.hasCat {
-                wide(resetArmed ? L10n.startOverConfirm(model.hud.name) : L10n.startOver, color: Color(hex: "FFD3D3"), small: small) {
+                wide(resetArmed ? L10n.startOverConfirm(model.hud.otherName.map { L10n.twoNames(model.hud.name, $0) } ?? model.hud.name) : L10n.startOver, color: Color(hex: "FFD3D3"), small: small) {
                     if resetArmed { model.startOver(); onClose() } else { resetArmed = true }
                 }
             }

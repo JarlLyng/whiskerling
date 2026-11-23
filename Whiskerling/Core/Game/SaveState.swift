@@ -17,7 +17,25 @@ struct Needs: Codable, Equatable {
     }
 }
 
+/// What is a cat's own, as opposed to the household's (#21): a second cat keeps these here.
+struct CatRecord: Codable, Equatable {
+    var name: String
+    var coat: String
+    var born: Date
+    var needs = Needs()
+    var wear = Wear(head: "bow")
+    var stage = 0
+    var awakeMinutes: Double = 0
+    var birthdays: Int?
+    var grownUpParty: Bool?
+}
+
 /// Everything about the cat that survives the app closing. Stored as JSON on the device only.
+///
+/// The cat shown in the top bar keeps its own fields (`name` through `grownUpParty` below) right
+/// here, and a second cat keeps them in `companion` (#21). Switching which cat is shown swaps the
+/// two, so everything that looks at "the cat" looks at the one shown. The rest (hearts, the room,
+/// the light, the litter box, decorations) belongs to the household.
 struct SaveState: Codable, Equatable {
     var version = 1
     var name: String
@@ -45,6 +63,8 @@ struct SaveState: Codable, Equatable {
     /// The living room's decorations that are put up (#18), by `Decor` id. Optional, so older saves
     /// load; nil or empty is the room as it always was.
     var decor: [String]?
+    /// A second cat that lives with the first (#21). Optional, so older saves load as one cat.
+    var companion: CatRecord?
 
     init(name: String, coat: String, now: Date = Date()) {
         self.name = name
@@ -84,35 +104,76 @@ struct SaveState: Codable, Equatable {
         return h >= 20 || h < 7
     }
 
-    // MARK: Time passing
+    // MARK: Two cats (#21)
 
-    /// While the game is open. Sleeping in the basket restores energy quickly.
-    mutating func liveTick(seconds: Double, sleeping: Bool) {
-        let h = seconds / 3600
-        if sleeping {
-            needs.food -= 2 * h; needs.fun -= 1 * h; needs.clean -= 1 * h; needs.energy += 0.5 * seconds
-        } else {
-            needs.food -= 6 * h; needs.fun -= 6 * h; needs.energy -= 5 * h
-            needs.clean -= (3.5 + 3 * Double(poop)) * h
+    /// The cat shown, as a record of its own.
+    var shown: CatRecord {
+        get {
+            CatRecord(name: name, coat: coat, born: born, needs: needs, wear: wear, stage: stage,
+                      awakeMinutes: awakeMinutes, birthdays: birthdays, grownUpParty: grownUpParty)
         }
-        needs.clamp()
+        set {
+            name = newValue.name; coat = newValue.coat; born = newValue.born; needs = newValue.needs
+            wear = newValue.wear; stage = newValue.stage; awakeMinutes = newValue.awakeMinutes
+            birthdays = newValue.birthdays; grownUpParty = newValue.grownUpParty
+        }
     }
 
-    /// While the game is closed. Every 4 awake hours the cat visits the litter box.
-    mutating func offlineTick(seconds: Double, sleeping: Bool) {
-        let h = seconds / 3600
+    /// Shows the other cat: its fields and the shown cat's change places.
+    mutating func swapCats() {
+        guard let other = companion else { return }
+        companion = shown
+        shown = other
+    }
+
+    /// Two cats keep each other busy and groom each other, so fun and clean fall at two thirds of
+    /// the speed, and each visits the litter box every six awake hours instead of four.
+    static let companyFactor = 2.0 / 3
+    var litterMinutes: Double { companion == nil ? 240 : 360 }
+
+    // MARK: Time passing
+
+    /// One cat's needs over `seconds`. `restPerHour` is the energy sleep gives back.
+    private static func tick(_ n: inout Needs, poop: Int, seconds: Double, sleeping: Bool, restPerHour: Double,
+                             company: Bool) {
+        let h = seconds / 3600, c = company ? companyFactor : 1
         if sleeping {
-            needs.food -= 2 * h; needs.fun -= 1 * h; needs.clean -= 1 * h; needs.energy += 25 * h
+            n.food -= 2 * h; n.fun -= 1 * h * c; n.clean -= 1 * h * c; n.energy += restPerHour * h
         } else {
-            needs.food -= 6 * h; needs.fun -= 6 * h; needs.energy -= 5 * h
-            needs.clean -= (3.5 + 3 * Double(poop)) * h
-            awakeMinutes += seconds / 60
-            if awakeMinutes >= 240 {
-                awakeMinutes -= 240
-                if poop < 3 { poop += 1 }
-            }
+            n.food -= 6 * h; n.fun -= 6 * h * c; n.energy -= 5 * h
+            n.clean -= (3.5 + 3 * Double(poop)) * h * c
         }
-        needs.clamp()
+        n.clamp()
+    }
+
+    /// While the game is open. Sleeping in the basket restores energy quickly.
+    mutating func liveTick(seconds: Double, sleeping: Bool, companionSleeping: Bool = false) {
+        let two = companion != nil
+        SaveState.tick(&needs, poop: poop, seconds: seconds, sleeping: sleeping, restPerHour: 1800, company: two)
+        if two {
+            SaveState.tick(&companion!.needs, poop: poop, seconds: seconds, sleeping: companionSleeping,
+                           restPerHour: 1800, company: true)
+        }
+    }
+
+    /// While the game is closed. Every 4 awake hours (6 with two cats) a cat visits the litter box.
+    mutating func offlineTick(seconds: Double, sleeping: Bool) {
+        let two = companion != nil
+        SaveState.tick(&needs, poop: poop, seconds: seconds, sleeping: sleeping, restPerHour: 25, company: two)
+        let every = litterMinutes
+        if !sleeping { SaveState.visitLitter(&awakeMinutes, &poop, seconds: seconds, every: every) }
+        if two {
+            SaveState.tick(&companion!.needs, poop: poop, seconds: seconds, sleeping: sleeping, restPerHour: 25, company: true)
+            if !sleeping { SaveState.visitLitter(&companion!.awakeMinutes, &poop, seconds: seconds, every: every) }
+        }
+    }
+
+    private static func visitLitter(_ minutes: inout Double, _ poop: inout Int, seconds: Double, every: Double) {
+        minutes += seconds / 60
+        if minutes >= every {
+            minutes -= every
+            if poop < 3 { poop += 1 }
+        }
     }
 
     /// Applies the time since `last` in 10-minute steps (at most 3 days) and returns how long
