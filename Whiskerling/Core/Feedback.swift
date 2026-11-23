@@ -7,6 +7,9 @@ import Foundation
 enum Feedback {
     static let address = "support@iamjarl.com"
     static let privacyURL = URL(string: "https://whiskerling.iamjarl.com/privacy/")!
+    /// The App Store's write-review page for Whiskerling, which Rate opens. Apple advises a link
+    /// like this for a button: `requestReview()` decides by itself whether to show anything.
+    static let reviewURL = URL(string: "https://apps.apple.com/app/id6835849162?action=write-review")!
 
     /// The marketing version alone, as in "1.0".
     static var marketingVersion: String {

@@ -20,9 +20,15 @@ final class Store {
     @ObservationIgnored private var updates: Task<Void, Never>?
 
     init() {
+        // Purchases that complete later (a parent approving Ask to Buy, a purchase on another
+        // device in the family) and refunds arrive here. Each verified one is finished once Pro
+        // reflects it, so StoreKit doesn't deliver it again on every launch.
         updates = Task { [weak self] in
-            for await _ in Transaction.updates {
+            for await result in Transaction.updates {
                 await self?.refreshEntitlement()
+                if case .verified(let transaction) = result {
+                    await transaction.finish()
+                }
             }
         }
     }
