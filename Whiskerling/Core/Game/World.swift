@@ -206,6 +206,9 @@ final class World {
         for item in Catalog.items where item.cost > before && item.cost <= save!.hearts && (item.isFree || isPro) {
             post(.toast(L10n.itemUnlocked(item.icon + " " + item.name)))
         }
+        for decor in Catalog.decor where decor.cost > before && decor.cost <= save!.hearts && (decor.isFree || isPro) {
+            post(.toast(L10n.decorUnlocked(decor.name)))
+        }
         hudDue = true
     }
 

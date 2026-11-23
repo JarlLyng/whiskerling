@@ -22,7 +22,7 @@ enum AdultRoute: String, Identifiable {
 /// The locked thing a child tapped on the way to the paywall. Once Pro is bought (or restored),
 /// the paywall closes by itself and the tap is finished, so the child doesn't have to tap again.
 enum ProUnlock: Equatable {
-    case garden, fish, coat(String), item(String), startCoat(String)
+    case garden, fish, coat(String), item(String), startCoat(String), decor(String)
 }
 
 /// The bridge between the game world (drawn every frame) and the SwiftUI screens.
@@ -233,6 +233,17 @@ final class GameModel {
         sync()
     }
 
+    /// A decoration for the room (#18): free ones, or Pro ones once Pro is bought, when enough
+    /// hearts have been collected. Choosing it again takes it away.
+    func choose(decor: Decor) {
+        guard let s = world.save else { return }
+        sound.click()
+        if !decor.isFree && !isPro { askForPro(.decor(decor.id)); return }
+        if s.hearts < decor.cost { showToast(L10n.needHearts(decor.cost)); return }
+        world.toggleDecor(decor.id)
+        sync()
+    }
+
     func choose(coat: Coat) {
         sound.click()
         if !coat.isFree && !isPro { askForPro(.coat(coat.id)); return }
@@ -286,6 +297,7 @@ final class GameModel {
         case .coat(let id): choose(coat: Catalog.coat(id))
         case .item(let id): if let item = Catalog.items.first(where: { $0.id == id }) { choose(item: item) }
         case .startCoat(let id): startCoat = id
+        case .decor(let id): if let decor = Catalog.decor.first(where: { $0.id == id }) { choose(decor: decor) }
         }
     }
 

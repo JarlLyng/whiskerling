@@ -3,8 +3,8 @@ import Foundation
 
 /// App Store screenshots, the pattern from `DESIGN.md` (debug builds only): launch with
 /// `-screenshots -screen <scene>` and `-debugSky day|night`, then `xcrun simctl io <device>
-/// screenshot`. Scenes: `room`, `gate`, `fish`, `wardrobe`, `night`, and `party` and `nap` for
-/// checking the grown-up cat. The sample cat lives in its own UserDefaults suite, so a real cat is
+/// screenshot`. Scenes: `room`, `gate`, `fish`, `wardrobe`, `night`, `party` and `nap` for
+/// checking the grown-up cat, and `decor` and `decornight` for the room with everything put up. The sample cat lives in its own UserDefaults suite, so a real cat is
 /// never touched, and Pro is shown as bought.
 extension GameModel {
     static var screenshotScene: String? {
@@ -14,7 +14,8 @@ extension GameModel {
 
     func setUpScreenshot(_ scene: String) {
         world.defaults = UserDefaults(suiteName: "whiskerling.screenshots") ?? .standard
-        let coats = ["room": "orange", "gate": "orange", "fish": "tabby", "wardrobe": "calico", "night": "white"]
+        let coats = ["room": "orange", "gate": "orange", "fish": "tabby", "wardrobe": "calico", "night": "white",
+                     "decor": "tabby", "decornight": "tabby"]
         var s = SaveState(name: "Luna", coat: coats[scene] ?? "orange")
         s.needs = Needs(food: 88, fun: 92, energy: 84, clean: 96)
         s.hearts = 140
@@ -34,6 +35,11 @@ extension GameModel {
             s.born = Date().addingTimeInterval(-(scene == "party" ? 366 : 30) * 86_400)
             s.birthdays = scene == "party" ? 1 : nil
             s.grownUpParty = true
+            s.wear = Wear(head: "bow")
+        case "decor", "decornight": // everything for the room put up (#18)
+            s.hearts = 520; s.seenHearts = 520
+            s.decor = Catalog.decor.map(\.id)
+            if scene == "decornight" { s.lightsOff = true; s.needs.energy = 46 } // tired, so the lights stay off
             s.wear = Wear(head: "bow")
         default:
             s.wear = Wear(head: "bow")

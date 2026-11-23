@@ -46,6 +46,17 @@ enum L10n {
         }
     }
 
+    static func decorName(_ id: String) -> String {
+        switch id {
+        case "plant": return String(localized: "decor.plant", defaultValue: "Plant")
+        case "rug": return String(localized: "decor.rug", defaultValue: "Pink rug")
+        case "cattree": return String(localized: "decor.cattree", defaultValue: "Cat tree")
+        case "wallpaper": return String(localized: "decor.wallpaper", defaultValue: "Heart wallpaper")
+        case "portrait": return String(localized: "decor.portrait", defaultValue: "Cat picture")
+        default: return String(localized: "decor.lights", defaultValue: "Fairy lights")
+        }
+    }
+
     static func itemName(_ id: String) -> String {
         switch id {
         case "bow": return String(localized: "item.bow", defaultValue: "Bow")
@@ -98,6 +109,9 @@ enum L10n {
     static var wear: String { String(localized: "wardrobe.wear", defaultValue: "Put on") }
     static var takeOff: String { String(localized: "wardrobe.takeOff", defaultValue: "Take off") }
     static var wearing: String { String(localized: "wardrobe.wearing", defaultValue: "Wearing") }
+    static var wardrobeRoom: String { String(localized: "wardrobe.room", defaultValue: "The room") }
+    static var putUp: String { String(localized: "wardrobe.putUp", defaultValue: "Add") }
+    static var takeDown: String { String(localized: "wardrobe.takeDown", defaultValue: "Take away") }
     static func needHearts(_ n: Int) -> String { String(localized: "wardrobe.needHearts", defaultValue: "You need \(n) ❤️ for that one") }
     static var pro: String { String(localized: "badge.pro", defaultValue: "Pro") }
     static var askGrownUp: String { String(localized: "badge.askGrownUp", defaultValue: "Ask a grown-up") }
@@ -138,9 +152,9 @@ enum L10n {
     static var proSubtitle: String { String(localized: "pro.subtitle", defaultValue: "Unlock everything, once and for all.") }
     static var proCoatsTitle: String { String(localized: "pro.coats.title", defaultValue: "All nine coats") }
     static var proCoatsBody: String { String(localized: "pro.coats.body", defaultValue: "Ginger, ginger and white, grey, black, tuxedo, white, tabby, calico and Siamese.") }
-    static var proItemsTitle: String { String(localized: "pro.items.title", defaultValue: "All the accessories") }
+    static var proItemsTitle: String { String(localized: "pro.items.title", defaultValue: "All the accessories and the room") }
     static var proItemsBody: String {
-        String(localized: "pro.items.body", defaultValue: "Flowers, sunglasses, top hat, scarf and crown. They still unlock with hearts.")
+        String(localized: "pro.items.body", defaultValue: "Flowers, sunglasses, top hat, scarf and crown, and for the room a cat tree, heart wallpaper, a picture of the cat and fairy lights. They still unlock with hearts.")
     }
     static var proGardenTitle: String { String(localized: "pro.garden.title", defaultValue: "The garden and Catch the fish") }
     static var proGardenBody: String {
@@ -170,6 +184,7 @@ enum L10n {
 
     // MARK: Toasts
     static var dailyGift: String { String(localized: "toast.daily", defaultValue: "Today's gift: +3 ❤️") }
+    static func decorUnlocked(_ label: String) -> String { String(localized: "toast.decorUnlocked", defaultValue: "New for the room: \(label)!") }
     static func itemUnlocked(_ label: String) -> String { String(localized: "toast.itemUnlocked", defaultValue: "New accessory unlocked: \(label)!") }
     static func grewYoung(_ name: String) -> String { String(localized: "toast.grewYoung", defaultValue: "\(name) is a young cat now! 🎉") }
     static func grewAdult(_ name: String) -> String { String(localized: "toast.grewAdult", defaultValue: "\(name) is a grown-up cat now! 🎉") }
