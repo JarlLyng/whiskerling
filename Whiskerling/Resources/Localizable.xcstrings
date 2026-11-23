@@ -358,6 +358,108 @@
         }
       }
     },
+    "decor.cattree": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kradsetræ"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cat tree"
+          }
+        }
+      }
+    },
+    "decor.lights": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lyskæde"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fairy lights"
+          }
+        }
+      }
+    },
+    "decor.plant": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Potteplante"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plant"
+          }
+        }
+      }
+    },
+    "decor.portrait": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Billede af katten"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cat picture"
+          }
+        }
+      }
+    },
+    "decor.rug": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lyserødt tæppe"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pink rug"
+          }
+        }
+      }
+    },
+    "decor.wallpaper": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hjertetapet"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heart wallpaper"
+          }
+        }
+      }
+    },
     "food.fish": {
       "extractionState": "manual",
       "localizations": {
@@ -1333,13 +1435,13 @@
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "Blomster, solbriller, høj hat, halstørklæde og krone. De låses stadig op med hjerter."
+            "value": "Blomster, solbriller, høj hat, halstørklæde og krone, og til stuen et kradsetræ, hjertetapet, et billede af katten og en lyskæde. Det låses stadig op med hjerter."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Flowers, sunglasses, top hat, scarf and crown. They still unlock with hearts."
+            "value": "Flowers, sunglasses, top hat, scarf and crown, and for the room a cat tree, heart wallpaper, a picture of the cat and fairy lights. They still unlock with hearts."
           }
         }
       }
@@ -1350,13 +1452,13 @@
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alt pynt"
+            "value": "Alt pynt til katten og stuen"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "All the accessories"
+            "value": "All the accessories and the room"
           }
         }
       }
@@ -3010,6 +3112,23 @@
         }
       }
     },
+    "toast.decorUnlocked": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nyt til stuen: %@!"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New for the room: %@!"
+          }
+        }
+      }
+    },
     "toast.fishResult": {
       "extractionState": "manual",
       "localizations": {
@@ -3176,6 +3295,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "You need %lld ❤️ for that one"
+          }
+        }
+      }
+    },
+    "wardrobe.putUp": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sæt ind"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
+          }
+        }
+      }
+    },
+    "wardrobe.room": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stuen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The room"
+          }
+        }
+      }
+    },
+    "wardrobe.takeDown": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tag væk"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Take away"
           }
         }
       }

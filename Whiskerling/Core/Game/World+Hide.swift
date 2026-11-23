@@ -204,11 +204,12 @@ extension World {
                 tailPath(p, wiggle, hanging: true); p.stroke(k.line, 22); p.stroke(tailFill(k), 15.5); stripes(p, k)
             case .lump:
                 // a cat-sized bump under the rug, with a shadow on the far side so it stands out
-                p.ell(6, 2, 80, 10); p.fill(.rgba(40, 95, 90, 0.22))
+                p.ell(6, 2, 80, 10); p.fill(.rgba(40, 60, 60, 0.2))
                 p.beginPath(); p.moveTo(-74, 2); p.quadTo(-60, -44, 0, -46); p.quadTo(60, -44, 74, 2); p.closePath()
-                p.fill(Color(hex: "9BD2CC")); p.stroke(Color(hex: "6AAEA7"), 2.5)
+                let rug = shows("rug") ? DecorArt.pinkRug : DecorArt.rug
+                p.fill(rug.mixed(with: .black, 0.06)); p.stroke(rug.mixed(with: .black, 0.28), 2.5)
                 p.beginPath(); p.moveTo(10, -44); p.quadTo(58, -40, 70, -2); p.quadTo(40, -24, 10, -44); p.closePath()
-                p.fill(.rgba(40, 95, 90, 0.18))
+                p.fill(.rgba(40, 60, 60, 0.15))
                 p.beginPath(); p.moveTo(-44, -30); p.quadTo(-16, -42, 14, -40); p.stroke(.rgba(255, 255, 255, 0.55), 5)
                 p.dash = [10, 8]
                 p.beginPath(); p.moveTo(-64, -6); p.quadTo(0, -36, 64, -6); p.stroke(.white, 3)

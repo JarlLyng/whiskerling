@@ -49,6 +49,17 @@ struct Item: Identifiable {
     var name: String { L10n.itemName(id) }
 }
 
+/// Something for the living room (#18). Unlocked with hearts like the accessories, and added or
+/// taken away one by one; the room looks as it always has until something is added.
+struct Decor: Identifiable {
+    let id: String
+    /// Hearts collected in total before it unlocks, above the crown's. Hearts are never spent.
+    let cost: Int
+    var isFree: Bool = false
+
+    var name: String { L10n.decorName(id) }
+}
+
 enum Food: String, CaseIterable, Identifiable {
     case kibble, fish, shrimp
     var id: String { rawValue }
@@ -112,5 +123,14 @@ enum Catalog {
         Item(id: "hat", slot: .head, icon: "🎩", cost: 90),
         Item(id: "scarf", slot: .neck, icon: "🧣", cost: 130),
         Item(id: "crown", slot: .head, icon: "👑", cost: 180)
+    ]
+
+    static let decor: [Decor] = [
+        Decor(id: "plant", cost: 200, isFree: true),
+        Decor(id: "rug", cost: 240, isFree: true),
+        Decor(id: "cattree", cost: 290),
+        Decor(id: "wallpaper", cost: 350),
+        Decor(id: "portrait", cost: 420),
+        Decor(id: "lights", cost: 500)
     ]
 }
