@@ -62,7 +62,7 @@ enum CatArt {
         p.moveTo(26, -20)
         p.bezierTo(80, -12, 98 + sw * 6, -60, 72 + sw * 18, -106)
         p.stroke(k.line, 22)
-        p.stroke(k.pattern == .calico ? k.p1 : k.fur, 15.5)
+        p.stroke(k.tail, 15.5)
         if k.pattern == .stripes {
             p.lineCap = .butt
             p.dash = [7, 10]
@@ -118,12 +118,17 @@ enum CatArt {
             p.ell(-30, -84, 28, 30); p.fill(k.p1)
             p.ell(36, -42, 22, 26); p.fill(k.p2)
             p.ell(26, -100, 16, 12); p.fill(k.p1)
+        case .bicolor: // a white bib from the chin down
+            p.ell(0, -52, 33, 58); p.fill(k.p1)
+        case .points: // darker towards the legs
+            p.ell(0, -4, 50, 24); p.fill(k.p2.opacity(0.28))
+            p.ell(0, 2, 50, 16); p.fill(k.p2.opacity(0.28))
         }
         p.restore()
     }
 
     static func paw(_ p: Pen, _ k: Coat, _ x: CGFloat, _ y: CGFloat) {
-        p.ell(x, y, 13, 9); p.fill(k.light); p.stroke(k.line, 3)
+        p.ell(x, y, 13, 9); p.fill(k.paw); p.stroke(k.line, 3)
         p.beginPath()
         p.moveTo(x - 4, y + 1); p.lineTo(x - 4, y + 7)
         p.moveTo(x + 4, y + 1); p.lineTo(x + 4, y + 7)
@@ -146,8 +151,8 @@ enum CatArt {
     }
 
     static func drawHead(_ p: Pen, _ k: Coat, _ c: CatPose) {
-        ear(p, k, side: 1, fill: k.pattern == .calico ? k.p1 : k.fur)
-        ear(p, k, side: -1, fill: k.pattern == .calico ? k.p2 : k.fur)
+        ear(p, k, side: 1, fill: k.ear(left: false))
+        ear(p, k, side: -1, fill: k.ear(left: true))
         p.ell(0, 0, 60, 48); p.fill(k.fur)
         if let pattern = k.pattern {
             p.save()
@@ -162,13 +167,24 @@ enum CatArt {
             case .calico:
                 p.ell(-38, -28, 32, 26); p.fill(k.p1)
                 p.ell(42, -24, 28, 24); p.fill(k.p2)
+            case .bicolor: // a white lower face and a blaze up between the eyes
+                p.ell(0, 24, 44, 26); p.fill(k.p1)
+                p.beginPath(); p.moveTo(-15, 8); p.quadTo(-4, -14, 0, -40); p.quadTo(4, -14, 15, 8); p.closePath()
+                p.fill(k.p1)
+            case .points: // a dark mask over the nose and round the eyes, fading out to the cheeks
+                p.save()
+                p.translate(0, 10); p.scale(1, 0.86)
+                p.fillRadial([.init(color: k.p2, location: 0), .init(color: k.p2, location: 0.5),
+                              .init(color: k.p2.opacity(0), location: 1)], radius: 52)
+                p.circ(0, 0, 52); p.fill()
+                p.restore()
             }
             p.restore()
         }
         p.ell(0, 0, 60, 48); p.stroke(k.line, 3.2)
         // muzzle
-        p.ell(-12, 15, 16, 12); p.fill(k.light)
-        p.ell(12, 15, 16, 12); p.fill(k.light)
+        p.ell(-12, 15, 16, 12); p.fill(k.muzzle)
+        p.ell(12, 15, 16, 12); p.fill(k.muzzle)
         if c.blush {
             p.ell(-38, 14, 10, 6); p.fill(.rgba(255, 110, 140, 0.33))
             p.ell(38, 14, 10, 6); p.fill(.rgba(255, 110, 140, 0.33))
@@ -206,7 +222,7 @@ enum CatArt {
         if c.lid > 0 {
             p.save()
             p.ell(ex, ey, 12.6, 14.6); p.clip()
-            p.fillColor = k.fur
+            p.fillColor = k.lid
             p.fillRect(ex - 14, ey - 16, 28, 2 + 28 * c.lid)
             p.restore()
             let lidY = ey - 14 + 28 * c.lid
@@ -337,6 +353,10 @@ enum CatArt {
             case .calico:
                 p.ell(40, -14, 30, 22); p.fill(k.p1)
                 p.ell(-6, 14, 22, 16); p.fill(k.p2)
+            case .bicolor: // the white chest, under the head
+                p.ell(-38, 14, 34, 22); p.fill(k.p1)
+            case .points:
+                p.ell(10, 30, 74, 16); p.fill(k.p2.opacity(0.3))
             }
             p.restore()
         }
@@ -344,7 +364,7 @@ enum CatArt {
         p.restore()
         p.beginPath(); p.moveTo(78, -26); p.quadTo(92, 2, 30, 0); p.quadTo(0, -1, -16, -6)
         p.stroke(k.line, 20)
-        p.stroke(k.pattern == .calico ? k.p1 : k.fur, 14)
+        p.stroke(k.tail, 14)
         paw(p, k, 24, -6)
         p.restore()
         p.save()

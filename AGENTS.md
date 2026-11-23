@@ -77,7 +77,7 @@ states, open issues and plans go stale: they live in `CHANGELOG.md`, GitHub and 
 
 ## App features (be precise, do not invent features that don't exist)
 
-- Start screen: choose one of six coats (two free, four with Pro) and type a name.
+- Start screen: choose one of nine coats (two free, seven with Pro) and type a name.
 - Four needs as bars: full, happy, energy, clean. They fall in real time, slower at night.
 - Feed (kibble, fish, shrimp treats with a limit), wash with a sponge, sleep (lights off, the cat
   in its basket), and a litter box the cat uses now and then; tap it to clean it.

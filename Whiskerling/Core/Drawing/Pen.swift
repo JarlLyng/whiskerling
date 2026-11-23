@@ -63,6 +63,11 @@ final class Pen {
         state.fill = .linearGradient(Gradient(colors: colors), startPoint: from, endPoint: to)
     }
 
+    /// A round gradient from the centre (`location` 0) out to `radius` (1).
+    func fillRadial(_ stops: [Gradient.Stop], center: CGPoint = .zero, radius: CGFloat) {
+        state.fill = .radialGradient(Gradient(stops: stops), center: center, startRadius: 0, endRadius: radius)
+    }
+
     // MARK: Paths
 
     func beginPath() { path = Path() }

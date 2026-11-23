@@ -10,8 +10,11 @@ struct StartView: View {
     var body: some View {
         GeometryReader { geo in
             let narrow = geo.size.width < 520 // a narrow window (#15)
+            // A short, wide screen (an iPad mini on its side) gets the coats in two rows, so the
+            // name and the button still fit without scrolling (#19).
+            let low = !narrow && geo.size.height < 900 && geo.size.width > geo.size.height
             ScrollView {
-                card(narrow: narrow)
+                card(narrow: narrow, low: low)
                     .padding(narrow ? Tokens.Spacing.md : Tokens.Spacing.xl)
                     // Centre the card on a tall screen; it still scrolls when the keyboard is up.
                     .frame(maxWidth: .infinity, minHeight: geo.size.height)
@@ -28,12 +31,12 @@ struct StartView: View {
         }
     }
 
-    private func card(narrow: Bool) -> some View {
-            VStack(spacing: Tokens.Spacing.lg) {
+    private func card(narrow: Bool, low: Bool) -> some View {
+            VStack(spacing: low ? Tokens.Spacing.md : Tokens.Spacing.lg) {
                 Text(verbatim: "Whiskerling 🐾").font(Theme.font(44, .heavy))
                     .lineLimit(1).minimumScaleFactor(0.5)
                 Text(verbatim: L10n.chooseKitten).font(Theme.font(20, .semibold)).foregroundStyle(Theme.muted)
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: Tokens.Spacing.md), count: 3),
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: Tokens.Spacing.md), count: low ? 5 : 3),
                           spacing: Tokens.Spacing.md) {
                     ForEach(Catalog.coats) { c in coatButton(c) }
                 }
@@ -56,8 +59,8 @@ struct StartView: View {
                 }
                 .buttonStyle(PillButtonStyle(color: Theme.go))
             }
-            .padding(narrow ? Tokens.Spacing.lg : Tokens.Spacing.xxl)
-            .frame(maxWidth: 680)
+            .padding(narrow || low ? Tokens.Spacing.lg : Tokens.Spacing.xxl)
+            .frame(maxWidth: low ? 860 : 680)
             .background(Theme.card, in: RoundedRectangle(cornerRadius: 32, style: .continuous))
     }
 
@@ -69,8 +72,9 @@ struct StartView: View {
             if locked { model.askForPro(.startCoat(c.id)) } else { coat = c.id }
         } label: {
             VStack(spacing: 2) {
-                // As large as the tile allows, up to 110 points, so tiles never overlap.
-                KittenPortrait(coat: c).frame(maxWidth: 110).aspectRatio(1, contentMode: .fit)
+                // As large as the tile allows, up to 110 points, so tiles never overlap. Square first,
+                // then capped: capped first, a wide tile gave a narrow, tall canvas that cut the cat off.
+                KittenPortrait(coat: c).aspectRatio(1, contentMode: .fit).frame(maxWidth: 110)
                 Text(verbatim: c.name).font(Theme.font(17)).lineLimit(1).minimumScaleFactor(0.7)
                 Text(verbatim: locked ? "🔒 " + L10n.askGrownUp : " ").font(Theme.font(13, .semibold)).foregroundStyle(Theme.muted)
                     .lineLimit(1).minimumScaleFactor(0.6)
