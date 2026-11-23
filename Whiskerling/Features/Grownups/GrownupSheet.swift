@@ -180,7 +180,6 @@ struct GrownupMenu: View {
     let onClose: () -> Void
     @State private var resetArmed = false
     @State private var showPaywall = false
-    @Environment(\.requestReview) private var requestReview
 
     var body: some View {
         if showPaywall {
@@ -208,12 +207,12 @@ struct GrownupMenu: View {
                         if resetArmed { model.startOver(); onClose() } else { resetArmed = true }
                     }
                 }
-                // Links out of the app and the rating prompt live here, behind the parental gate,
-                // as Apple's Kids category asks.
+                // Links out of the app live here, behind the parental gate, as Apple's Kids
+                // category asks. Rate is a link to the App Store's review page, never a prompt.
                 VStack(spacing: Tokens.Spacing.xs) {
                     HStack(spacing: Tokens.Spacing.xl) {
                         Link(L10n.sendFeedback, destination: Feedback.mailURL())
-                        Button(L10n.rateApp) { requestReview() }
+                        Link(L10n.rateApp, destination: Feedback.reviewURL)
                         Link(L10n.privacyPolicy, destination: Feedback.privacyURL)
                     }
                     .font(Theme.font(16, .semibold))

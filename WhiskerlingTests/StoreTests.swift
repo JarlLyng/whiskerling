@@ -38,6 +38,26 @@ final class StoreTests: XCTestCase {
         XCTAssertTrue(unlocked, "Pro should lock again after a refund")
     }
 
+    func testAnApprovedAskToBuyUnlocksProAndIsFinished() async throws {
+        session.askToBuyEnabled = true
+        let store = await loadedStore()
+        await store.purchase()
+        XCTAssertFalse(store.isPro, "Pro waits for the parent's approval")
+        XCTAssertEqual(store.purchaseError, L10n.purchasePending)
+
+        let pending = try XCTUnwrap(session.allTransactions().first)
+        try session.approveAskToBuyTransaction(identifier: pending.identifier)
+        // The approval arrives through Transaction.updates, not through purchase().
+        let settled = await waitUntil {
+            var unfinished = 0
+            for await result in Transaction.unfinished {
+                if case .verified(let transaction) = result, transaction.productID == Store.proID { unfinished += 1 }
+            }
+            return store.isPro && unfinished == 0
+        }
+        XCTAssertTrue(settled, "Pro should unlock after the approval, and the transaction be finished")
+    }
+
     // MARK: - Helpers
 
     /// A store with the product loaded. A simulator that has just booted can take a moment

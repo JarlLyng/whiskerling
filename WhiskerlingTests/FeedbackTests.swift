@@ -12,4 +12,12 @@ final class FeedbackTests: XCTestCase {
         XCTAssertTrue(query["body"]?.contains("Whiskerling 1.0 (7)") == true)
         XCTAssertTrue(query["body"]?.contains("iPadOS 27.1") == true)
     }
+
+    func testRateOpensWhiskerlingsReviewPage() throws {
+        let parts = try XCTUnwrap(URLComponents(url: Feedback.reviewURL, resolvingAgainstBaseURL: false))
+        XCTAssertEqual(parts.scheme, "https")
+        XCTAssertEqual(parts.host, "apps.apple.com")
+        XCTAssertEqual(parts.path, "/app/id6835849162")
+        XCTAssertEqual(parts.queryItems, [URLQueryItem(name: "action", value: "write-review")])
+    }
 }

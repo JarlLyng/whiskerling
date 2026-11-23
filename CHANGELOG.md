@@ -6,6 +6,16 @@ All notable changes to Whiskerling are listed here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+- Rate in the grown-ups' menu opens Whiskerling's review page in the App Store. It asked for
+  Apple's rating prompt, which the system may choose not to show, so the button could do nothing
+  ([#12](https://github.com/JarlLyng/whiskerling/issues/12)).
+- Purchases that complete later, like a parent approving Ask to Buy, are now finished once Pro
+  is unlocked, so the App Store doesn't hand them over again on every launch
+  ([#13](https://github.com/JarlLyng/whiskerling/issues/13)).
+
+## [1.0.0] - not released yet (build 4)
+
 ### Added
 - The first iPad version of the game, rebuilt in SwiftUI from the web version (Min Mis):
   a kitten to feed, play with, wash and put to bed, with a litter box, hearts and accessories.
