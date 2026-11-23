@@ -39,6 +39,9 @@ struct SaveState: Codable, Equatable {
     var room: String?
     /// How many birthdays have been celebrated (#17). Optional, so older saves load; nil is none.
     var birthdays: Int?
+    /// Whether the cat has had its grown-up party (#17). Optional, so older saves load; a cat that
+    /// had already grown up in one gets its party late, once.
+    var grownUpParty: Bool?
 
     init(name: String, coat: String, now: Date = Date()) {
         self.name = name
