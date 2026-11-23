@@ -116,6 +116,10 @@ final class World {
     var screenshotScene: String?
     #endif
     var sky = SkyPhase.at(Date())
+    /// The system's Reduce Motion, set by the game view (#14). Hearts and sparkles then fade where
+    /// they appear, jumps become small hops, and fish leap low and slow. The game and its rewards
+    /// stay the same.
+    var reduceMotion = false
     var W: CGFloat = 0, H: CGFloat = 0, U: CGFloat = 1
     var G = Geometry()
     private var lastFrame: Date?
@@ -163,10 +167,20 @@ final class World {
 
     func spawn(_ kind: ParticleKind, _ x: CGFloat, _ y: CGFloat, vx: CGFloat = 0, vy: CGFloat = 0,
                life: CGFloat = 1, size: CGFloat = 10, text: String = "") {
+        // With Reduce Motion nothing flies sideways, and what rises only drifts up a little.
+        let vx = reduceMotion ? 0 : vx, vy = reduceMotion ? vy * 0.2 : vy
         parts.append(Particle(kind: kind, x: x, y: y, vx: vx, vy: vy, life: life, max: life, size: size, text: text))
         if parts.count > 140 { parts.removeFirst() }
     }
     func burst(_ kind: ParticleKind, _ x: CGFloat, _ y: CGFloat, count: Int, speed: CGFloat, life: CGFloat, size: CGFloat) {
+        if reduceMotion {
+            // A few sparkles that fade where they are, instead of bursting outwards.
+            for _ in 0..<min(count, 5) {
+                let a = CGFloat.random(in: 0...(2 * .pi)), r = CGFloat.random(in: 0...(speed * 0.2))
+                spawn(kind, x + cos(a) * r, y + sin(a) * r, life: life, size: size)
+            }
+            return
+        }
         for _ in 0..<count {
             let a = CGFloat.random(in: 0...(2 * .pi)), v = CGFloat.random(in: (speed * 0.4)...speed)
             spawn(kind, x, y, vx: cos(a) * v, vy: sin(a) * v, life: life, size: size)
@@ -578,16 +592,19 @@ final class World {
         bowl = nil
         cat.walk = nil; cat.jump = nil; cat.activity = .play; cat.cool = 0.8
         feather.x = min(max(cat.x + 160 * U, 60), W - 60); feather.tx = feather.x
-        feather.y = G.catY - 240 * U; feather.ty = feather.y
+        feather.y = max(G.catY - 240 * U, featherTop); feather.ty = feather.y
         feather.held = 0; feather.catches = 0
         return true
     }
 
     private var featherCenter: CGPoint { CGPoint(x: feather.x, y: feather.y + 26 * U) }
+    /// How high the feather can go. With Reduce Motion it stays low enough for a small hop to
+    /// reach, so the cat still catches it as often without leaping.
+    private var featherTop: CGFloat { reduceMotion ? G.catY - 220 * U : 20 * U }
 
     func catLift() -> CGFloat {
         if let j = cat.jump { let p = min(max(j.t / j.dur, 0), 1); return j.h * 4 * p * (1 - p) }
-        if cat.hop > 0 { return sin((1 - cat.hop / 0.35) * .pi) * 16 * U }
+        if cat.hop > 0 { return sin((1 - cat.hop / 0.35) * .pi) * (reduceMotion ? 6 : 16) * U }
         if cat.activity == .walk || cat.moving { return abs(sin(cat.t * 11)) * 4 * U }
         return 0
     }
@@ -603,7 +620,7 @@ final class World {
             feather.ang = -0.5
             if feather.held <= 0 {
                 feather.tx = min(max(cat.x + (Bool.random() ? -1 : 1) * 190 * U, 50), W - 50)
-                feather.ty = G.catY - 300 * U
+                feather.ty = max(G.catY - 300 * U, featherTop)
             }
         } else {
             let k = min(1, dt * 12), ox = feather.x
@@ -629,14 +646,16 @@ final class World {
             if j.t >= j.dur { cat.cool = 0.9 }
             cat.moving = false
         } else {
-            let tx = min(max(feather.x, G.minX), G.maxX), dx = tx - cat.x, sp = 330 * U * dt
+            let tx = min(max(feather.x, G.minX), G.maxX), dx = tx - cat.x, sp = (reduceMotion ? 200 : 330) * U * dt
             cat.moving = abs(dx) > 6
             if cat.moving { cat.x += min(max(dx, -sp), sp) }
             cat.y += (G.catY - cat.y) * min(1, dt * 6)
             let fc = featherCenter
             if cat.cool <= 0 && feather.held <= 0 && abs(fc.x - cat.x) < 90 * U && fc.y < cat.y - 50 * s && fc.y > cat.y - 340 * s {
                 let headY = cat.y - 118 * stage.body * s
-                cat.jump = Jump(h: min(max(headY - fc.y + 10 * s, 20 * U), 170 * U), vx: min(max((fc.x - cat.x) / 0.31, -260 * U), 260 * U))
+                let h = min(max(headY - fc.y + 10 * s, 20 * U), (reduceMotion ? 36 : 170) * U)
+                let reach: CGFloat = (reduceMotion ? 120 : 260) * U
+                cat.jump = Jump(h: h, vx: min(max((fc.x - cat.x) / 0.31, -reach), reach))
                 sound.jump()
             }
         }
@@ -774,7 +793,7 @@ final class World {
 
     private func featherTo(_ p: CGPoint) {
         feather.tx = p.x
-        feather.ty = min(max(p.y - 70 * U, 20 * U), G.catY - 90 * U)
+        feather.ty = min(max(p.y - 70 * U, featherTop), G.catY - 90 * U)
     }
 
     func pointerDown(_ p: CGPoint) {
@@ -825,7 +844,7 @@ final class World {
             parts[i].x += parts[i].vx * dt
             parts[i].y += parts[i].vy * dt
             switch parts[i].kind {
-            case .heart, .zzz, .bubble: parts[i].x += sin(parts[i].ph + parts[i].life * 4) * 18 * dt
+            case .heart, .zzz, .bubble: if !reduceMotion { parts[i].x += sin(parts[i].ph + parts[i].life * 4) * 18 * dt }
             case .sparkle: parts[i].vx *= 0.93; parts[i].vy *= 0.93
             case .text: break
             }
