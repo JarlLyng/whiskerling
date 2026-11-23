@@ -3,8 +3,9 @@ import Foundation
 
 /// App Store screenshots, the pattern from `DESIGN.md` (debug builds only): launch with
 /// `-screenshots -screen <scene>` and `-debugSky day|night`, then `xcrun simctl io <device>
-/// screenshot`. Scenes: `room`, `gate`, `fish`, `wardrobe`, `night`. The sample cat lives in its
-/// own UserDefaults suite, so a real cat is never touched, and Pro is shown as bought.
+/// screenshot`. Scenes: `room`, `gate`, `fish`, `wardrobe`, `night`, and `party` and `nap` for
+/// checking the grown-up cat. The sample cat lives in its own UserDefaults suite, so a real cat is
+/// never touched, and Pro is shown as bought.
 extension GameModel {
     static var screenshotScene: String? {
         guard ProcessInfo.processInfo.arguments.contains("-screenshots") else { return nil }
@@ -28,6 +29,11 @@ extension GameModel {
             s.lightsOff = true
             s.needs.energy = 46
             s.wear = Wear(neck: "scarf")
+        case "party", "nap": // a grown-up cat (#17), a year old for its first birthday
+            s.stage = Catalog.stages.count - 1
+            s.born = Date().addingTimeInterval(-(scene == "party" ? 366 : 30) * 86_400)
+            s.birthdays = scene == "party" ? 1 : nil
+            s.wear = Wear(head: "bow")
         default:
             s.wear = Wear(head: "bow")
         }

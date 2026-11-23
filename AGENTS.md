@@ -88,7 +88,9 @@ states, open issues and plans go stale: they live in `CHANGELOG.md`, GitHub and 
 - Stroke the cat to pet it (purring); tap it to hear what it needs.
 - Hearts come from caring and are never spent. They unlock accessories: bow and bell free;
   flowers, sunglasses, top hat, scarf and crown with Pro. Coats change in the wardrobe.
-- Grows from kitten (days 1 to 2) to young cat (to day 6) to grown-up cat.
+- Grows from kitten (days 1 to 2) to young cat (to day 6) to grown-up cat, with a party (balloons
+  and a cake) when it grows up and on each yearly birthday. A content grown-up cat now and then
+  naps on the rug, stretches, or brings the child a ball of yarn.
 - A real-time cat clock, and a window whose sky follows the time of day.
 - Synthesised sounds that respect the silent switch. English and Danish.
 - Grown-ups' area behind a parental gate (a 6-to-9 times-table question on a keypad), opened by

@@ -41,7 +41,7 @@ extension World {
         guard save != nil, room != r else { return }
         save!.room = r == .living ? nil : r.rawValue
         roomFade = 0.45
-        bowl = nil; cat.jump = nil; cat.walk = nil; cat.petT = 0
+        bowl = nil; cat.jump = nil; cat.walk = nil; cat.petT = 0; toy = nil
         sound.stopPurr()
         cat.activity = .idle; cat.timer = 2
         cat.x = r == .garden ? G.minX : G.maxX

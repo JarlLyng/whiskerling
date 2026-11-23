@@ -30,6 +30,8 @@ extension World {
             (G.bed.y - 0.5, drawBedBack), (G.bed.y + 0.5, drawBedFront)
         ]
         list.append((cat.y, drawTheCat))
+        if party != nil { list.append((partySpot.y, drawParty)) }
+        if let toy { list.append((toy.carried ? cat.y + 1 : toy.y, drawToy)) }
         list.sort { $0.0 < $1.0 }
         for item in list { item.1(p) }
         if mode == .play { drawFeather(p) }
@@ -315,8 +317,10 @@ extension World {
     private func drawTheCat(_ p: Pen) {
         let s = catScale
         let dirt = CGFloat(min(max((45 - save!.needs.clean) / 45, 0), 1))
-        if cat.activity == .sleep {
-            CatArt.drawSleepingCat(p, x: cat.x + 6 * U, y: cat.y - 24 * objScale(cat.y), s: s, coat: coat, stage: stage,
+        if cat.activity == .sleep || cat.activity == .nap {
+            // in the basket at night, or curled up on the rug for a nap (#17)
+            let y = cat.activity == .sleep ? cat.y - 24 * objScale(cat.y) : cat.y
+            CatArt.drawSleepingCat(p, x: cat.x + 6 * U, y: y, s: s, coat: coat, stage: stage,
                                    wear: save!.wear, t: T, dirt: dirt)
             return
         }
@@ -360,7 +364,16 @@ extension World {
         pose.pawsUp = cat.jump != nil
         pose.lift = catLift()
         pose.step = walking ? sin(cat.t * 10) : 0
-        CatArt.drawCat(p, pose)
+        if cat.activity == .stretch {
+            // a long stretch with a yawn: the cat leans out and sinks a little, then back
+            let k = sin(min(max(1 - cat.timer / World.stretchTime, 0), 1) * .pi)
+            pose.eyes = .closed; pose.mouth = .open; pose.tilt = 0
+            p.save(); p.translate(cat.x, cat.y); p.scale(1 + 0.14 * k, 1 - 0.12 * k); p.translate(-cat.x, -cat.y)
+            CatArt.drawCat(p, pose)
+            p.restore()
+        } else {
+            CatArt.drawCat(p, pose)
+        }
         if save!.needs.clean < 20 { drawFlies(p, catHeadPos(), s) }
     }
 
@@ -464,7 +477,9 @@ extension World {
         guard let b = bubble else { return }
         let s = catScale
         var ax: CGFloat, ay: CGFloat
-        if cat.activity == .sleep { ax = cat.x - 40 * s; ay = cat.y - 120 * s } else {
+        if cat.activity == .sleep || cat.activity == .nap {
+            ax = cat.x - 40 * s; ay = cat.y - (cat.activity == .nap ? 100 : 120) * s
+        } else {
             let hp = catHeadPos(); ax = hp.x; ay = hp.y - 72 * stage.head * s
         }
         let fs = min(max(22 * U, 17), 30)

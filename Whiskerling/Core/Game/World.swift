@@ -27,7 +27,7 @@ struct Particle {
     var ph = CGFloat.random(in: 0...(2 * .pi))
 }
 
-enum CatActivity { case idle, walk, eat, poop, sleep, play, wash, fish }
+enum CatActivity { case idle, walk, eat, poop, sleep, play, wash, fish, nap, stretch }
 
 struct Walk {
     var x: CGFloat, y: CGFloat
@@ -111,6 +111,10 @@ final class World {
     var fishing: FishGame?
     var ripples: [Ripple] = []
     var roomFade: CGFloat = 0
+    // the grown-up cat (#17)
+    var party: Party?
+    var toy: Toy?
+    var habitT: CGFloat = 60
     #if DEBUG
     /// Set for App Store screenshots: the scene is staged and the world stands still.
     var screenshotScene: String?
@@ -248,6 +252,7 @@ final class World {
 
     private func afterAway(_ away: TimeInterval) {
         checkStage(celebrate: true)
+        checkBirthday()
         dailyBonus()
         if save!.lightsOff && !SaveState.isNight(Date()) && save!.needs.energy >= 60 {
             save!.lightsOff = false
@@ -268,6 +273,7 @@ final class World {
             sound.fanfare()
             addHearts(5)
             burst(.sparkle, cat.x, cat.y - 150 * U, count: 20, speed: 220 * U, life: 1.2, size: 10 * U)
+            if st == Catalog.stages.count - 1 { startParty(.grownUp) }
         }
     }
 
@@ -306,10 +312,11 @@ final class World {
             save!.last = now
         }
         stageT -= dt
-        if stageT <= 0 { stageT = 5; checkStage(celebrate: true); dailyBonus() }
+        if stageT <= 0 { stageT = 5; checkStage(celebrate: true); checkBirthday(); dailyBonus() }
         let phase = SkyPhase.at(now)
         if phase != sky { sky = phase }
         updateCat(dt)
+        updateGrownUp(dt)
         updateParts(dt)
         updateGarden(dt)
         if roomFade > 0 { roomFade -= dt }
@@ -455,7 +462,9 @@ final class World {
         case .idle:
             cat.timer -= dt
             if mode == .normal && cat.timer <= 0 && cat.petT <= 0 {
-                if save!.poop < 3 && poopClock >= World.poopEvery && save!.needs.food > 20 {
+                if startHabit() {
+                    // a grown-up habit now and then (#17)
+                } else if save!.poop < 3 && poopClock >= World.poopEvery && save!.needs.food > 20 {
                     poopClock = 0
                     goTo(G.litter.x, G.litter.y, speed: 0.9, tag: "litter") { [weak self] in
                         guard let self, self.mode == .normal, self.save?.lightsOff == false else { return }
@@ -509,6 +518,8 @@ final class World {
             updateFishing(dt)
         case .wash:
             break
+        case .nap, .stretch:
+            updateHabit(dt)
         }
 
         // the cat says what it needs
@@ -534,6 +545,7 @@ final class World {
 
     func tapCat() {
         guard let s = save else { return }
+        if wakeFromNap() { return }
         if s.lightsOff { say(L10n.zzz, 1.5); return }
         if cat.activity == .idle || cat.activity == .walk { cat.hop = 0.35 }
         cat.happyT = 0.8
@@ -541,6 +553,7 @@ final class World {
     }
 
     private func pet(_ p: CGPoint, _ d: CGFloat) {
+        _ = wakeFromNap()
         if cat.activity == .walk && cat.walk?.tag == nil { cat.walk = nil; cat.activity = .idle }
         guard cat.activity == .idle else { return }
         cat.petT = 0.5
@@ -776,7 +789,7 @@ final class World {
     func hitCat(_ p: CGPoint) -> Bool {
         guard save != nil else { return false }
         let s = catScale
-        if cat.activity == .sleep {
+        if cat.activity == .sleep || cat.activity == .nap {
             let ax = (p.x - cat.x) / (95 * s), ay = (p.y - (cat.y - 40 * s)) / (60 * s)
             return ax * ax + ay * ay < 1
         }
