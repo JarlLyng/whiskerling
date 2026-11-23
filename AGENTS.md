@@ -90,6 +90,8 @@ states, open issues and plans go stale: they live in `CHANGELOG.md`, GitHub and 
   flowers, sunglasses, top hat, scarf and crown with Pro. Coats change in the wardrobe.
 - Grows from kitten (days 1 to 2) to young cat (to day 6) to grown-up cat.
 - A real-time cat clock, and a window whose sky follows the time of day.
+- Seasons from the iPad's date (the other way round south of the equator): snow, blossom or
+  leaves past the window, and in the garden snow, blossom, apples or orange leaves.
 - Synthesised sounds that respect the silent switch. English and Danish.
 - Grown-ups' area behind a parental gate (a 6-to-9 times-table question on a keypad), opened by
   holding the cat's name for 2 seconds: Pro, restore, sound, feedback mail, rate, privacy policy,
@@ -118,7 +120,7 @@ states, open issues and plans go stale: they live in `CHANGELOG.md`, GitHub and 
 - Run the `Whiskerling` scheme from Xcode on an iPad simulator; it uses `Whiskerling.storekit`.
 - Tests: `xcodebuild -project Whiskerling.xcodeproj -scheme Whiskerling -destination 'platform=iOS Simulator,name=<an iPad>' test`.
   Tests that need a cat use their own UserDefaults suite.
-- Debug arguments: `-debugSky night|dawn|day|dusk`, and `-screenshots -screen <scene>` (see
+- Debug arguments: `-debugSky night|dawn|day|dusk`, `-debugSeason winter|spring|summer|autumn`, and `-screenshots -screen <scene>` (see
   `appstore/README.md`).
 - Texts: `Core/Localization/L10n.swift` (English) and the Danish table in `tools/l10n.py`, then
   `/usr/bin/python3 tools/l10n.py`.
