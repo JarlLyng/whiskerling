@@ -7,6 +7,12 @@ All notable changes to Whiskerling are listed here. The format follows
 ## [Unreleased]
 
 ### Added
+- Hide and seek, a new game with Pro, in the living room or the garden. While a big 1, 2, 3 counts,
+  the cat hides with its ears or its tail peeking out: in the basket, behind the litter box, under
+  the rug or behind the curtain indoors, and behind the apple tree, over the fence or behind the
+  pond outside. A tap finds it, and it pops out and hides again, eight times. There is no timer
+  and no score, and now and then it meows from the hiding place as a hint
+  ([#20](https://github.com/JarlLyng/whiskerling/issues/20)).
 - Three more coats with Pro: tuxedo, Siamese, and ginger and white, with two new markings, a white
   bib and blaze, and a Siamese's dark mask, ears, paws and tail. The start screen shows the nine
   coats in three rows, or in two on a short, wide screen like an iPad mini on its side, and the

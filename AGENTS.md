@@ -83,6 +83,10 @@ states, open issues and plans go stale: they live in `CHANGELOG.md`, GitHub and 
   in its basket), and a litter box the cat uses now and then; tap it to clean it.
 - Play: the feather (free; the cat chases and pounces) or Catch the fish (Pro): twelve fish leap
   from the garden pond, the child taps them and the cat leaps after them. Nobody loses.
+- Hide and seek (Pro), in the living room or the garden: the cat hides eight times while a 1, 2, 3
+  counts, with ears or a tail peeking out (the basket, the litter box, under the rug, behind the
+  curtain; the apple tree, the fence, the pond), and the child taps it. No timer, no score, a
+  meow from the hiding place as a hint now and then. Nobody loses.
 - The garden (Pro): a second room with a pond, an apple tree, flowers and butterflies, and stars
   and fireflies at night. Food and sleep bring the cat inside; the litter box is indoors.
 - Stroke the cat to pet it (purring); tap it to hear what it needs.
@@ -108,7 +112,7 @@ states, open issues and plans go stale: they live in `CHANGELOG.md`, GitHub and 
 - No multiplayer, chat, sharing or social features. No push notifications.
 - No iPhone, Mac or Apple Watch version (iPad only for now).
 - The cat cannot die or run away.
-- No games besides the feather and Catch the fish; no rooms besides the living room and garden.
+- No games besides the feather, Catch the fish and hide and seek; no rooms besides the living room and garden.
 - No languages beyond English and Danish.
 
 ## Requirements
@@ -136,7 +140,8 @@ states, open issues and plans go stale: they live in `CHANGELOG.md`, GitHub and 
 Under `Whiskerling/`:
 
 - `Core/Game/World.swift`: the game. `World+Draw.swift` and `Core/Drawing/CatArt.swift` draw the
-  room and the cat; `World+Garden.swift` and `World+GardenDraw.swift` the garden and Catch the fish.
+  room and the cat; `World+Garden.swift` and `World+GardenDraw.swift` the garden and Catch the fish;
+  `World+Hide.swift` hide and seek.
 - `Core/Game/SaveState.swift`: the saved cat and time passing. `GameModel.swift`: the SwiftUI
   bridge and Pro unlocks. `Core/Store/Store.swift`: StoreKit 2.
 - `Features/`: the SwiftUI screens. At the repo root: `appstore/` (screenshots) and `public/`

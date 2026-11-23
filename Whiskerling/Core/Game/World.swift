@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum GameMode { case normal, play, wash, fish }
+enum GameMode { case normal, play, wash, fish, hide }
 
 /// Where the cat is. The living room is free; the garden comes with Pro.
 enum Room: String, Codable { case living, garden }
@@ -27,7 +27,7 @@ struct Particle {
     var ph = CGFloat.random(in: 0...(2 * .pi))
 }
 
-enum CatActivity { case idle, walk, eat, poop, sleep, play, wash, fish, nap, stretch }
+enum CatActivity { case idle, walk, eat, poop, sleep, play, wash, fish, nap, stretch, hide }
 
 struct Walk {
     var x: CGFloat, y: CGFloat
@@ -109,6 +109,7 @@ final class World {
     var hudDue = true
     // the garden and Catch the fish
     var fishing: FishGame?
+    var hiding: HideGame?
     var ripples: [Ripple] = []
     var roomFade: CGFloat = 0
     // the grown-up cat (#17)
@@ -385,6 +386,7 @@ final class World {
         case .eat: cat.x = G.bowl.x + 78 * objScale(G.catY); cat.y = G.catY; return
         case .poop: cat.x = G.litter.x; cat.y = G.litter.y; return
         case .fish: cat.jump = nil; cat.x = clampToPond(cat.x); cat.y = G.catY; return
+        case .hide: cat.x = min(max(cat.x, G.minX), G.maxX); cat.y = G.catY; return
         default: break
         }
         cat.x = min(max(cat.x == 0 ? W * 0.55 : cat.x, G.minX), G.maxX)
@@ -427,7 +429,7 @@ final class World {
 
     private func updateCat(_ dt: CGFloat) {
         cat.t += dt
-        cat.tail += dt * ((cat.activity == .walk || cat.activity == .play || cat.activity == .fish) ? 5 : 1.8)
+        cat.tail += dt * ((cat.activity == .walk || cat.activity == .play || cat.activity == .fish || cat.activity == .hide) ? 5 : 1.8)
         cat.blinkT -= dt
         if cat.blinkT <= 0 { cat.blink = 0.15; cat.blinkT = .random(in: 2.5...5.5) }
         if cat.blink > 0 { cat.blink -= dt }
@@ -519,6 +521,8 @@ final class World {
             updatePlay(dt)
         case .fish:
             updateFishing(dt)
+        case .hide:
+            updateHide(dt)
         case .wash:
             break
         case .nap, .stretch:
@@ -773,7 +777,8 @@ final class World {
         if m == .normal {
             cat.jump = nil; cat.moving = false; modeEndT = 0
             if cat.walk?.tag == "wash" { cat.walk = nil; cat.activity = .idle }
-            if cat.activity == .play || cat.activity == .wash || cat.activity == .fish { cat.activity = .idle; cat.timer = 2 }
+            stopHide()
+            if [.play, .wash, .fish, .hide].contains(cat.activity) { cat.activity = .idle; cat.timer = 2 }
             fishing = nil
         }
     }
@@ -826,6 +831,7 @@ final class World {
         case .play: featherTo(p); return
         case .wash: sponge = p; if hitLitter(p) { scoop() }; return
         case .fish: tapFish(p); return
+        case .hide: tapHide(p); return
         case .normal: break
         }
         if s.lightsOff || ptrOnCat { return }
@@ -844,7 +850,7 @@ final class World {
             sponge = p
             if cat.activity == .wash && hitCat(p) { scrub(p, d) }
             return
-        case .fish: return
+        case .fish, .hide: return
         case .normal: break
         }
         if !s.lightsOff && ptrOnCat && ptrMoved > 10 && hitCat(p) { pet(p, d) }

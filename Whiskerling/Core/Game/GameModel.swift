@@ -22,7 +22,7 @@ enum AdultRoute: String, Identifiable {
 /// The locked thing a child tapped on the way to the paywall. Once Pro is bought (or restored),
 /// the paywall closes by itself and the tap is finished, so the child doesn't have to tap again.
 enum ProUnlock: Equatable {
-    case garden, fish, coat(String), item(String), startCoat(String)
+    case garden, fish, hide, coat(String), item(String), startCoat(String)
 }
 
 /// The bridge between the game world (drawn every frame) and the SwiftUI screens.
@@ -143,7 +143,7 @@ final class GameModel {
         world.feed(food)
     }
 
-    /// Play opens a choice of games: the feather (free) and Catch the fish (Pro).
+    /// Play opens a choice of games: the feather (free), and Catch the fish and hide and seek (Pro).
     func tapPlay() {
         sound.click()
         if hud.lightsOff { showToast(L10n.asleep(hud.name)); return }
@@ -166,6 +166,19 @@ final class GameModel {
 
     private func startFishing() {
         if world.startFishing() { mode = .fish; modeHint = L10n.fishHint }
+    }
+
+    /// Hide and seek (#20, Pro), in whichever room the cat is in.
+    func playHide() {
+        sound.click()
+        overlay = nil
+        if !isPro { askForPro(.hide); return }
+        startHide()
+        sync()
+    }
+
+    private func startHide() {
+        if world.startHide() { mode = .hide; modeHint = L10n.hideHint(hud.name) }
     }
 
     /// Out to the garden (Pro) or back into the living room.
@@ -283,6 +296,7 @@ final class GameModel {
         switch unlock {
         case .garden: if world.room == .living { world.goOutside() }
         case .fish: startFishing()
+        case .hide: startHide()
         case .coat(let id): choose(coat: Catalog.coat(id))
         case .item(let id): if let item = Catalog.items.first(where: { $0.id == id }) { choose(item: item) }
         case .startCoat(let id): startCoat = id

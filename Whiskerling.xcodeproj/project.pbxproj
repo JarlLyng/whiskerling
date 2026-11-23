@@ -40,10 +40,12 @@
 		B58294EF6C9431049C16B641 /* GameModel+Screenshots.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0E96716A29D44B67AA92E80 /* GameModel+Screenshots.swift */; };
 		B72E66F18E66C1C365029B2C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2F9E99F0D588BC0A3F8F /* Theme.swift */; };
 		C406B795EED0027E68BA2150 /* SaveStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEDD935FE447057E479FBF0B /* SaveStateTests.swift */; };
+		C7A8458D136B19F89F23E842 /* HideTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15D7E9F616EFCB988A861370 /* HideTests.swift */; };
 		D45F07AD1B3B0E6398C89160 /* Whiskerling.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 7E35B3FCF20B68DE190452C7 /* Whiskerling.storekit */; };
 		D5E89C9F4931FAFB14312EF4 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 463467B12B9B98C2AC513C63 /* Store.swift */; };
 		D8088458BD36B0B18038DB43 /* Season.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F2A5B2B6926AF2A1A33D60 /* Season.swift */; };
 		DFBE296FFC6DC0BB9CD0AF74 /* IAMJARLDesignTokens in Frameworks */ = {isa = PBXBuildFile; productRef = 1ED3C10C70FB43F7827741C2 /* IAMJARLDesignTokens */; };
+		EEE1CC9FC45F1872671FD494 /* World+Hide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6860E1788DC5A0B3A43102E0 /* World+Hide.swift */; };
 		F4095287E79673134967B498 /* StoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9E3DC534301465458C0D09 /* StoreTests.swift */; };
 		F5629FBF75919BF41FE9ABD0 /* WindowSizeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BEE0D8C66DB3E55C9049B8 /* WindowSizeTests.swift */; };
 /* End PBXBuildFile section */
@@ -63,6 +65,7 @@
 		0F3A0A38A086C86C10A728AE /* WhiskerlingTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = WhiskerlingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		11E69E1F3A38A8CF72B1E3C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		13930A045131887F7ABFD5C6 /* Overlays.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Overlays.swift; sourceTree = "<group>"; };
+		15D7E9F616EFCB988A861370 /* HideTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HideTests.swift; sourceTree = "<group>"; };
 		168C77A0989A0E73C383015C /* Pen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pen.swift; sourceTree = "<group>"; };
 		34B14F953C343D78AE57C867 /* Catalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Catalog.swift; sourceTree = "<group>"; };
 		3CAB02E2EFF40460A3D36B6D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -72,6 +75,7 @@
 		59FA3B4DA8AA8C3BAE96FE41 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6405745A7C70464ED1BC2530 /* SeasonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonTests.swift; sourceTree = "<group>"; };
 		64267EE8E0C5A51C873A6175 /* World+Garden.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "World+Garden.swift"; sourceTree = "<group>"; };
+		6860E1788DC5A0B3A43102E0 /* World+Hide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "World+Hide.swift"; sourceTree = "<group>"; };
 		7C850E96D7291D5EF67AB2D0 /* World+Screenshots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "World+Screenshots.swift"; sourceTree = "<group>"; };
 		7E35B3FCF20B68DE190452C7 /* Whiskerling.storekit */ = {isa = PBXFileReference; path = Whiskerling.storekit; sourceTree = "<group>"; };
 		842E28B85C19DC489C51D47C /* WhiskerlingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiskerlingApp.swift; sourceTree = "<group>"; };
@@ -121,6 +125,7 @@
 				C62752AD9D8AE9B7D187B1EF /* FeedbackTests.swift */,
 				B26C0DEBDE3739A16B4234E0 /* GardenTests.swift */,
 				B84E48954FE5146717C4FDA9 /* GrownUpTests.swift */,
+				15D7E9F616EFCB988A861370 /* HideTests.swift */,
 				BB6983328194FAE7C12EFFB0 /* LocalizationTests.swift */,
 				8A0404FDD38F747B4A1A60BF /* ProUnlockTests.swift */,
 				97DB26A85C60085B08433E7B /* ReduceMotionTests.swift */,
@@ -179,6 +184,7 @@
 				64267EE8E0C5A51C873A6175 /* World+Garden.swift */,
 				B1B636392343F9224BEC6119 /* World+GardenDraw.swift */,
 				58A082075FAE3D74117FFF36 /* World+GrownUp.swift */,
+				6860E1788DC5A0B3A43102E0 /* World+Hide.swift */,
 				7C850E96D7291D5EF67AB2D0 /* World+Screenshots.swift */,
 			);
 			path = Game;
@@ -405,6 +411,7 @@
 				18C668CCFD205BE9DF290312 /* World+Garden.swift in Sources */,
 				241E1CE48B2AC56C9FD3F7B2 /* World+GardenDraw.swift in Sources */,
 				6A4DFEFBE6F947096C99B89D /* World+GrownUp.swift in Sources */,
+				EEE1CC9FC45F1872671FD494 /* World+Hide.swift in Sources */,
 				79F8902F11731C1A01F8B44A /* World+Screenshots.swift in Sources */,
 				478696558AF3EB0825AB53B3 /* World.swift in Sources */,
 			);
@@ -418,6 +425,7 @@
 				3B98DA66C0F16E1203B5FC24 /* FeedbackTests.swift in Sources */,
 				A2C5EA8B66459550BC005D64 /* GardenTests.swift in Sources */,
 				7DA874128A5CF81544CDBE01 /* GrownUpTests.swift in Sources */,
+				C7A8458D136B19F89F23E842 /* HideTests.swift in Sources */,
 				22FADF04801BEADD49DCB27F /* LocalizationTests.swift in Sources */,
 				7647893823D290FE471C1082 /* ProUnlockTests.swift in Sources */,
 				2737322097B86D5724175E7D /* ReduceMotionTests.swift in Sources */,

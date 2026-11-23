@@ -29,7 +29,8 @@ extension World {
             (G.bowl.y, drawBowl),
             (G.bed.y - 0.5, drawBedBack), (G.bed.y + 0.5, drawBedFront)
         ]
-        list.append((cat.y, drawTheCat))
+        list += hideProps()
+        if !catHidden { list.append((cat.y, drawTheCat)) }
         if party != nil { list.append((partySpot.y, drawParty)) }
         if let toy { list.append((toy.carried ? cat.y + 1 : toy.y, drawToy)) }
         list.sort { $0.0 < $1.0 }
@@ -39,6 +40,7 @@ extension World {
         if garden { drawGardenAir(p) }
         if save!.lightsOff { drawDark(p) }
         drawParts(p)
+        drawHideCount(p)
         drawBubble(p)
         drawRoomFade(p)
     }
@@ -218,6 +220,7 @@ extension World {
         p.beginPath(); p.moveTo(w.minX - 46 * U, ry); p.lineTo(w.maxX + 46 * U, ry); p.stroke(Color(hex: "B07D4F"), 6 * U)
         p.fillColor = Color(hex: "B07D4F")
         p.circ(w.minX - 48 * U, ry, 7 * U); p.fill(); p.circ(w.maxX + 48 * U, ry, 7 * U); p.fill()
+        drawHidePeek(onWall: p) // a tail hanging from behind the curtain (#20)
         curtain(p, w, ry)
         p.save(); p.translate(2 * w.minX + w.width, 0); p.scale(-1, 1); curtain(p, w, ry); p.restore()
     }

@@ -90,6 +90,7 @@ extension World {
             p.circ(bx - r * 0.4, hz - 52 * U - r * 0.3, r * 0.45); p.fill(.rgba(255, 255, 255, 0.12))
             if season == .winter { p.ell(bx, hz - 52 * U - r * 0.62, r * 0.78, r * 0.38); p.fill(.white) }
         }
+        drawHidePeek(onWall: p) // ears and eyes over the fence (#20)
         let top = hz - 64 * U, pw = 18 * U, gap = 9 * U
         p.fillColor = Color(hex: "FFF6E8"); p.strokeColor = Color(hex: "C8AE8E"); p.lineWidth = 1.5
         p.fillRect(0, top + 14 * U, W, 9 * U); p.strokeRect(0, top + 14 * U, W, 9 * U)

@@ -24,6 +24,15 @@ extension World {
             }
         case "wardrobe":
             cat.x = min(max(W * 0.68, G.minX), G.maxX); cat.happyT = 1_000
+        case "hide": // hidden, or counting (#20)
+            let spot = UserDefaults.standard.string(forKey: "hideSpot") ?? "basket"
+            setMode(.hide); cat.activity = .hide
+            var g = HideGame()
+            g.phase = spot == "count" ? .counting : .hidden
+            g.t = spot == "count" ? HideGame.countTime * 0.5 : 0
+            g.spot = spot == "count" ? hideSpots().first?.id : spot
+            g.found = 3
+            hiding = g
         case "party": // a first birthday (#17)
             cat.x = min(max(W * 0.6, G.minX), G.maxX); cat.happyT = 1_000
             party = Party(kind: .birthday(1), t: Party.length / 2)
