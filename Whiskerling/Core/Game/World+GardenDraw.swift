@@ -48,12 +48,12 @@ extension World {
                 p.ell(x + 18 * s, y + 6 * s, 32 * s, 10 * s); p.fill()
             }
         }
-        let hill = World.hills[sky]!
-        p.ell(W * 0.22, hz + 6 * U, W * 0.42, 70 * U); p.fill(hill[0])
-        p.ell(W * 0.8, hz + 14 * U, W * 0.48, 92 * U); p.fill(hill[1])
+        let hill = World.hills[sky]!, night = sky == .night
+        p.ell(W * 0.22, hz + 6 * U, W * 0.42, 70 * U); p.fill(season.ground(hill[0], night: night))
+        p.ell(W * 0.8, hz + 14 * U, W * 0.48, 92 * U); p.fill(season.ground(hill[1], night: night))
         drawFence(p, hz)
 
-        let lawn = World.lawn[sky]!
+        let lawn = World.lawn[sky]!.map { season.ground($0, night: night) }
         p.fillGradient(lawn, from: CGPoint(x: 0, y: hz), to: CGPoint(x: 0, y: H))
         p.fillRect(0, hz, W, H - hz)
         // mown stripes, wider towards the front
@@ -63,8 +63,15 @@ extension World {
             if row % 2 == 0 { p.fillRect(0, y, W, band) }
             y += band; band *= 1.2; row += 1
         }
+        if season == .autumn {
+            for i in 0..<26 {
+                let lx = World.hash01(i, 21) * W, ly = hz + 14 * U + World.hash01(i, 22) * (H - hz - 16 * U)
+                let s = objScale(ly), leaf = [Color(hex: "E3913B"), Color(hex: "D2553F"), Color(hex: "E8B23E")][i % 3]
+                p.ell(lx, ly, 6 * s, 3 * s, World.hash01(i, 23) * .pi); p.fill(leaf)
+            }
+        }
         p.fillColor = .rgba(40, 110, 40, 0.22)
-        for i in 0..<34 {
+        for i in 0..<(season == .winter ? 0 : 34) {
             let gx = World.hash01(i, 5) * W, gy = hz + 18 * U + World.hash01(i, 6) * (H - hz - 20 * U)
             let s = objScale(gy)
             p.beginPath()
@@ -78,8 +85,10 @@ extension World {
         // bushes peeking over the fence
         for i in 0..<7 {
             let bx = World.hash01(i, 7) * W, r = (34 + World.hash01(i, 8) * 26) * U
-            p.circ(bx, hz - 52 * U, r); p.fill(Color(hex: "6DB863"))
+            let bush = season == .winter ? Color(hex: "6DB863").mixed(with: Color(hex: "8FA48C"), 0.5) : season.leaves(Color(hex: "6DB863"))
+            p.circ(bx, hz - 52 * U, r); p.fill(bush)
             p.circ(bx - r * 0.4, hz - 52 * U - r * 0.3, r * 0.45); p.fill(.rgba(255, 255, 255, 0.12))
+            if season == .winter { p.ell(bx, hz - 52 * U - r * 0.62, r * 0.78, r * 0.38); p.fill(.white) }
         }
         let top = hz - 64 * U, pw = 18 * U, gap = 9 * U
         p.fillColor = Color(hex: "FFF6E8"); p.strokeColor = Color(hex: "C8AE8E"); p.lineWidth = 1.5
@@ -93,6 +102,13 @@ extension World {
             x += pw + gap
         }
         p.fillColor = .rgba(120, 90, 50, 0.18); p.fillRect(0, hz - 2, W, 3)
+        if season == .winter {
+            // snow along the top rail and on the tip of every post
+            p.fillColor = .white
+            p.rr(0, top + 10 * U, W, 5 * U, 2.5 * U); p.fill()
+            var px: CGFloat = -4 * U
+            while px < W { p.ell(px + pw / 2, top + 2 * U, pw * 0.42, 4 * U); p.fill(); px += pw + gap }
+        }
     }
 
     // MARK: Things on the lawn (sorted by depth with the cat)
@@ -103,7 +119,9 @@ extension World {
             (G.pond.y - 0.5, drawPond),
             (G.pond.y + 0.5, drawLeapingFish)
         ]
-        for f in G.flowers { list.append((f.y, { [unowned self] p in self.drawFlower(p, f) })) }
+        if season == .spring || season == .summer {
+            for f in G.flowers { list.append((f.y, { [unowned self] p in self.drawFlower(p, f) })) }
+        }
         return list
     }
 
@@ -116,14 +134,38 @@ extension World {
         p.closePath(); p.fill(Color(hex: "9C6B3F")); p.stroke(Color(hex: "6E4626"), 3)
         p.beginPath(); p.moveTo(-6, -40); p.quadTo(-2, -90, -8, -150); p.stroke(.rgba(110, 70, 38, 0.5), 3)
         let sway = sin(T * 0.9) * 3
+        if season == .winter {
+            // bare branches with snow along them
+            let branches: [(CGFloat, CGFloat, CGFloat, CGFloat)] = [
+                (-10, -200, -95, -300), (10, -210, 100, -290), (0, -225, -40, -380), (5, -225, 55, -385), (-60, -270, -110, -320), (70, -260, 120, -330),
+            ]
+            for b in branches {
+                p.beginPath(); p.moveTo(b.0, b.1); p.quadTo((b.0 + b.2) / 2 + 8, (b.1 + b.3) / 2, b.2, b.3)
+                p.stroke(Color(hex: "7A5233"), 7)
+                p.beginPath(); p.moveTo(b.0, b.1 - 4); p.quadTo((b.0 + b.2) / 2 + 8, (b.1 + b.3) / 2 - 4, b.2, b.3 - 4)
+                p.stroke(.white, 3)
+            }
+            p.restore()
+            return
+        }
         let crown: [(CGFloat, CGFloat, CGFloat)] = [(-80, -250, 70), (80, -255, 72), (0, -300, 100), (-45, -360, 66), (50, -365, 64)]
-        for c in crown { p.circ(c.0 + sway, c.1, c.2 + 4); p.fill(Color(hex: "4E9E45")) }
-        for c in crown { p.circ(c.0 + sway, c.1, c.2); p.fill(Color(hex: "6CBF5B")) }
+        for c in crown { p.circ(c.0 + sway, c.1, c.2 + 4); p.fill(season.leaves(Color(hex: "4E9E45"))) }
+        for c in crown { p.circ(c.0 + sway, c.1, c.2); p.fill(season.leaves(Color(hex: "6CBF5B"))) }
         for c in crown { p.circ(c.0 + sway - c.2 * 0.3, c.1 - c.2 * 0.3, c.2 * 0.42); p.fill(.rgba(255, 255, 255, 0.12)) }
-        let apples: [(CGFloat, CGFloat)] = [(-70, -240), (40, -280), (95, -235), (-20, -330), (10, -230), (60, -350)]
-        for a in apples {
-            p.circ(a.0 + sway, a.1, 9); p.fill(Color(hex: "E5484D"))
-            p.circ(a.0 + sway - 3, a.1 - 3, 3); p.fill(.rgba(255, 255, 255, 0.6))
+        let spots: [(CGFloat, CGFloat)] = [(-70, -240), (40, -280), (95, -235), (-20, -330), (10, -230), (60, -350)]
+        for a in spots {
+            if season == .spring {
+                // blossom in spring, apples the rest of the year
+                p.fillColor = Color(hex: "FFC2D6")
+                for k in 0..<5 {
+                    let ang = CGFloat(k) * .pi * 2 / 5
+                    p.circ(a.0 + sway + cos(ang) * 6, a.1 + sin(ang) * 6, 5); p.fill()
+                }
+                p.circ(a.0 + sway, a.1, 3.5); p.fill(Color(hex: "FFD84D"))
+            } else {
+                p.circ(a.0 + sway, a.1, 9); p.fill(Color(hex: "E5484D"))
+                p.circ(a.0 + sway - 3, a.1 - 3, 3); p.fill(.rgba(255, 255, 255, 0.6))
+            }
         }
         p.restore()
     }
@@ -138,6 +180,10 @@ extension World {
             let shade = Double(0.82 + 0.12 * World.hash01(i, 9))
             p.ell(c.x + cos(a) * (rx + 7 * U), c.y + sin(a) * (ry + 6 * U), (13 + World.hash01(i, 10) * 5) * U, 8 * U)
             p.fill(Color(red: shade * 0.86, green: shade * 0.84, blue: shade * 0.8))
+            if season == .winter {
+                p.ell(c.x + cos(a) * (rx + 7 * U), c.y + sin(a) * (ry + 6 * U) - 3 * U, (9 + World.hash01(i, 10) * 4) * U, 4 * U)
+                p.fill(.white)
+            }
         }
         p.save()
         p.ell(c.x, c.y, rx, ry); p.clip()
@@ -226,12 +272,15 @@ extension World {
 
     // MARK: In front of everything
 
-    /// Butterflies by day, fireflies by night, and how many fish are caught.
+    /// What falls through the air, butterflies by day in spring and summer, fireflies on summer
+    /// nights, and how many fish are caught.
     func drawGardenAir(_ p: Pen) {
+        drawFalling(p, in: CGRect(x: 0, y: 0, width: W, height: H), count: season == .winter ? 40 : 12, seed: 30)
+        let warm = season == .spring || season == .summer
         switch sky {
         case .night:
             p.fillColor = .rgba(14, 18, 48, 0.42); p.fillRect(0, 0, W, H)
-            for i in 0..<8 {
+            for i in 0..<(season == .summer ? 8 : 0) {
                 let x = W * (0.1 + 0.8 * (0.5 + 0.5 * sin(T * (0.07 + CGFloat(i) * 0.013) + CGFloat(i) * 1.7)))
                 let y = G.floorY + (H - G.floorY) * (0.15 + 0.5 * (0.5 + 0.5 * sin(T * (0.11 + CGFloat(i) * 0.02) + CGFloat(i))))
                 let glow = 0.5 + 0.5 * sin(T * 2.6 + CGFloat(i) * 1.3)
@@ -242,9 +291,9 @@ extension World {
             p.alpha = 1
         case .dawn, .dusk:
             p.fillColor = .rgba(255, 140, 90, 0.08); p.fillRect(0, 0, W, H)
-            drawButterflies(p)
+            if warm { drawButterflies(p) }
         case .day:
-            drawButterflies(p)
+            if warm { drawButterflies(p) }
         }
         if mode == .fish, let g = fishing {
             let label = "🐟 \(g.caught)"

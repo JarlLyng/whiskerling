@@ -116,6 +116,8 @@ final class World {
     var screenshotScene: String?
     #endif
     var sky = SkyPhase.at(Date())
+    /// The time of year, for the window and the garden (#16). Checked whenever the sky changes.
+    var season = Season.at(Date())
     /// The system's Reduce Motion, set by the game view (#14). Hearts and sparkles then fade where
     /// they appear, jumps become small hops, and fish leap low and slow. The game and its rewards
     /// stay the same.
@@ -308,7 +310,7 @@ final class World {
         stageT -= dt
         if stageT <= 0 { stageT = 5; checkStage(celebrate: true); dailyBonus() }
         let phase = SkyPhase.at(now)
-        if phase != sky { sky = phase }
+        if phase != sky { sky = phase; season = Season.at(now) }
         updateCat(dt)
         updateParts(dt)
         updateGarden(dt)

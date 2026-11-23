@@ -6,6 +6,14 @@ All notable changes to Whiskerling are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+- Seasons, from the iPad's date. Snow falls past the window and piles on the sill in winter,
+  blossom drifts by in spring and leaves in autumn. In the garden the lawn, the fence and the
+  bushes get snow, the apple tree is bare in winter, blossoms in spring and turns orange in
+  autumn, flowers and butterflies come in spring and summer, and fireflies on summer nights.
+  South of the equator the seasons are the other way round. Debug builds take
+  `-debugSeason winter|spring|summer|autumn` ([#16](https://github.com/JarlLyng/whiskerling/issues/16)).
+
 ### Changed
 - The game follows Reduce Motion. Hearts and sparkles fade where they appear instead of flying
   out, the cat hops a little instead of leaping, fish rise low and slow and slip back without
