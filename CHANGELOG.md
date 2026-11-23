@@ -6,6 +6,16 @@ All notable changes to Whiskerling are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+- Three more coats with Pro: tuxedo, Siamese, and ginger and white, with two new markings, a white
+  bib and blaze, and a Siamese's dark mask, ears, paws and tail. The start screen shows the nine
+  coats in three rows, or in two on a short, wide screen like an iPad mini on its side, and the
+  paywall names them all ([#19](https://github.com/JarlLyng/whiskerling/issues/19)).
+
+### Fixed
+- The kittens on the start screen were cut off at the sides when their tiles were wider than the
+  picture, as on a 13-inch iPad.
+
 ## [1.1.0] - not released yet
 
 ### Added
