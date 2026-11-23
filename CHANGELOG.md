@@ -6,35 +6,6 @@ All notable changes to Whiskerling are listed here. The format follows
 
 ## [Unreleased]
 
-### Added
-- A second cat with Pro. Once the first cat is grown up, a "+" next to its name lets a kitten come
-  to live with it. One bowl feeds both, the light puts both to bed in the basket, and the litter
-  box is shared, while the sponge and a stroke go to the cat that's touched. With company, fun
-  and clean fall more slowly and each cat visits the litter box less often, so two cats aren't
-  twice the chores. The top bar shows one cat at a time, with the other as a small picture to
-  tap. Each grows from its own adoption date, and the two groom each other, chase, nap together
-  and sit at the window. Losing Pro removes no cat, and Start over removes both
-  ([#21](https://github.com/JarlLyng/whiskerling/issues/21)).
-- Hide and seek, a new game with Pro, in the living room or the garden. While a big 1, 2, 3 counts,
-  the cat hides with its ears or its tail peeking out: in the basket, behind the litter box, under
-  the rug or behind the curtain indoors, and behind the apple tree, over the fence or behind the
-  pond outside. A tap finds it, and it pops out and hides again, eight times. There is no timer
-  and no score, and now and then it meows from the hiding place as a hint
-  ([#20](https://github.com/JarlLyng/whiskerling/issues/20)).
-- Three more coats with Pro: tuxedo, Siamese, and ginger and white, with two new markings, a white
-  bib and blaze, and a Siamese's dark mask, ears, paws and tail. The start screen shows the nine
-  coats in three rows, or in two on a short, wide screen like an iPad mini on its side, and the
-  paywall names them all ([#19](https://github.com/JarlLyng/whiskerling/issues/19)).
-- Things for the living room, unlocked with hearts after the crown, so the hearts keep leading
-  somewhere. A plant and a pink rug are free; a cat tree, heart wallpaper, a picture of the cat
-  in its own coat and fairy lights, which shine when the light is off, come with Pro. They're put
-  up and taken away in a new Room section of the wardrobe, and the bowl, the basket and the litter
-  box stay where they are ([#18](https://github.com/JarlLyng/whiskerling/issues/18)).
-
-### Fixed
-- The kittens on the start screen were cut off at the sides when their tiles were wider than the
-  picture, as on a 13-inch iPad.
-
 ## [1.1.0] - not released yet
 
 ### Added
@@ -51,6 +22,29 @@ All notable changes to Whiskerling are listed here. The format follows
   then naps on the rug, stretches with a yawn, or brings the child a ball of yarn; a tap wakes it.
   A cat that grew up in 1.0 gets its party late, on the first visit after the update
   ([#17](https://github.com/JarlLyng/whiskerling/issues/17)).
+- Things for the living room, unlocked with hearts after the crown, so the hearts keep leading
+  somewhere. A plant and a pink rug are free; a cat tree, heart wallpaper, a picture of the cat
+  in its own coat and fairy lights, which shine when the light is off, come with Pro. They're put
+  up and taken away in a new Room section of the wardrobe, and the bowl, the basket and the litter
+  box stay where they are ([#18](https://github.com/JarlLyng/whiskerling/issues/18)).
+- Three more coats with Pro: tuxedo, Siamese, and ginger and white, with two new markings, a white
+  bib and blaze, and a Siamese's dark mask, ears, paws and tail. The start screen shows the nine
+  coats in three rows, or in two on a short, wide screen like an iPad mini on its side, and the
+  paywall names them all ([#19](https://github.com/JarlLyng/whiskerling/issues/19)).
+- Hide and seek, a new game with Pro, in the living room or the garden. While a big 1, 2, 3 counts,
+  the cat hides with its ears or its tail peeking out: in the basket, behind the litter box, under
+  the rug or behind the curtain indoors, and behind the apple tree, over the fence or behind the
+  pond outside. A tap finds it, and it pops out and hides again, eight times. There is no timer
+  and no score, and now and then it meows from the hiding place as a hint
+  ([#20](https://github.com/JarlLyng/whiskerling/issues/20)).
+- A second cat with Pro. Once the first cat is grown up, a "+" next to its name lets a kitten come
+  to live with it. One bowl feeds both, the light puts both to bed in the basket, and the litter
+  box is shared, while the sponge and a stroke go to the cat that's touched. With company, fun
+  and clean fall more slowly and each cat visits the litter box less often, so two cats aren't
+  twice the chores. The top bar shows one cat at a time, with the other as a small picture to
+  tap. Each grows from its own adoption date, and the two groom each other, chase, nap together
+  and sit at the window. Losing Pro removes no cat, and Start over removes both
+  ([#21](https://github.com/JarlLyng/whiskerling/issues/21)).
 
 ### Changed
 - The game follows Reduce Motion. Hearts and sparkles fade where they appear instead of flying
