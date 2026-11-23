@@ -39,6 +39,9 @@ enum L10n {
         case "black": return String(localized: "coat.black", defaultValue: "Black")
         case "white": return String(localized: "coat.white", defaultValue: "White")
         case "tabby": return String(localized: "coat.tabby", defaultValue: "Tabby")
+        case "tuxedo": return String(localized: "coat.tuxedo", defaultValue: "Tuxedo")
+        case "siamese": return String(localized: "coat.siamese", defaultValue: "Siamese")
+        case "gingerwhite": return String(localized: "coat.gingerwhite", defaultValue: "Ginger and white")
         default: return String(localized: "coat.calico", defaultValue: "Calico")
         }
     }
@@ -147,8 +150,8 @@ enum L10n {
     // MARK: Pro
     static var proTitle: String { String(localized: "pro.title", defaultValue: "Whiskerling Pro") }
     static var proSubtitle: String { String(localized: "pro.subtitle", defaultValue: "Unlock everything, once and for all.") }
-    static var proCoatsTitle: String { String(localized: "pro.coats.title", defaultValue: "All six coats") }
-    static var proCoatsBody: String { String(localized: "pro.coats.body", defaultValue: "Ginger, grey, black, white, tabby and calico.") }
+    static var proCoatsTitle: String { String(localized: "pro.coats.title", defaultValue: "All nine coats") }
+    static var proCoatsBody: String { String(localized: "pro.coats.body", defaultValue: "Ginger, ginger and white, grey, black, tuxedo, white, tabby, calico and Siamese.") }
     static var proItemsTitle: String { String(localized: "pro.items.title", defaultValue: "All the accessories and the room") }
     static var proItemsBody: String {
         String(localized: "pro.items.body", defaultValue: "Flowers, sunglasses, top hat, scarf and crown, and for the room a cat tree, heart wallpaper, a picture of the cat and fairy lights. They still unlock with hearts.")

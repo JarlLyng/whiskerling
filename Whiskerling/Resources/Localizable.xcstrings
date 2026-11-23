@@ -239,6 +239,23 @@
         }
       }
     },
+    "coat.gingerwhite": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rød-hvid"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ginger and white"
+          }
+        }
+      }
+    },
     "coat.gray": {
       "extractionState": "manual",
       "localizations": {
@@ -273,6 +290,23 @@
         }
       }
     },
+    "coat.siamese": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siameser"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siamese"
+          }
+        }
+      }
+    },
     "coat.tabby": {
       "extractionState": "manual",
       "localizations": {
@@ -286,6 +320,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tabby"
+          }
+        }
+      }
+    },
+    "coat.tuxedo": {
+      "extractionState": "manual",
+      "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort-hvid"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tuxedo"
           }
         }
       }
@@ -1214,13 +1265,13 @@
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rød, grå, sort, hvid, stribet og trefarvet."
+            "value": "Rød, rød-hvid, grå, sort, sort-hvid, hvid, stribet, trefarvet og siameser."
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ginger, grey, black, white, tabby and calico."
+            "value": "Ginger, ginger and white, grey, black, tuxedo, white, tabby, calico and Siamese."
           }
         }
       }
@@ -1231,13 +1282,13 @@
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alle seks pelsfarver"
+            "value": "Alle ni pelsfarver"
           }
         },
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "All six coats"
+            "value": "All nine coats"
           }
         }
       }

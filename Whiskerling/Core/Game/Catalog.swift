@@ -1,6 +1,8 @@
 import SwiftUI
 
-enum CoatPattern { case stripes, calico }
+/// Markings drawn over the fur. `bicolor` is white (`p1`) on the lower face, the chest and the
+/// paws; `points` is a pale body with dark (`p2`) ears, face, paws and tail.
+enum CoatPattern { case stripes, calico, bicolor, points }
 
 struct Coat: Identifiable {
     let id: String
@@ -12,6 +14,16 @@ struct Coat: Identifiable {
     var isFree: Bool = false
 
     var name: String { L10n.coatName(id) }
+
+    /// The tail and the ears follow the markings: patched on a calico, dark on a pointed coat.
+    var tail: Color { switch pattern { case .calico: p1; case .points: p2; default: fur } }
+    func ear(left: Bool) -> Color {
+        switch pattern { case .calico: left ? p2 : p1; case .points: p2; default: fur }
+    }
+    var paw: Color { pattern == .points ? p2 : light }
+    var muzzle: Color { pattern == .points ? p2 : light }
+    /// The eyelid shows the fur round the eyes, which is the mask on a pointed coat.
+    var lid: Color { pattern == .points ? p2 : fur }
 }
 
 struct Stage {
@@ -76,7 +88,17 @@ enum Catalog {
              whisker: .rgba(70, 45, 25, 0.5), pattern: .stripes),
         Coat(id: "calico", fur: Color(hex: "FCF8F1"), dark: Color(hex: "3C3B47"), light: Color(hex: "FFFFFF"),
              inner: Color(hex: "F8B9C6"), eye: Color(hex: "73C24A"), line: Color(hex: "6E5E50"), nose: Color(hex: "F49AAA"),
-             whisker: .rgba(110, 94, 80, 0.5), pattern: .calico, p1: Color(hex: "EE9A4D"), p2: Color(hex: "3C3B47"))
+             whisker: .rgba(110, 94, 80, 0.5), pattern: .calico, p1: Color(hex: "EE9A4D"), p2: Color(hex: "3C3B47")),
+        // #19: three more Pro coats
+        Coat(id: "tuxedo", fur: Color(hex: "3C3B47"), dark: Color(hex: "24232B"), light: Color(hex: "FFFFFF"),
+             inner: Color(hex: "C98394"), eye: Color(hex: "8FCB5B"), line: Color(hex: "141318"), nose: Color(hex: "F49AAA"),
+             whisker: .rgba(150, 150, 160, 0.6), pattern: .bicolor, p1: Color(hex: "FFFFFF")),
+        Coat(id: "siamese", fur: Color(hex: "F4E9D8"), dark: Color(hex: "D9C6AA"), light: Color(hex: "FBF6EE"),
+             inner: Color(hex: "D9A0A6"), eye: Color(hex: "5AA9E6"), line: Color(hex: "5A4436"), nose: Color(hex: "8E6A5C"),
+             whisker: .rgba(255, 255, 255, 0.6), pattern: .points, p2: Color(hex: "6E5242")),
+        Coat(id: "gingerwhite", fur: Color(hex: "F6A35B"), dark: Color(hex: "E07F2C"), light: Color(hex: "FFFFFF"),
+             inner: Color(hex: "F8B4B0"), eye: Color(hex: "E3B23C"), line: Color(hex: "7A4317"), nose: Color(hex: "F28B9B"),
+             whisker: .rgba(150, 110, 80, 0.5), pattern: .bicolor, p1: Color(hex: "FFFFFF"))
     ]
 
     static func coat(_ id: String) -> Coat { coats.first { $0.id == id } ?? coats[0] }
