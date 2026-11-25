@@ -52,6 +52,16 @@ final class ContrastTests: XCTestCase {
         }
     }
 
+    func testTheAccentColourReads() {
+        // the plain text buttons (Restore purchase, Not now, Close) and the links use it
+        let accent = Color("AccentColor")
+        for scheme in [ColorScheme.light, .dark] {
+            for bg in [Theme.card, Theme.screen, Theme.bar] {
+                XCTAssertGreaterThanOrEqual(ratio(accent, bg, in: env(scheme)), 4.5, "\(scheme)")
+            }
+        }
+    }
+
     func testIncreaseContrastMakesTheGreyStronger() {
         for scheme in [ColorScheme.light, .dark] {
             let standard = ratio(Theme.muted, Theme.option, in: env(scheme))
