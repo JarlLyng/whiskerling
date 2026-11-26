@@ -27,8 +27,9 @@ Six decisions about how whiskerling.iamjarl.com looks, made on purpose rather th
 - **Not on the App Store yet:** the hero and the closing say "Coming soon to the App Store" as
   plain text. No App Store badge and no Smart App Banner until there is a real store link; then
   both come from the design system's store registry.
-- **Nothing third-party:** no analytics, no cookies, no fonts from elsewhere. The privacy page says
-  so, so adding anything (Umami included) means changing that page in the same commit.
+- **Nothing third-party but Umami:** the one script from elsewhere is IAMJARL's own cookieless Umami
+  instance (#45). No cookies, no fonts from elsewhere. The privacy pages describe exactly what the
+  site loads, so changing that means changing both pages in the same commit.
 - **Everything is in the served HTML,** including the FAQ, so crawlers that don't run JavaScript
   read the whole page. The FAQ is also in the JSON-LD, and the visible page and the JSON-LD say the
   same price: free, with one optional purchase.
