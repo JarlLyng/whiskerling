@@ -317,6 +317,23 @@ final class GameModel {
 
     func toggleSoundFromMenu() { toggleSound() }
 
+    /// A new name for the cat shown, or for the other one, from the grown-ups' menu. Spaces are
+    /// tidied and it's cut to 14 letters, as on the start screen; an empty name changes nothing.
+    @discardableResult
+    func rename(_ name: String, other: Bool = false) -> Bool {
+        let tidy = String(name.split(whereSeparator: \.isWhitespace).joined(separator: " ").prefix(14))
+        guard !tidy.isEmpty, world.save != nil else { return false }
+        if other {
+            guard world.save!.companion != nil else { return false }
+            world.save!.companion!.name = tidy
+        } else {
+            world.save!.name = tidy
+        }
+        world.persist()
+        sync()
+        return true
+    }
+
     func startOver() {
         world.removeCat()
         hasCat = false

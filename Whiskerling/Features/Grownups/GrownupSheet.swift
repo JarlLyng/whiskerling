@@ -193,6 +193,8 @@ struct GrownupMenu: View {
     let onClose: () -> Void
     @State private var resetArmed = false
     @State private var showPaywall = false
+    @State private var shownName = ""
+    @State private var otherName = ""
 
     var body: some View {
         if showPaywall {
@@ -227,6 +229,15 @@ struct GrownupMenu: View {
                 wide(L10n.unlockProPlain, color: Theme.dress, small: small) { showPaywall = true }
             }
             wide(L10n.restore, color: Theme.option, small: small) { Task { await model.store.restore() } }
+            if model.hasCat {
+                // A new name for a cat, or for both (#21)
+                VStack(spacing: Tokens.Spacing.sm) {
+                    Text(verbatim: L10n.renameTitle).font(Theme.font(17)).foregroundStyle(Theme.text)
+                    nameField($shownName, current: model.hud.name, other: false)
+                    if let other = model.hud.otherName { nameField($otherName, current: other, other: true) }
+                }
+                .onAppear { shownName = model.hud.name; otherName = model.hud.otherName ?? "" }
+            }
             wide(model.hud.sound ? L10n.menuSoundOn : L10n.menuSoundOff, color: Theme.option, small: small) { model.toggleSoundFromMenu() }
             if model.hasCat {
                 wide(resetArmed ? L10n.startOverConfirm(model.hud.otherName.map { L10n.twoNames(model.hud.name, $0) } ?? model.hud.name) : L10n.startOver, color: Color(hex: "FFD3D3"), small: small) {
@@ -267,6 +278,30 @@ struct GrownupMenu: View {
                 .frame(minWidth: 44, minHeight: 44)
                 .contentShape(Rectangle())
         }
+    }
+
+    private func nameField(_ text: Binding<String>, current: String, other: Bool) -> some View {
+        let tidy = text.wrappedValue.split(whereSeparator: \.isWhitespace).joined(separator: " ")
+        let changed = !tidy.isEmpty && tidy != current
+        return HStack(spacing: Tokens.Spacing.sm) {
+            TextField(L10n.namePlaceholder, text: text)
+                .font(Theme.font(20))
+                .textInputAutocapitalization(.words)
+                .autocorrectionDisabled()
+                .submitLabel(.done)
+                .onSubmit { if changed { model.rename(text.wrappedValue, other: other) } }
+                .onChange(of: text.wrappedValue) { _, new in if new.count > 14 { text.wrappedValue = String(new.prefix(14)) } }
+                .padding(.horizontal, Tokens.Spacing.md).frame(height: 52)
+                .background(Color.white, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Theme.barLine, lineWidth: 2))
+                .foregroundStyle(Theme.onPastel)
+                .accessibilityLabel(L10n.renameField(current))
+            Button(L10n.save) { model.rename(text.wrappedValue, other: other) }
+                .font(Theme.font(18))
+                .frame(minWidth: 44, minHeight: 44)
+                .disabled(!changed)
+        }
+        .frame(maxWidth: 420)
     }
 
     private func wide(_ title: String, color: Color, small: Bool, _ action: @escaping () -> Void) -> some View {

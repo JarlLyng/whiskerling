@@ -15,6 +15,30 @@ extension World {
         return s.companion == nil && s.stage == Catalog.stages.count - 1
     }
 
+    // MARK: Keeping apart
+
+    /// The two cats keep about a cat's width apart, so neither stands on or behind the other.
+    var catGap: CGFloat { 150 * max(catScale, buddyScale) }
+
+    /// Where the first cat is, and where it is heading.
+    var catXs: [CGFloat] { [cat.x] + (cat.walk.map { [$0.x] } ?? []) }
+    /// Where the other cat is, and where it is heading; nothing with one cat.
+    var buddyXs: [CGFloat] { hasCompanion ? [buddy.x] + (buddy.walk.map { [$0.x] } ?? []) : [] }
+
+    /// A place on the floor at least `catGap` from each of `xs`, or the farthest of a few tries.
+    func freeSpot(awayFrom xs: [CGFloat]) -> CGFloat {
+        let lo = G.minX, hi = max(G.minX, G.maxX)
+        guard !xs.isEmpty else { return .random(in: lo...hi) }
+        var best = CGFloat.random(in: lo...hi), bestD: CGFloat = -1
+        for _ in 0..<10 {
+            let x = CGFloat.random(in: lo...hi)
+            let d = xs.map { abs($0 - x) }.min()!
+            if d >= catGap { return x }
+            if d > bestD { bestD = d; best = x }
+        }
+        return best
+    }
+
     /// Two cats visit the litter box a little more often between them than one cat does.
     var poopEveryNow: CGFloat { hasCompanion ? World.poopEvery * 0.75 : World.poopEvery }
 
@@ -196,7 +220,15 @@ extension World {
             stepBuddy(dt)
         case .idle:
             buddy.timer -= dt
-            if buddy.timer <= 0 && buddy.petT <= 0 { decide(rec) }
+            buddy.cool -= dt
+            if buddy.happyT <= 0 && buddy.cool <= 0 && abs(buddy.x - cat.x) < catGap * 0.7
+                && (cat.activity == .idle || cat.activity == .walk) {
+                // standing on top of the other cat: a step aside (not right after a wash together)
+                buddy.cool = 3
+                buddyGo(freeSpot(awayFrom: catXs), G.catY, speed: 0.7)
+            } else if buddy.timer <= 0 && buddy.petT <= 0 {
+                decide(rec)
+            }
         case .eat:
             buddy.timer -= dt
             buddy.eatT -= dt
@@ -324,7 +356,7 @@ extension World {
         }
         if startTogether(rec) { return }
         if Double.random(in: 0...1) < 0.5 {
-            buddyGo(.random(in: G.minX...max(G.minX, G.maxX)), G.catY, speed: 0.55)
+            buddyGo(freeSpot(awayFrom: catXs), G.catY, speed: 0.55)
         } else {
             buddy.timer = .random(in: 2...5)
             buddy.look = .random(in: -1...1)
