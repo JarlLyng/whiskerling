@@ -15,6 +15,7 @@
 		18C668CCFD205BE9DF290312 /* World+Garden.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64267EE8E0C5A51C873A6175 /* World+Garden.swift */; };
 		22FADF04801BEADD49DCB27F /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB6983328194FAE7C12EFFB0 /* LocalizationTests.swift */; };
 		241E1CE48B2AC56C9FD3F7B2 /* World+GardenDraw.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1B636392343F9224BEC6119 /* World+GardenDraw.swift */; };
+		26F1C872C8BA21B54A337A96 /* ContrastTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB829EEBF32312CBC1BDA6F /* ContrastTests.swift */; };
 		2737322097B86D5724175E7D /* ReduceMotionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97DB26A85C60085B08433E7B /* ReduceMotionTests.swift */; };
 		2EAABE3416D86994FDB71A60 /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA83F47D52C8D2766174C609 /* Feedback.swift */; };
 		34DF2405D102391548907A81 /* Catalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B14F953C343D78AE57C867 /* Catalog.swift */; };
@@ -87,6 +88,7 @@
 		64267EE8E0C5A51C873A6175 /* World+Garden.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "World+Garden.swift"; sourceTree = "<group>"; };
 		6860E1788DC5A0B3A43102E0 /* World+Hide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "World+Hide.swift"; sourceTree = "<group>"; };
 		6E7EF419D44FE2D179BA3C65 /* World+Kitchen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "World+Kitchen.swift"; sourceTree = "<group>"; };
+		7AB829EEBF32312CBC1BDA6F /* ContrastTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContrastTests.swift; sourceTree = "<group>"; };
 		7C850E96D7291D5EF67AB2D0 /* World+Screenshots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "World+Screenshots.swift"; sourceTree = "<group>"; };
 		7E35B3FCF20B68DE190452C7 /* Whiskerling.storekit */ = {isa = PBXFileReference; path = Whiskerling.storekit; sourceTree = "<group>"; };
 		842E28B85C19DC489C51D47C /* WhiskerlingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiskerlingApp.swift; sourceTree = "<group>"; };
@@ -138,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				E354AACFC6E3D4BE33D2F94A /* CoatTests.swift */,
+				7AB829EEBF32312CBC1BDA6F /* ContrastTests.swift */,
 				E3B37DB8A83629A51FAC38D6 /* DecorTests.swift */,
 				C62752AD9D8AE9B7D187B1EF /* FeedbackTests.swift */,
 				B26C0DEBDE3739A16B4234E0 /* GardenTests.swift */,
@@ -451,6 +454,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8116E485D24F73B74443EA2B /* CoatTests.swift in Sources */,
+				26F1C872C8BA21B54A337A96 /* ContrastTests.swift in Sources */,
 				840257B1277B9BDA7FDD9627 /* DecorTests.swift in Sources */,
 				3B98DA66C0F16E1203B5FC24 /* FeedbackTests.swift in Sources */,
 				A2C5EA8B66459550BC005D64 /* GardenTests.swift in Sources */,

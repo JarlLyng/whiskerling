@@ -255,13 +255,13 @@ struct ActionBar: View {
     private func action(_ icon: String, _ label: String, _ color: Color, dim: Bool, _ fn: @escaping () -> Void) -> some View {
         Button(action: fn) {
             VStack(spacing: 0) {
-                Text(verbatim: icon).font(.system(size: 36))
+                // while the cat sleeps: a quiet face and a faded icon, the words still clear (#43)
+                Text(verbatim: icon).font(.system(size: 36)).opacity(dim ? 0.4 : 1)
                 Text(verbatim: label).font(Theme.font(18)).lineLimit(1).minimumScaleFactor(0.7)
             }
             .frame(maxWidth: 170).frame(height: 88)
         }
-        .buttonStyle(PillButtonStyle(color: color))
-        .opacity(dim ? 0.4 : 1)
+        .buttonStyle(PillButtonStyle(color: dim ? Theme.restingFace : color))
     }
 }
 

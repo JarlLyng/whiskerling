@@ -36,10 +36,9 @@ struct RoomsOverlay: View {
         let locked = r != .living && !model.isPro, here = model.hud.room == r
         return Button { model.go(to: r) } label: {
             ChoiceLabel(icon: icon, title: title, note: here ? L10n.youAreHere : (locked ? "🔒 " + L10n.askGrownUp : note),
-                        fit: fit, tall: 170, iconSize: 54, titleSize: 19)
+                        fit: fit, tall: 170, iconSize: 54, titleSize: 19, dim: locked || here)
         }
-        .buttonStyle(PillButtonStyle(color: locked ? Theme.option : Theme.garden))
-        .opacity(locked ? 0.75 : (here ? 0.6 : 1))
+        .buttonStyle(PillButtonStyle(color: locked || here ? Theme.restingFace : Theme.garden))
         .disabled(here)
         .accessibilityLabel(Text(verbatim: locked ? "\(title), \(L10n.pro)" : title))
     }
@@ -62,10 +61,9 @@ struct GamesOverlay: View {
     private func game(_ icon: String, _ title: String, _ note: String, locked: Bool, fit: ChoiceFit,
                       action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            ChoiceLabel(icon: icon, title: title, note: note, fit: fit, tall: 170, iconSize: 54, titleSize: 19)
+            ChoiceLabel(icon: icon, title: title, note: note, fit: fit, tall: 170, iconSize: 54, titleSize: 19, dim: locked)
         }
-        .buttonStyle(PillButtonStyle(color: locked ? Theme.option : Theme.play))
-        .opacity(locked ? 0.75 : 1)
+        .buttonStyle(PillButtonStyle(color: locked ? Theme.restingFace : Theme.play))
         .accessibilityLabel(Text(verbatim: locked ? "\(title), \(L10n.pro)" : title))
     }
 }
@@ -136,14 +134,16 @@ struct ChoiceLabel: View {
     let tall: CGFloat
     var iconSize: CGFloat = 46
     var titleSize: CGFloat = 17
+    /// Locked or not available just now: the icon fades, the words keep their contrast (#43).
+    var dim = false
 
     var body: some View {
         if fit == .rows {
             HStack(spacing: Tokens.Spacing.md) {
-                Text(verbatim: icon).font(.system(size: 36))
+                Text(verbatim: icon).font(.system(size: 36)).opacity(dim ? 0.45 : 1)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(verbatim: title).font(Theme.font(18))
-                    Text(verbatim: note).font(Theme.font(14, .semibold)).opacity(0.75)
+                    Text(verbatim: note).font(Theme.font(14, .semibold)).foregroundStyle(Theme.onPastelSoft)
                 }
                 Spacer(minLength: 0)
             }
@@ -151,9 +151,9 @@ struct ChoiceLabel: View {
             .frame(maxWidth: .infinity, minHeight: 64)
         } else {
             VStack(spacing: 4) {
-                Text(verbatim: icon).font(.system(size: fit == .wide ? iconSize : 36))
+                Text(verbatim: icon).font(.system(size: fit == .wide ? iconSize : 36)).opacity(dim ? 0.45 : 1)
                 Text(verbatim: title).font(Theme.font(titleSize))
-                Text(verbatim: note).font(Theme.font(14, .semibold)).opacity(0.75)
+                Text(verbatim: note).font(Theme.font(14, .semibold)).foregroundStyle(Theme.onPastelSoft)
                     .multilineTextAlignment(.center)
             }
             .padding(.vertical, Tokens.Spacing.md).padding(.horizontal, Tokens.Spacing.sm)
@@ -166,6 +166,7 @@ struct ChoiceLabel: View {
 /// and the room stay in view.
 struct WardrobeOverlay: View {
     let model: GameModel
+    @Environment(\.colorSchemeContrast) private var contrast
 
     var body: some View {
         GeometryReader { geo in
@@ -253,18 +254,22 @@ struct WardrobeOverlay: View {
 
     private func tile<Icon: View>(icon: Icon, title: String, note: String, chosen: Bool, dim: Bool) -> some View {
         VStack(spacing: 2) {
-            icon
+            // locked, or waiting for its hearts: the picture fades, the words keep their contrast (#43)
+            icon.opacity(dim ? 0.45 : 1)
             Text(verbatim: title).font(Theme.font(15)).lineLimit(1).minimumScaleFactor(0.7)
-            Text(verbatim: note).font(Theme.font(13, .semibold)).foregroundStyle(Theme.muted).lineLimit(1)
+            Text(verbatim: note).font(Theme.font(13, .semibold)).foregroundStyle(chosen ? Theme.onPastelSoft : Theme.muted).lineLimit(1)
         }
         .padding(.vertical, Tokens.Spacing.sm).padding(.horizontal, 4)
         .frame(maxWidth: .infinity)
         .background(chosen ? Color(hex: "D2F2CF") : Theme.option, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay {
-            if chosen { RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(Theme.chosen, lineWidth: 4) }
+            if chosen {
+                RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(Theme.chosen, lineWidth: 4)
+            } else if contrast == .increased {
+                RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(Theme.barLine, lineWidth: 2)
+            }
         }
         .foregroundStyle(chosen ? Theme.onPastel : Theme.text)
-        .opacity(dim ? 0.55 : 1)
     }
 }
 

@@ -6,6 +6,15 @@ All notable changes to Whiskerling are listed here. The format follows
 
 ## [Unreleased]
 
+### Changed
+- Better contrast. The grey notes are darker, so they reach the contrast small text needs on
+  every card, tile and button, in light and dark. Locked and not yet unlocked items, and the
+  buttons while the cat sleeps, now fade only their picture, not their words. With the system's
+  Increase Contrast on, the notes turn as dark as the text and the buttons and tiles get an
+  outline. The pink of the text buttons and links is darker, so it reads on the cream cards, and
+  the links in the grown-ups' menu are underlined and easier to hit
+  ([#43](https://github.com/JarlLyng/whiskerling/issues/43)).
+
 ## [1.1.0] - not released yet
 
 ### Added

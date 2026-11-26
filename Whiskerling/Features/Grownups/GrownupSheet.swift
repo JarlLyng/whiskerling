@@ -253,10 +253,20 @@ struct GrownupMenu: View {
         .frame(maxWidth: 520)
     }
 
+    /// Each link with a hit area of at least 44 by 44 points (#43).
     @ViewBuilder private var links: some View {
-        Link(L10n.sendFeedback, destination: Feedback.mailURL())
-        Link(L10n.rateApp, destination: Feedback.reviewURL)
-        Link(L10n.privacyPolicy, destination: Feedback.privacyURL)
+        link(L10n.sendFeedback, Feedback.mailURL())
+        link(L10n.rateApp, Feedback.reviewURL)
+        link(L10n.privacyPolicy, Feedback.privacyURL)
+    }
+
+    private func link(_ title: String, _ url: URL) -> some View {
+        Link(destination: url) {
+            Text(verbatim: title).underline()
+                .padding(.horizontal, Tokens.Spacing.sm)
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
+        }
     }
 
     private func wide(_ title: String, color: Color, small: Bool, _ action: @escaping () -> Void) -> some View {

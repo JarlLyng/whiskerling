@@ -6,6 +6,7 @@ struct StartView: View {
     @State private var coat = "orange"
     @State private var name = ""
     @FocusState private var nameFocused: Bool
+    @Environment(\.colorSchemeContrast) private var contrast
 
     var body: some View {
         GeometryReader { geo in
@@ -82,6 +83,7 @@ struct StartView: View {
                 // As large as the tile allows, up to 110 points, so tiles never overlap. Square first,
                 // then capped: capped first, a wide tile gave a narrow, tall canvas that cut the cat off.
                 KittenPortrait(coat: c).aspectRatio(1, contentMode: .fit).frame(maxWidth: 110)
+                    .opacity(locked ? 0.5 : 1) // the picture fades, the words keep their contrast (#43)
                 Text(verbatim: c.name).font(Theme.font(17)).lineLimit(1).minimumScaleFactor(0.7)
                 Text(verbatim: locked ? "🔒 " + L10n.askGrownUp : " ").font(Theme.font(13, .semibold)).foregroundStyle(Theme.muted)
                     .lineLimit(1).minimumScaleFactor(0.6)
@@ -90,11 +92,14 @@ struct StartView: View {
             .frame(maxWidth: .infinity)
             .background(chosen ? Color(hex: "D2F2CF") : Theme.option, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
             .overlay {
-                if chosen { RoundedRectangle(cornerRadius: 20, style: .continuous).stroke(Theme.chosen, lineWidth: 4) }
+                if chosen {
+                    RoundedRectangle(cornerRadius: 20, style: .continuous).stroke(Theme.chosen, lineWidth: 4)
+                } else if contrast == .increased {
+                    RoundedRectangle(cornerRadius: 20, style: .continuous).stroke(Theme.barLine, lineWidth: 2)
+                }
             }
             .foregroundStyle(chosen ? Theme.onPastel : Theme.text)
-            .opacity(locked ? 0.6 : 1)
-        }
+                    }
         .buttonStyle(.plain)
         .accessibilityLabel(c.name)
         .accessibilityAddTraits(chosen ? .isSelected : [])
