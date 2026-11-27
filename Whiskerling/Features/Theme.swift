@@ -45,8 +45,44 @@ enum Theme {
         v > 60 ? Color(hex: "5BC57A") : (v > 30 ? Color(hex: "F2C14E") : Color(hex: "EF6F6C"))
     }
 
-    static func font(_ size: CGFloat, _ weight: Font.Weight = .bold) -> Font {
-        .system(size: size, weight: weight, design: .rounded)
+    /// The text style a size grows with: the one closest to it at the standard text size, so a
+    /// big title grows less than a small note, the way the system's own styles do (#42).
+    static func textStyle(for size: CGFloat) -> Font.TextStyle {
+        switch size {
+        case 31...: .largeTitle
+        case 25..<31: .title
+        case 21..<25: .title2
+        case 19..<21: .title3
+        case 17..<19: .body
+        case 16..<17: .callout
+        case 14..<16: .subheadline
+        case 13..<14: .footnote
+        case 12..<13: .caption
+        default: .caption2
+        }
+    }
+}
+
+/// The app's rounded type, at a size that grows with the system's text size (#42).
+private struct ThemeFont: ViewModifier {
+    @ScaledMetric private var size: CGFloat
+    private let weight: Font.Weight
+
+    init(size: CGFloat, weight: Font.Weight) {
+        _size = ScaledMetric(wrappedValue: size, relativeTo: Theme.textStyle(for: size))
+        self.weight = weight
+    }
+
+    func body(content: Content) -> some View {
+        content.font(.system(size: size, weight: weight, design: .rounded))
+    }
+}
+
+extension View {
+    /// The app's rounded type: `size` points at the standard text size, larger or smaller with
+    /// the system's text size, like the system's own text styles (#42).
+    func themeFont(_ size: CGFloat, _ weight: Font.Weight = .bold) -> some View {
+        modifier(ThemeFont(size: size, weight: weight))
     }
 }
 

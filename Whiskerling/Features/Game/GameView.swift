@@ -9,12 +9,14 @@ struct GameView: View {
             ZStack(alignment: .top) {
                 GameCanvas(model: model)
                 if let toast = model.toast {
+                    // grows with the system's text size and wraps, centred over the room (#42)
                     Text(toast)
-                        .font(Theme.font(19))
+                        .themeFont(19)
+                        .multilineTextAlignment(.center)
                         .foregroundStyle(.white)
                         .padding(.horizontal, 18).padding(.vertical, 10)
-                        .background(Color(hex: "4A3B35").opacity(0.9), in: Capsule())
-                        .padding(.top, 12)
+                        .background(Color(hex: "4A3B35").opacity(0.9), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+                        .padding(.top, 12).padding(.horizontal, Tokens.Spacing.lg)
                         .transition(.opacity)
                         .allowsHitTesting(false)
                 }
@@ -100,13 +102,20 @@ struct HUDBar: View {
         .padding(.vertical, Tokens.Spacing.sm)
         .background(Theme.bar)
         .overlay(alignment: .bottom) { Rectangle().fill(Theme.barLine).frame(height: 3) }
+        // The bar grows with the text up to the largest standard size, so the room stays in view;
+        // beyond that a long press shows a need or a button large, like a tab bar (#42).
+        .dynamicTypeSize(...Self.largestType)
     }
+
+    /// How far the bars around the room grow with the system's text size (#42).
+    static let largestType = DynamicTypeSize.xxxLarge
 
     private func nameAndStage(_ hud: HUD) -> some View {
         HStack(spacing: Tokens.Spacing.sm) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(verbatim: hud.name).font(Theme.font(24)).lineLimit(1)
-                Text(verbatim: hud.stageLabel).font(Theme.font(14, .semibold)).foregroundStyle(Theme.muted).lineLimit(1)
+                Text(verbatim: hud.name).themeFont(24).lineLimit(1).minimumScaleFactor(0.7)
+                Text(verbatim: hud.stageLabel).themeFont(14, .semibold).foregroundStyle(Theme.muted).lineLimit(1)
+                    .minimumScaleFactor(0.7)
             }
             .contentShape(Rectangle())
             // The grown-up menu: hold the name for two seconds.
@@ -131,7 +140,7 @@ struct HUDBar: View {
         } else if hud.canAdopt {
             Button(action: model.tapAdopt) {
                 Image(systemName: "plus")
-                    .font(.system(size: 18, weight: .heavy))
+                    .themeFont(18, .heavy)
                     .frame(width: 40, height: 40)
                     .background(Theme.option, in: Circle())
             }
@@ -152,19 +161,22 @@ struct HUDBar: View {
 
     private func hearts(_ hud: HUD) -> some View {
         Text(verbatim: "❤️ \(hud.hearts)")
-            .font(Theme.font(22))
+            .themeFont(22)
             .contentTransition(.numericText())
             .animation(.spring(duration: 0.4), value: hud.hearts)
             .accessibilityLabel(L10n.hearts(hud.hearts))
+            .accessibilityShowsLargeContentViewer { Text(verbatim: "❤️ \(hud.hearts)") }
     }
 
     private func soundButton(_ hud: HUD) -> some View {
         Button(action: model.toggleSound) {
-            Text(verbatim: hud.sound ? "🔊" : "🔇").font(.system(size: 22))
+            Text(verbatim: hud.sound ? "🔊" : "🔇").themeFont(22, .regular)
                 .frame(width: 46, height: 46)
                 .background(Theme.option, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
         }
         .accessibilityLabel(hud.sound ? L10n.soundOn : L10n.soundOff)
+        // the viewer shows text, so the icon goes in front of the words
+        .accessibilityShowsLargeContentViewer { Text(verbatim: (hud.sound ? "🔊 " : "🔇 ") + (hud.sound ? L10n.soundOn : L10n.soundOff)) }
     }
 }
 
@@ -180,13 +192,13 @@ struct Meter: View {
         HStack(spacing: compact ? 3 : 5) {
             // A low need makes its icon pulse, or with Reduce Motion simply stay larger.
             Text(verbatim: icon)
-                .font(.system(size: compact ? 19 : 24))
+                .themeFont(compact ? 19 : 24, .regular)
                 .scaleEffect(value < 25 ? 1.25 : 1)
                 .animation(reduceMotion ? nil : (value < 25 ? .easeInOut(duration: 0.7).repeatForever() : .default),
                            value: value < 25)
                 .id(reduceMotion) // a pulse already running stops when the setting is turned on
             VStack(alignment: .leading, spacing: 2) {
-                Text(verbatim: label).font(Theme.font(compact ? 11 : 12)).foregroundStyle(Theme.muted).lineLimit(1)
+                Text(verbatim: label).themeFont(compact ? 11 : 12).foregroundStyle(Theme.muted).lineLimit(1)
                     .minimumScaleFactor(0.8)
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
@@ -202,6 +214,7 @@ struct Meter: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(label)
         .accessibilityValue(Text(verbatim: "\(Int(value.rounded())) %"))
+        .accessibilityShowsLargeContentViewer { Text(verbatim: "\(icon) \(label) \(Int(value.rounded())) %") }
     }
 }
 
@@ -219,7 +232,7 @@ struct ActionBar: View {
                     action("🎀", L10n.dressUp, Theme.dress, dim: false, model.openWardrobe)
                         .overlay(alignment: .topTrailing) {
                             if model.hud.hasNewItems {
-                                Text(verbatim: "!").font(Theme.font(15)).foregroundStyle(.white)
+                                Text(verbatim: "!").themeFont(15).foregroundStyle(.white)
                                     .frame(minWidth: 26, minHeight: 26)
                                     .background(Color(hex: "EF476F"), in: Capsule())
                                     .offset(x: 4, y: -6)
@@ -234,13 +247,14 @@ struct ActionBar: View {
                 .frame(maxWidth: 1000)
             } else {
                 HStack(spacing: Tokens.Spacing.md) {
-                    Text(verbatim: model.modeHint).font(Theme.font(21)).frame(maxWidth: .infinity, alignment: .leading)
+                    Text(verbatim: model.modeHint).themeFont(21).frame(maxWidth: .infinity, alignment: .leading)
                     Button(action: model.tapDone) {
-                        Text(verbatim: L10n.done + " ✓").font(Theme.font(22)).padding(.horizontal, 30).frame(height: 72)
+                        Text(verbatim: L10n.done + " ✓").themeFont(22).padding(.horizontal, 30).frame(minHeight: 72)
                     }
                     .buttonStyle(PillButtonStyle(color: Theme.go))
+                    .accessibilityShowsLargeContentViewer { Text(verbatim: L10n.done + " ✓") }
                 }
-                .frame(height: 88)
+                .frame(minHeight: 88)
             }
         }
         .foregroundStyle(Theme.text)
@@ -250,26 +264,28 @@ struct ActionBar: View {
         .frame(maxWidth: .infinity)
         .background(Theme.bar)
         .overlay(alignment: .top) { Rectangle().fill(Theme.barLine).frame(height: 3) }
+        .dynamicTypeSize(...HUDBar.largestType) // like the top bar (#42)
     }
 
     private func action(_ icon: String, _ label: String, _ color: Color, dim: Bool, _ fn: @escaping () -> Void) -> some View {
         Button(action: fn) {
             VStack(spacing: 0) {
                 // while the cat sleeps: a quiet face and a faded icon, the words still clear (#43)
-                Text(verbatim: icon).font(.system(size: 36)).opacity(dim ? 0.4 : 1)
-                Text(verbatim: label).font(Theme.font(18)).lineLimit(1).minimumScaleFactor(0.7)
+                Text(verbatim: icon).themeFont(36, .regular).opacity(dim ? 0.4 : 1)
+                Text(verbatim: label).themeFont(18).lineLimit(1).minimumScaleFactor(0.5)
             }
-            .frame(maxWidth: 170).frame(height: 88)
+            .frame(maxWidth: 170).frame(minHeight: 88)
         }
         .buttonStyle(PillButtonStyle(color: dim ? Theme.restingFace : color))
+        .accessibilityShowsLargeContentViewer { Text(verbatim: "\(icon) \(label)") }
     }
 }
 
 /// A small padlock on something that needs Pro. Tapping it leads to the parental gate.
 struct LockBadge: View {
     var body: some View {
-        Text(verbatim: "🔒").font(.system(size: 15))
-            .frame(width: 30, height: 30)
+        Text(verbatim: "🔒").themeFont(15, .regular)
+            .frame(minWidth: 30, minHeight: 30)
             .background(Color.white, in: Circle())
             .overlay(Circle().stroke(Theme.barLine, lineWidth: 2))
             .accessibilityLabel(L10n.pro)

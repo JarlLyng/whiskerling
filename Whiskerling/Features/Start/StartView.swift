@@ -7,13 +7,15 @@ struct StartView: View {
     @State private var name = ""
     @FocusState private var nameFocused: Bool
     @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         GeometryReader { geo in
             let narrow = geo.size.width < 520 // a narrow window (#15)
             // A short, wide screen (an iPad mini on its side) gets the coats in two rows, so the
             // name and the button still fit without scrolling (#19).
-            let low = !narrow && geo.size.height < 900 && geo.size.width > geo.size.height
+            // With large text the coats stay in wide tiles, two to a row (#42).
+            let low = !narrow && !typeSize.isAccessibilitySize && geo.size.height < 900 && geo.size.width > geo.size.height
             ScrollView {
                 card(narrow: narrow, low: low)
                     .padding(narrow ? Tokens.Spacing.md : Tokens.Spacing.xl)
@@ -34,18 +36,19 @@ struct StartView: View {
 
     private func card(narrow: Bool, low: Bool) -> some View {
             VStack(spacing: low ? Tokens.Spacing.md : Tokens.Spacing.lg) {
-                Text(verbatim: "Whiskerling 🐾").font(Theme.font(44, .heavy))
+                Text(verbatim: "Whiskerling 🐾").themeFont(44, .heavy)
                     .lineLimit(1).minimumScaleFactor(0.5)
                 // A second kitten (#21): a friend for the cat there is
                 Text(verbatim: model.adopting ? L10n.adoptTitle(model.hud.name) : L10n.chooseKitten)
-                    .font(Theme.font(20, .semibold)).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: Tokens.Spacing.md), count: low ? 5 : 3),
+                    .themeFont(20, .semibold).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: Tokens.Spacing.md),
+                                         count: typeSize.isAccessibilitySize ? 2 : (low ? 5 : 3)),
                           spacing: Tokens.Spacing.md) {
                     ForEach(Catalog.coats) { c in coatButton(c) }
                 }
-                Text(verbatim: L10n.nameQuestion).font(Theme.font(20, .semibold)).foregroundStyle(Theme.muted)
+                Text(verbatim: L10n.nameQuestion).themeFont(20, .semibold).foregroundStyle(Theme.muted)
                 TextField(L10n.namePlaceholder, text: $name)
-                    .font(Theme.font(28))
+                    .themeFont(28)
                     .multilineTextAlignment(.center)
                     .textInputAutocapitalization(.words)
                     .autocorrectionDisabled()
@@ -58,12 +61,13 @@ struct StartView: View {
                     .foregroundStyle(Theme.onPastel)
                     .onChange(of: name) { _, new in if new.count > 14 { name = String(new.prefix(14)) } }
                 Button(action: start) {
-                    Text(verbatim: L10n.bringHome).font(Theme.font(24)).padding(.horizontal, 36).frame(height: 68)
+                    Text(verbatim: L10n.bringHome).themeFont(24).multilineTextAlignment(.center)
+                        .padding(.horizontal, 36).padding(.vertical, Tokens.Spacing.sm).frame(minHeight: 68)
                 }
                 .buttonStyle(PillButtonStyle(color: Theme.go))
                 if model.adopting {
                     Button(L10n.adoptCancel, action: model.cancelAdopt)
-                        .font(Theme.font(18))
+                        .themeFont(18)
                         .foregroundStyle(Theme.muted)
                 }
             }
@@ -84,9 +88,9 @@ struct StartView: View {
                 // then capped: capped first, a wide tile gave a narrow, tall canvas that cut the cat off.
                 KittenPortrait(coat: c).aspectRatio(1, contentMode: .fit).frame(maxWidth: 110)
                     .opacity(locked ? 0.5 : 1) // the picture fades, the words keep their contrast (#43)
-                Text(verbatim: c.name).font(Theme.font(17)).lineLimit(1).minimumScaleFactor(0.7)
-                Text(verbatim: locked ? "🔒 " + L10n.askGrownUp : " ").font(Theme.font(13, .semibold)).foregroundStyle(Theme.muted)
-                    .lineLimit(1).minimumScaleFactor(0.6)
+                Text(verbatim: c.name).themeFont(17).lineLimit(2).minimumScaleFactor(0.7).multilineTextAlignment(.center)
+                Text(verbatim: locked ? "🔒 " + L10n.askGrownUp : " ").themeFont(13, .semibold).foregroundStyle(Theme.muted)
+                    .lineLimit(2).minimumScaleFactor(0.6).multilineTextAlignment(.center)
             }
             .padding(.vertical, Tokens.Spacing.sm)
             .frame(maxWidth: .infinity)

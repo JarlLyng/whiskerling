@@ -168,3 +168,6 @@ Under `Whiskerling/`:
 - `iamjarl-design` tokens around the room; the room and the cat have their own palette.
 - No telemetry at all; the privacy manifest declares UserDefaults (CA92.1) only.
 - No em-dashes in player-facing text (a test checks a few keys).
+- Text uses `.themeFont(size, weight)`, which grows with the system's text size. The bars around
+  the room stop at `HUDBar.largestType` and show the Large Content Viewer beyond it; the room's
+  own drawn text (speech bubbles, labels) stays as it is.
