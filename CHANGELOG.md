@@ -6,20 +6,6 @@ All notable changes to Whiskerling are listed here. The format follows
 
 ## [Unreleased]
 
-### Added
-- A cat's name can be changed in the grown-ups' menu, for each cat when there are two.
-
-### Changed
-- Two cats keep apart. Each picks a place on the floor away from the other, and if they still end
-  up on top of each other, the one not shown steps aside, so neither hides behind the other.
-- Better contrast. The grey notes are darker, so they reach the contrast small text needs on
-  every card, tile and button, in light and dark. Locked and not yet unlocked items, and the
-  buttons while the cat sleeps, now fade only their picture, not their words. With the system's
-  Increase Contrast on, the notes turn as dark as the text and the buttons and tiles get an
-  outline. The pink of the text buttons and links is darker, so it reads on the cream cards, and
-  the links in the grown-ups' menu are underlined and easier to hit
-  ([#43](https://github.com/JarlLyng/whiskerling/issues/43)).
-
 ## [1.1.0] - not released yet
 
 ### Added
@@ -57,7 +43,8 @@ All notable changes to Whiskerling are listed here. The format follows
   and clean fall more slowly and each cat visits the litter box less often, so two cats aren't
   twice the chores. The top bar shows one cat at a time, with the other as a small picture to
   tap. Each grows from its own adoption date, and the two groom each other, chase, nap together
-  and sit at the window. Losing Pro removes no cat, and Start over removes both
+  and sit at the window, and otherwise keep a cat's width apart, so neither hides behind the
+  other. Losing Pro removes no cat, and Start over removes both
   ([#21](https://github.com/JarlLyng/whiskerling/issues/21)).
 - The kitchen, a third room with Pro. A tap on the mixing bowl bakes fish cookies: fish and flour
   into the bowl, a stir, six fish cut out of the dough, and the oven, with every tap moving it on
@@ -66,12 +53,21 @@ All notable changes to Whiskerling are listed here. The format follows
   a cookie. "Go to" replaces the garden button and chooses between the living room, the kitchen
   and the garden, and hide and seek has four hiding places in the kitchen
   ([#38](https://github.com/JarlLyng/whiskerling/issues/38)).
+- A cat's name can be changed in the grown-ups' menu, for each cat when there are two
+  ([#48](https://github.com/JarlLyng/whiskerling/pull/48)).
 
 ### Changed
 - The game follows Reduce Motion. Hearts and sparkles fade where they appear instead of flying
   out, the cat hops a little instead of leaping, fish rise low and slow and slip back without
   spinning, and a low need's icon stays large instead of pulsing. The games and their hearts are
   the same ([#14](https://github.com/JarlLyng/whiskerling/issues/14)).
+- Better contrast. The grey notes are darker, so they reach the contrast small text needs on
+  every card, tile and button, in light and dark. Locked and not yet unlocked items, and the
+  buttons while the cat sleeps, now fade only their picture, not their words. With the system's
+  Increase Contrast on, the notes turn as dark as the text and the buttons and tiles get an
+  outline. The pink of the text buttons and links is darker, so it reads on the cream cards, and
+  the links in the grown-ups' menu are underlined and easier to hit
+  ([#43](https://github.com/JarlLyng/whiskerling/issues/43)).
 
 ### Fixed
 - Rate in the grown-ups' menu opens Whiskerling's review page in the App Store. It asked for
