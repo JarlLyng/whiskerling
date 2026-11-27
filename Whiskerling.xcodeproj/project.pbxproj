@@ -57,6 +57,7 @@
 		EEE1CC9FC45F1872671FD494 /* World+Hide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6860E1788DC5A0B3A43102E0 /* World+Hide.swift */; };
 		F4095287E79673134967B498 /* StoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9E3DC534301465458C0D09 /* StoreTests.swift */; };
 		F5629FBF75919BF41FE9ABD0 /* WindowSizeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BEE0D8C66DB3E55C9049B8 /* WindowSizeTests.swift */; };
+		F9AEF1D9BA18B7E623B89A96 /* LargerTextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B896C8D54B4510F24D66CC3 /* LargerTextTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,6 +95,7 @@
 		842E28B85C19DC489C51D47C /* WhiskerlingApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiskerlingApp.swift; sourceTree = "<group>"; };
 		85BEE0D8C66DB3E55C9049B8 /* WindowSizeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowSizeTests.swift; sourceTree = "<group>"; };
 		8A0404FDD38F747B4A1A60BF /* ProUnlockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProUnlockTests.swift; sourceTree = "<group>"; };
+		8B896C8D54B4510F24D66CC3 /* LargerTextTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargerTextTests.swift; sourceTree = "<group>"; };
 		977B3746EDCCAFF4C4774220 /* GrownupSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrownupSheet.swift; sourceTree = "<group>"; };
 		97DB26A85C60085B08433E7B /* ReduceMotionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReduceMotionTests.swift; sourceTree = "<group>"; };
 		9A3E6C17EAFADD397824EAEE /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
@@ -147,6 +149,7 @@
 				B84E48954FE5146717C4FDA9 /* GrownUpTests.swift */,
 				15D7E9F616EFCB988A861370 /* HideTests.swift */,
 				559C36D831BC4AE2EA381BD8 /* KitchenTests.swift */,
+				8B896C8D54B4510F24D66CC3 /* LargerTextTests.swift */,
 				BB6983328194FAE7C12EFFB0 /* LocalizationTests.swift */,
 				8A0404FDD38F747B4A1A60BF /* ProUnlockTests.swift */,
 				97DB26A85C60085B08433E7B /* ReduceMotionTests.swift */,
@@ -461,6 +464,7 @@
 				7DA874128A5CF81544CDBE01 /* GrownUpTests.swift in Sources */,
 				C7A8458D136B19F89F23E842 /* HideTests.swift in Sources */,
 				031CEBF6C885C41ABF1797C9 /* KitchenTests.swift in Sources */,
+				F9AEF1D9BA18B7E623B89A96 /* LargerTextTests.swift in Sources */,
 				22FADF04801BEADD49DCB27F /* LocalizationTests.swift in Sources */,
 				7647893823D290FE471C1082 /* ProUnlockTests.swift in Sources */,
 				2737322097B86D5724175E7D /* ReduceMotionTests.swift in Sources */,

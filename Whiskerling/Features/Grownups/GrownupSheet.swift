@@ -45,47 +45,55 @@ struct ParentGateView: View {
     }
     @State private var answer = ""
     @State private var wrong = false
+    /// The keys grow with their digits (#42).
+    @ScaledMetric(relativeTo: .title) private var keyWidth: CGFloat = 84
+    @ScaledMetric(relativeTo: .title) private var keyHeight: CGFloat = 64
 
     var body: some View {
         // Centred when it fits, smaller keys in a short window, and scrolling below that, so
         // OK and Cancel are always within reach (#15).
         GeometryReader { geo in
             let short = geo.size.height < 600
+            let narrow = geo.size.width < 520
+            // Three keys to a row always fit the window, however large the text (#42).
+            let fit = (geo.size.width - 2 * (narrow ? Tokens.Spacing.md : Tokens.Spacing.xxl) - 2 * Tokens.Spacing.sm) / 3
             ScrollView {
-                gate(short: short).frame(maxWidth: .infinity, minHeight: geo.size.height)
+                gate(short: short, narrow: narrow, keyWidth: min(keyWidth, fit))
+                    .frame(maxWidth: .infinity, minHeight: geo.size.height)
             }
             .scrollBounceBehavior(.basedOnSize)
         }
     }
 
-    private func gate(short: Bool) -> some View {
+    private func gate(short: Bool, narrow: Bool, keyWidth: CGFloat) -> some View {
         VStack(spacing: short ? Tokens.Spacing.sm : Tokens.Spacing.lg) {
-            Text(verbatim: L10n.forGrownUps).font(Theme.font(short ? 22 : 28))
-            Text(verbatim: L10n.gateQuestion(a, b)).font(Theme.font(short ? 20 : 24, .semibold))
+            Text(verbatim: L10n.forGrownUps).themeFont(short ? 22 : 28).multilineTextAlignment(.center)
+            Text(verbatim: L10n.gateQuestion(a, b)).themeFont(short ? 20 : 24, .semibold).multilineTextAlignment(.center)
             Text(verbatim: answer.isEmpty ? " " : answer)
-                .font(Theme.font(short ? 30 : 40, .heavy)).monospacedDigit()
-                .frame(width: 200, height: short ? 46 : 64)
+                .themeFont(short ? 30 : 40, .heavy).monospacedDigit()
+                .padding(.horizontal, Tokens.Spacing.md)
+                .frame(minWidth: 200, minHeight: short ? 46 : 64)
                 .background(Theme.option, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
             // The line is always there, so the keypad never jumps under a grown-up's finger.
-            Text(verbatim: wrong ? L10n.gateWrong : " ").font(Theme.font(16, .semibold)).foregroundStyle(Color(hex: "D64545"))
+            Text(verbatim: wrong ? L10n.gateWrong : " ").themeFont(16, .semibold).foregroundStyle(Color(hex: "D64545"))
             Grid(horizontalSpacing: Tokens.Spacing.sm, verticalSpacing: Tokens.Spacing.sm) {
                 ForEach(0..<3) { row in
                     GridRow {
-                        ForEach(1...3, id: \.self) { col in key(String(row * 3 + col), short: short) }
+                        ForEach(1...3, id: \.self) { col in key(String(row * 3 + col), short: short, width: keyWidth) }
                     }
                 }
                 GridRow {
-                    key("⌫", short: short)
-                    key("0", short: short)
-                    key(L10n.ok, short: short)
+                    key("⌫", short: short, width: keyWidth)
+                    key("0", short: short, width: keyWidth)
+                    key(L10n.ok, short: short, width: keyWidth)
                 }
             }
-            Button(L10n.cancel, action: onCancel).font(Theme.font(18)).padding(.top, short ? 0 : Tokens.Spacing.sm)
+            Button(L10n.cancel, action: onCancel).themeFont(18).padding(.top, short ? 0 : Tokens.Spacing.sm)
         }
-        .padding(short ? Tokens.Spacing.md : Tokens.Spacing.xxl)
+        .padding(short || narrow ? Tokens.Spacing.md : Tokens.Spacing.xxl)
     }
 
-    private func key(_ label: String, short: Bool) -> some View {
+    private func key(_ label: String, short: Bool, width: CGFloat) -> some View {
         Button {
             if label != L10n.ok { wrong = false }
             switch label {
@@ -94,7 +102,8 @@ struct ParentGateView: View {
             default: if answer.count < 4 { answer += label }
             }
         } label: {
-            Text(verbatim: label).font(Theme.font(short ? 22 : 26)).frame(width: 84, height: short ? 46 : 64)
+            Text(verbatim: label).themeFont(short ? 22 : 26).lineLimit(1).minimumScaleFactor(0.5)
+                .frame(width: width, height: keyHeight * (short ? 46.0 / 64 : 1))
         }
         .buttonStyle(PillButtonStyle(color: label == L10n.ok ? Theme.go : Theme.feed))
     }
@@ -114,6 +123,8 @@ struct ParentGateView: View {
 struct PaywallView: View {
     let store: Store
     let onClose: () -> Void
+    @Environment(\.dynamicTypeSize) private var typeSize
+    @ScaledMetric(relativeTo: .title) private var iconWidth: CGFloat = 36
 
     var body: some View {
         // Centred when it fits, scrolling when it doesn't (an iPad mini in landscape with the
@@ -135,8 +146,8 @@ struct PaywallView: View {
     private var content: some View {
         VStack(spacing: Tokens.Spacing.xl) {
             VStack(spacing: Tokens.Spacing.sm) {
-                Text(verbatim: L10n.proTitle).font(Theme.font(34, .heavy))
-                Text(verbatim: L10n.proSubtitle).font(Theme.font(19, .semibold)).foregroundStyle(Theme.muted)
+                Text(verbatim: L10n.proTitle).themeFont(34, .heavy).multilineTextAlignment(.center)
+                Text(verbatim: L10n.proSubtitle).themeFont(19, .semibold).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
             }
             VStack(alignment: .leading, spacing: Tokens.Spacing.lg) {
                 row("paintpalette.fill", L10n.proCoatsTitle, L10n.proCoatsBody)
@@ -146,11 +157,11 @@ struct PaywallView: View {
                 row("sparkles", L10n.proFutureTitle, L10n.proFutureBody)
                 row("lock.shield.fill", L10n.proPrivateTitle, L10n.proPrivateBody)
             }
-            .frame(maxWidth: 460, alignment: .leading)
+            .frame(maxWidth: typeSize.isAccessibilitySize ? 640 : 460, alignment: .leading)
 
             if store.isPro {
-                Text(verbatim: L10n.proUnlocked).font(Theme.font(20)).foregroundStyle(Theme.chosen)
-                Button(L10n.close, action: onClose).font(Theme.font(20))
+                Text(verbatim: L10n.proUnlocked).themeFont(20).foregroundStyle(Theme.chosen)
+                Button(L10n.close, action: onClose).themeFont(20)
             } else {
                 Button { Task { await store.purchase() } } label: {
                     Group {
@@ -158,31 +169,38 @@ struct PaywallView: View {
                             Text(verbatim: store.proProduct.map { L10n.unlockPro($0.displayPrice) } ?? L10n.unlockProPlain)
                         }
                     }
-                    .font(Theme.font(22)).padding(.horizontal, 34).frame(height: 64)
+                    .themeFont(22).multilineTextAlignment(.center)
+                    .padding(.horizontal, 34).padding(.vertical, Tokens.Spacing.sm).frame(minHeight: 64)
                 }
                 .buttonStyle(PillButtonStyle(color: Theme.go))
                 .opacity(store.proProduct == nil ? 0.6 : 1)
                 if store.loadFailed && store.proProduct == nil {
-                    Text(verbatim: L10n.storeOffline).font(Theme.font(15, .semibold)).foregroundStyle(Theme.muted)
+                    Text(verbatim: L10n.storeOffline).themeFont(15, .semibold).foregroundStyle(Theme.muted)
                         .multilineTextAlignment(.center)
-                    Button(L10n.tryAgain) { Task { await store.loadProduct() } }.font(Theme.font(17))
+                    Button(L10n.tryAgain) { Task { await store.loadProduct() } }.themeFont(17)
                 }
-                HStack(spacing: Tokens.Spacing.xxl) {
-                    Button(L10n.restore) { Task { await store.restore() } }
-                    Button(L10n.notNow, action: onClose)
+                // side by side when they fit, under each other with large text (#42)
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: Tokens.Spacing.xxl) { restoreAndNotNow }
+                    VStack(spacing: Tokens.Spacing.md) { restoreAndNotNow }
                 }
-                .font(Theme.font(17, .semibold))
+                .themeFont(17, .semibold)
             }
         }
         .padding(Tokens.Spacing.xxl)
     }
 
+    @ViewBuilder private var restoreAndNotNow: some View {
+        Button(L10n.restore) { Task { await store.restore() } }
+        Button(L10n.notNow, action: onClose)
+    }
+
     private func row(_ symbol: String, _ title: String, _ body: String) -> some View {
         HStack(alignment: .top, spacing: Tokens.Spacing.md) {
-            Image(systemName: symbol).font(.system(size: 26)).foregroundStyle(Color(hex: "E76B86")).frame(width: 36)
+            Image(systemName: symbol).themeFont(26, .regular).foregroundStyle(Color(hex: "E76B86")).frame(width: iconWidth)
             VStack(alignment: .leading, spacing: 2) {
-                Text(verbatim: title).font(Theme.font(19))
-                Text(verbatim: body).font(Theme.font(16, .regular)).foregroundStyle(Theme.muted)
+                Text(verbatim: title).themeFont(19)
+                Text(verbatim: body).themeFont(16, .regular).foregroundStyle(Theme.muted)
             }
         }
     }
@@ -195,6 +213,7 @@ struct GrownupMenu: View {
     @State private var showPaywall = false
     @State private var shownName = ""
     @State private var otherName = ""
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         if showPaywall {
@@ -214,16 +233,16 @@ struct GrownupMenu: View {
 
     private func menu(small: Bool) -> some View {
         VStack(spacing: small ? Tokens.Spacing.md : Tokens.Spacing.lg) {
-            Text(verbatim: L10n.menuTitle).font(Theme.font(small ? 24 : 28)).multilineTextAlignment(.center)
+            Text(verbatim: L10n.menuTitle).themeFont(small ? 24 : 28).multilineTextAlignment(.center)
             if let s = model.world.save {
                 // Same day number as the top bar ("Kitten · day 1").
                 let day = Int(Date().timeIntervalSince(s.born) / 86_400) + 1
-                Text(verbatim: L10n.menuInfo(s.name, day, s.hearts)).font(Theme.font(17, .semibold)).foregroundStyle(Theme.muted)
+                Text(verbatim: L10n.menuInfo(s.name, day, s.hearts)).themeFont(17, .semibold).foregroundStyle(Theme.muted)
                     .multilineTextAlignment(.center)
             }
             if model.store.isPro {
                 // A status, not a button: the same green line as on the paywall.
-                Text(verbatim: L10n.proUnlocked).font(Theme.font(20)).foregroundStyle(Theme.chosen)
+                Text(verbatim: L10n.proUnlocked).themeFont(20).foregroundStyle(Theme.chosen)
                     .padding(.vertical, Tokens.Spacing.sm)
             } else {
                 wide(L10n.unlockProPlain, color: Theme.dress, small: small) { showPaywall = true }
@@ -232,7 +251,7 @@ struct GrownupMenu: View {
             if model.hasCat {
                 // A new name for a cat, or for both (#21)
                 VStack(spacing: Tokens.Spacing.sm) {
-                    Text(verbatim: L10n.renameTitle).font(Theme.font(17)).foregroundStyle(Theme.text)
+                    Text(verbatim: L10n.renameTitle).themeFont(17).foregroundStyle(Theme.text)
                     nameField($shownName, current: model.hud.name, other: false)
                     if let other = model.hud.otherName { nameField($otherName, current: other, other: true) }
                 }
@@ -252,16 +271,16 @@ struct GrownupMenu: View {
                     HStack(spacing: Tokens.Spacing.xl) { links }
                     VStack(spacing: Tokens.Spacing.sm) { links }
                 }
-                .font(Theme.font(16, .semibold))
-                Text(verbatim: L10n.feedbackNote).font(Theme.font(13, .regular)).foregroundStyle(Theme.muted)
+                .themeFont(16, .semibold)
+                Text(verbatim: L10n.feedbackNote).themeFont(13, .regular).foregroundStyle(Theme.muted)
                     .multilineTextAlignment(.center)
             }
             .padding(.top, Tokens.Spacing.sm)
-            Text(verbatim: "Whiskerling \(Feedback.appVersion)").font(Theme.font(13, .regular)).foregroundStyle(Theme.muted)
-            Button(L10n.close, action: onClose).font(Theme.font(18))
+            Text(verbatim: "Whiskerling \(Feedback.appVersion)").themeFont(13, .regular).foregroundStyle(Theme.muted)
+            Button(L10n.close, action: onClose).themeFont(18)
         }
         .padding(small ? Tokens.Spacing.lg : Tokens.Spacing.xxl)
-        .frame(maxWidth: 520)
+        .frame(maxWidth: typeSize.isAccessibilitySize ? 680 : 520)
     }
 
     /// Each link with a hit area of at least 44 by 44 points (#43).
@@ -283,30 +302,33 @@ struct GrownupMenu: View {
     private func nameField(_ text: Binding<String>, current: String, other: Bool) -> some View {
         let tidy = text.wrappedValue.split(whereSeparator: \.isWhitespace).joined(separator: " ")
         let changed = !tidy.isEmpty && tidy != current
-        return HStack(spacing: Tokens.Spacing.sm) {
+        // the field and Save under each other with large text (#42)
+        let layout = typeSize.isAccessibilitySize ? AnyLayout(VStackLayout(spacing: Tokens.Spacing.sm))
+                                                  : AnyLayout(HStackLayout(spacing: Tokens.Spacing.sm))
+        return layout {
             TextField(L10n.namePlaceholder, text: text)
-                .font(Theme.font(20))
+                .themeFont(20)
                 .textInputAutocapitalization(.words)
                 .autocorrectionDisabled()
                 .submitLabel(.done)
                 .onSubmit { if changed { model.rename(text.wrappedValue, other: other) } }
                 .onChange(of: text.wrappedValue) { _, new in if new.count > 14 { text.wrappedValue = String(new.prefix(14)) } }
-                .padding(.horizontal, Tokens.Spacing.md).frame(height: 52)
+                .padding(.horizontal, Tokens.Spacing.md).padding(.vertical, Tokens.Spacing.xs).frame(minHeight: 52)
                 .background(Color.white, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                 .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Theme.barLine, lineWidth: 2))
                 .foregroundStyle(Theme.onPastel)
                 .accessibilityLabel(L10n.renameField(current))
             Button(L10n.save) { model.rename(text.wrappedValue, other: other) }
-                .font(Theme.font(18))
+                .themeFont(18)
                 .frame(minWidth: 44, minHeight: 44)
                 .disabled(!changed)
         }
-        .frame(maxWidth: 420)
+        .frame(maxWidth: typeSize.isAccessibilitySize ? 600 : 420)
     }
 
     private func wide(_ title: String, color: Color, small: Bool, _ action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            Text(verbatim: title).font(Theme.font(19)).multilineTextAlignment(.center)
+            Text(verbatim: title).themeFont(19).multilineTextAlignment(.center)
                 .padding(small ? Tokens.Spacing.md : Tokens.Spacing.lg).frame(maxWidth: .infinity)
         }
         .buttonStyle(PillButtonStyle(color: color))

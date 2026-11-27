@@ -69,12 +69,12 @@ struct GamesOverlay: View {
 }
 
 /// How the choices on a card fit the room: side by side and tall, side by side but low (a short
-/// window), or as rows under each other (a narrow window), #15.
+/// window), or as rows under each other (a narrow window, #15, or large text, #42).
 enum ChoiceFit {
     case wide, short, rows
 
-    static func `for`(_ size: CGSize) -> ChoiceFit {
-        if size.width < 520 { return .rows }
+    static func `for`(_ size: CGSize, type: DynamicTypeSize = .large) -> ChoiceFit {
+        if size.width < 520 || type > .xLarge { return .rows }
         return size.height < 470 ? .short : .wide
     }
 }
@@ -86,24 +86,27 @@ struct ChoiceCard<Choices: View>: View {
     let maxWidth: CGFloat
     let onClose: () -> Void
     @ViewBuilder let choices: (ChoiceFit) -> Choices
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         GeometryReader { geo in
-            let fit = ChoiceFit.for(geo.size)
-            let roomy = fit == .wide
+            let fit = ChoiceFit.for(geo.size, type: typeSize)
+            // The window alone decides the title's size and the spacing, so the title keeps
+            // growing with the text when the choices turn into rows (#42).
+            let roomy = ChoiceFit.for(geo.size) == .wide
             ZStack {
                 Color.black.opacity(0.35).ignoresSafeArea()
                 ScrollView {
                     VStack(spacing: roomy ? Tokens.Spacing.lg : Tokens.Spacing.md) {
-                        Text(verbatim: title).font(Theme.font(roomy ? 26 : 22))
+                        Text(verbatim: title).themeFont(roomy ? 26 : 22)
                             .multilineTextAlignment(.center)
                             .fixedSize(horizontal: false, vertical: true)
                         let layout = fit == .rows ? AnyLayout(VStackLayout(spacing: Tokens.Spacing.sm))
                                                   : AnyLayout(HStackLayout(spacing: Tokens.Spacing.md))
                         layout { choices(fit) }
                         Button(L10n.close, action: onClose)
-                            .font(Theme.font(20))
-                            .padding(.horizontal, 34).frame(height: roomy ? 56 : 48)
+                            .themeFont(20)
+                            .padding(.horizontal, 34).padding(.vertical, Tokens.Spacing.xs).frame(minHeight: roomy ? 56 : 48)
                             .background(Theme.option, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
                     }
                     .foregroundStyle(Theme.text)
@@ -140,10 +143,10 @@ struct ChoiceLabel: View {
     var body: some View {
         if fit == .rows {
             HStack(spacing: Tokens.Spacing.md) {
-                Text(verbatim: icon).font(.system(size: 36)).opacity(dim ? 0.45 : 1)
+                Text(verbatim: icon).themeFont(36, .regular).opacity(dim ? 0.45 : 1)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(verbatim: title).font(Theme.font(18))
-                    Text(verbatim: note).font(Theme.font(14, .semibold)).foregroundStyle(Theme.onPastelSoft)
+                    Text(verbatim: title).themeFont(18)
+                    Text(verbatim: note).themeFont(14, .semibold).foregroundStyle(Theme.onPastelSoft)
                 }
                 Spacer(minLength: 0)
             }
@@ -151,9 +154,9 @@ struct ChoiceLabel: View {
             .frame(maxWidth: .infinity, minHeight: 64)
         } else {
             VStack(spacing: 4) {
-                Text(verbatim: icon).font(.system(size: fit == .wide ? iconSize : 36)).opacity(dim ? 0.45 : 1)
-                Text(verbatim: title).font(Theme.font(titleSize))
-                Text(verbatim: note).font(Theme.font(14, .semibold)).foregroundStyle(Theme.onPastelSoft)
+                Text(verbatim: icon).themeFont(fit == .wide ? iconSize : 36, .regular).opacity(dim ? 0.45 : 1)
+                Text(verbatim: title).themeFont(titleSize)
+                Text(verbatim: note).themeFont(14, .semibold).foregroundStyle(Theme.onPastelSoft)
                     .multilineTextAlignment(.center)
             }
             .padding(.vertical, Tokens.Spacing.md).padding(.horizontal, Tokens.Spacing.sm)
@@ -167,16 +170,20 @@ struct ChoiceLabel: View {
 struct WardrobeOverlay: View {
     let model: GameModel
     @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         GeometryReader { geo in
             let landscape = geo.size.width > geo.size.height
+            let narrow = geo.size.width < 520
+            // With large text the tiles get wider: fewer to a row and a wider panel (#42).
+            let big = typeSize.isAccessibilitySize
             ZStack(alignment: landscape ? .leading : .top) {
                 Color.black.opacity(0.12).ignoresSafeArea()
                     .onTapGesture { model.overlay = nil }
-                panel(columns: landscape || geo.size.width < 520 ? 3 : 4)
-                    .frame(width: landscape ? min(400, geo.size.width * 0.46) : nil)
-                    .frame(maxHeight: landscape ? .infinity : geo.size.height * 0.62)
+                panel(columns: big ? (landscape || narrow ? 2 : 3) : (landscape || narrow ? 3 : 4))
+                    .frame(width: landscape ? min(big ? 540 : 400, geo.size.width * (big ? 0.6 : 0.46)) : nil)
+                    .frame(maxHeight: landscape ? .infinity : geo.size.height * (big ? 0.75 : 0.62))
                     .padding(Tokens.Spacing.md)
             }
         }
@@ -188,19 +195,19 @@ struct WardrobeOverlay: View {
         let save = model.world.save
         return ScrollView {
             VStack(alignment: .leading, spacing: Tokens.Spacing.md) {
-                Text(verbatim: L10n.wardrobeTitle).font(Theme.font(26)).frame(maxWidth: .infinity)
+                Text(verbatim: L10n.wardrobeTitle).themeFont(26).frame(maxWidth: .infinity)
                 Text(verbatim: L10n.wardrobeInfo(model.hud.hearts, model.hud.name))
-                    .font(Theme.font(16, .semibold)).foregroundStyle(Theme.muted).frame(maxWidth: .infinity)
+                    .themeFont(16, .semibold).foregroundStyle(Theme.muted).frame(maxWidth: .infinity)
                     .multilineTextAlignment(.center)
 
-                Text(verbatim: L10n.wardrobeItems).font(Theme.font(19))
+                Text(verbatim: L10n.wardrobeItems).themeFont(19)
                 LazyVGrid(columns: grid, spacing: Tokens.Spacing.md) {
                     ForEach(Catalog.items) { item in
                         let locked = !item.isFree && !model.isPro
                         let worn = save?.wear[item.slot] == item.id
                         let earned = model.hud.hearts >= item.cost
                         Button { model.choose(item: item) } label: {
-                            tile(icon: Text(verbatim: item.icon).font(.system(size: 40)), title: item.name,
+                            tile(icon: Text(verbatim: item.icon).themeFont(40, .regular), title: item.name,
                                  note: locked ? L10n.pro : (!earned ? "🔒 \(item.cost) ❤️" : (worn ? L10n.takeOff : L10n.wear)),
                                  chosen: worn, dim: locked || !earned)
                         }
@@ -208,7 +215,7 @@ struct WardrobeOverlay: View {
                     }
                 }
 
-                Text(verbatim: L10n.wardrobeCoats).font(Theme.font(19)).padding(.top, Tokens.Spacing.sm)
+                Text(verbatim: L10n.wardrobeCoats).themeFont(19).padding(.top, Tokens.Spacing.sm)
                 LazyVGrid(columns: grid, spacing: Tokens.Spacing.md) {
                     ForEach(Catalog.coats) { coat in
                         let locked = !coat.isFree && !model.isPro
@@ -223,7 +230,7 @@ struct WardrobeOverlay: View {
                 }
 
                 // Things for the living room (#18), after the crown, with hearts the same way.
-                Text(verbatim: L10n.wardrobeRoom).font(Theme.font(19)).padding(.top, Tokens.Spacing.sm)
+                Text(verbatim: L10n.wardrobeRoom).themeFont(19).padding(.top, Tokens.Spacing.sm)
                 LazyVGrid(columns: grid, spacing: Tokens.Spacing.md) {
                     ForEach(Catalog.decor) { decor in
                         let locked = !decor.isFree && !model.isPro
@@ -240,8 +247,8 @@ struct WardrobeOverlay: View {
                 }
 
                 Button(L10n.done) { model.overlay = nil }
-                    .font(Theme.font(20))
-                    .padding(.horizontal, 34).frame(height: 56)
+                    .themeFont(20)
+                    .padding(.horizontal, 34).padding(.vertical, Tokens.Spacing.xs).frame(minHeight: 56)
                     .background(Theme.option, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
                     .frame(maxWidth: .infinity)
                     .padding(.top, Tokens.Spacing.sm)
@@ -256,8 +263,10 @@ struct WardrobeOverlay: View {
         VStack(spacing: 2) {
             // locked, or waiting for its hearts: the picture fades, the words keep their contrast (#43)
             icon.opacity(dim ? 0.45 : 1)
-            Text(verbatim: title).font(Theme.font(15)).lineLimit(1).minimumScaleFactor(0.7)
-            Text(verbatim: note).font(Theme.font(13, .semibold)).foregroundStyle(chosen ? Theme.onPastelSoft : Theme.muted).lineLimit(1)
+            // two lines when a name doesn't fit with large text (#42)
+            Text(verbatim: title).themeFont(15).lineLimit(2).minimumScaleFactor(0.7).multilineTextAlignment(.center)
+            Text(verbatim: note).themeFont(13, .semibold).foregroundStyle(chosen ? Theme.onPastelSoft : Theme.muted)
+                .lineLimit(2).minimumScaleFactor(0.8).multilineTextAlignment(.center)
         }
         .padding(.vertical, Tokens.Spacing.sm).padding(.horizontal, 4)
         .frame(maxWidth: .infinity)

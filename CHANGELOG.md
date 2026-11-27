@@ -6,6 +6,15 @@ All notable changes to Whiskerling are listed here. The format follows
 
 ## [Unreleased]
 
+### Changed
+- The text follows the system's text size. Everything outside the room grows with it, up to the
+  largest accessibility sizes: the start screen, the food, game and room cards, the wardrobe, the
+  parental gate, the paywall and the grown-ups' menu. With large text the choices stand in rows,
+  the coats and the wardrobe's tiles sit fewer to a row, and the keys and buttons grow with their
+  words. The bars above and below the room grow up to the largest standard size, so the room stays
+  in view, and at the larger sizes a long press on a need or a button shows it large
+  ([#42](https://github.com/JarlLyng/whiskerling/issues/42)).
+
 ## [1.1.0] - not released yet
 
 ### Added
