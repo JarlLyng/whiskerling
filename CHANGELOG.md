@@ -6,7 +6,12 @@ All notable changes to Whiskerling are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+- A cat's name can be changed in the grown-ups' menu, for each cat when there are two.
+
 ### Changed
+- Two cats keep apart. Each picks a place on the floor away from the other, and if they still end
+  up on top of each other, the one not shown steps aside, so neither hides behind the other.
 - Better contrast. The grey notes are darker, so they reach the contrast small text needs on
   every card, tile and button, in light and dark. Locked and not yet unlocked items, and the
   buttons while the cat sleeps, now fade only their picture, not their words. With the system's

@@ -511,7 +511,8 @@ final class World {
                         self.cat.activity = .poop; self.cat.timer = 2.6
                     }
                 } else if Double.random(in: 0...1) < 0.55 {
-                    goTo(.random(in: G.minX...max(G.minX, G.maxX)), G.catY, speed: 0.55)
+                    // away from the other cat, if there is one (#21)
+                    goTo(freeSpot(awayFrom: buddyXs), G.catY, speed: 0.55)
                 } else {
                     cat.timer = .random(in: 2...5)
                     cat.look = .random(in: -1...1)

@@ -108,15 +108,15 @@ states, open issues and plans go stale: they live in `CHANGELOG.md`, GitHub and 
   and the litter box is shared; the sponge and a stroke go to the cat touched. Fun and clean fall
   at two thirds of the speed with two, and each visits the litter box every six awake hours. The
   top bar shows one cat, the other is a small picture to tap; hearts and the room are shared.
-  They groom each other, chase, nap together and sit at the window. Losing Pro removes no cat;
-  Start over removes both.
+  They groom each other, chase, nap together and sit at the window, and otherwise keep a cat's
+  width apart. Losing Pro removes no cat; Start over removes both.
 - A real-time cat clock, and a window whose sky follows the time of day.
 - Seasons from the iPad's date (the other way round south of the equator): snow, blossom or
   leaves past the window, and in the garden snow, blossom, apples or orange leaves.
 - Synthesised sounds that respect the silent switch. English and Danish.
 - Grown-ups' area behind a parental gate (a 6-to-9 times-table question on a keypad), opened by
-  holding the cat's name for 2 seconds: Pro, restore, sound, feedback mail, rate, privacy policy,
-  start over.
+  holding the cat's name for 2 seconds: Pro, restore, a new name for each cat, sound, feedback mail,
+  rate, privacy policy, start over.
 - Tapping something locked opens the gate, then the paywall; after buying, the paywall closes and
   the tap is finished. The paywall says later additions to Pro are included.
 

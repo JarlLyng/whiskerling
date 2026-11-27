@@ -188,6 +188,38 @@ final class SecondCatTests: XCTestCase {
         XCTAssertFalse(seen.isEmpty, "now and then the two do something together")
     }
 
+    func testTheTwoKeepApart() {
+        let model = makeModel()
+        adoptPip(model)
+        let w = model.world
+        var close = 0, counted = 0
+        for _ in 0..<2400 {
+            w.save!.needs = Needs(food: 95, fun: 95, energy: 95, clean: 95)
+            w.save!.companion!.needs = w.save!.needs
+            w.update(0.25)
+            // two cats just walking or standing about, not doing something together
+            let free = { (c: CatState) in (c.activity == .idle || (c.activity == .walk && c.walk?.tag == nil)) && c.happyT <= 0 }
+            guard free(w.cat), free(w.buddy) else { continue }
+            counted += 1
+            if abs(w.cat.x - w.buddy.x) < w.catGap * 0.5 { close += 1 }
+        }
+        XCTAssertGreaterThan(counted, 200)
+        XCTAssertLessThan(Double(close) / Double(counted), 0.1, "they seldom stand on top of each other")
+    }
+
+    func testANameCanBeChangedForEitherCat() {
+        let model = makeModel()
+        adoptPip(model)
+        XCTAssertTrue(model.rename("  Luna   Belle ", other: false))
+        XCTAssertEqual(model.hud.name, "Luna Belle", "spaces tidied")
+        XCTAssertTrue(model.rename("Mister Fluffypaws The Third", other: true))
+        XCTAssertEqual(model.hud.otherName, "Mister Fluffyp", "cut to 14 letters")
+        XCTAssertFalse(model.rename("   ", other: false), "an empty name changes nothing")
+        XCTAssertEqual(model.hud.name, "Luna Belle")
+        XCTAssertEqual(SaveStore.load(from: defaults)?.name, "Luna Belle", "and it is saved")
+        XCTAssertEqual(SaveStore.load(from: defaults)?.companion?.name, "Mister Fluffyp")
+    }
+
     func testStartOverRemovesBoth() {
         let model = makeModel()
         adoptPip(model)

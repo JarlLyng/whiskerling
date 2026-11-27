@@ -181,6 +181,9 @@ enum L10n {
     static var menuSoundOn: String { String(localized: "menu.soundOn", defaultValue: "Sound: on") }
     static var menuSoundOff: String { String(localized: "menu.soundOff", defaultValue: "Sound: off") }
     static var startOver: String { String(localized: "menu.startOver", defaultValue: "Start over with a new cat") }
+    static var renameTitle: String { String(localized: "menu.rename", defaultValue: "Change a name") }
+    static func renameField(_ name: String) -> String { String(localized: "menu.renameField", defaultValue: "New name for \(name)") }
+    static var save: String { String(localized: "menu.save", defaultValue: "Save") }
     static func twoNames(_ first: String, _ second: String) -> String { String(localized: "menu.twoNames", defaultValue: "\(first) and \(second)") }
     static func startOverConfirm(_ name: String) -> String {
         String(localized: "menu.startOverConfirm", defaultValue: "Are you sure? Tap again to say goodbye to \(name).")
